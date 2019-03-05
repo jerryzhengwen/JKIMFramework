@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "JKIMFramework"
-  s.version      = "3.0.0"
+  s.version      = "4.0.0"
   s.summary      = "这是一个IM的SDK的初步测试"
 
   # This description is used to generate tags and improve search results.
@@ -78,7 +78,7 @@ Pod::Spec.new do |s|
   #  Supports git, hg, bzr, svn and HTTP.
   #
 
-  s.source       = { :git => "https://github.com/jerryzhengwen/JKIMFramework.git", :tag => "3.0.0" }
+  s.source       = { :git => "https://github.com/jerryzhengwen/JKIMFramework.git", :tag => "4.0.0" }
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
