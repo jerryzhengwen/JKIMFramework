@@ -1,0 +1,13 @@
+use_frameworks!
+
+platform :ios, '8.0'
+
+target 'JKIMFramework_Example' do
+  pod 'JKIMFramework', :path => '../'
+
+  target 'JKIMFramework_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end

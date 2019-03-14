@@ -1,0 +1,22 @@
+{
+  "name": "JKIMFramework",
+  "version": "0.1.0",
+  "summary": "A short description of JKIMFramework.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/ilucklyzhengwen@163.com/JKIMFramework",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "ilucklyzhengwen@163.com": "jerry.gu@9client.com"
+  },
+  "source": {
+    "git": "https://github.com/ilucklyzhengwen@163.com/JKIMFramework.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "source_files": "JKIMFramework/Classes/**/*"
+}
