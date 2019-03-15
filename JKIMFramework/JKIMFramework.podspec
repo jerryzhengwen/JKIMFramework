@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'JKIMFramework'
-  s.version          = '0.0.2'
+  s.version          = '0.0.3'
   s.summary          = '这是一个关于久科IMSDK的初级版'
 
 # This description is used to generate tags and improve search results.
@@ -40,6 +40,6 @@ Pod::Spec.new do |s|
 
 s.libraries = "resolv", "xml2"
 s.xcconfig = { 'VALID_ARCHS' => 'arm64 x86_64 armv7 i386', }
-  # s.frameworks = 'UIKit', 'MapKit'
+s.frameworks = 'UIKit', 'MapKit'
   # s.dependency 'AFNetworking', '~> 2.3'
 end
