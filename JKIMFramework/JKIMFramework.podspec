@@ -29,14 +29,14 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '9.0'
   s.platform     = :ios, "9.0"
 
-  s.source_files = 'JKIMFramework/Classes/**/*.{h}'
+  s.source_files = 'JKIMFramework/**/Classes/**/*.h'
   
    s.resource_bundles = {
-     'JKIMFramework' => ['JKIMFramework/Assets/*.png']
+     'JKIMFramework' => ['JKIMFramework/**/Assets/*.png']
    }
 
-    s.public_header_files = 'JKIMFramework/Classes/**/*.h'
-  s.ios.vendored_libraries = 'JKIMFramework/Frameworks/**/*.a'
+    s.public_header_files = 'JKIMFramework/**/Classes/**/*.h'
+  s.ios.vendored_libraries = 'JKIMFramework/**/Frameworks/**/*.a'
 
 s.libraries = "resolv", "xml2"
 s.xcconfig = { 'VALID_ARCHS' => 'arm64 x86_64 armv7 i386', }
