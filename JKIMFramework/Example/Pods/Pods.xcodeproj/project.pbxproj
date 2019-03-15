@@ -8,15 +8,40 @@
 
 /* Begin PBXBuildFile section */
 		03020756E395D714366C7988A33D033B /* Pods-JKIMFramework_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = FD387F8D3537CA05A05BDC02CB81033D /* Pods-JKIMFramework_Tests-dummy.m */; };
+		07A7D71878B4D50F707F8AC0D7B8CD7C /* JKDialogueSetting.h in Headers */ = {isa = PBXBuildFile; fileRef = 651980F9D9DF1ED5F474062E83B1A032 /* JKDialogueSetting.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09A9D4C849BA4186B0467F7A3923FD14 /* Pods-JKIMFramework_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = F84EE7D941D1A90A29229BA0CCA13841 /* Pods-JKIMFramework_Example-dummy.m */; };
-		54456C6905CB7ADCE90D6CB4C48EFA65 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4607EFCA7C5F75397649E792E2AFCB /* Foundation.framework */; };
+		0CA89EA8944F4DDA8E33D855D2F0874A /* JKENUMObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 04013925387DD9356D5C8F56C4817386 /* JKENUMObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0E73E939CB28F51C0A67779942171548 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5FC5B64354078279927964A795D8D1C /* Foundation.framework */; };
+		199B76F3EB1CD850D358994CAC3F22A0 /* JKSDKFramework.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C7D169071A35FED035D0A543FD43871 /* JKSDKFramework.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28D386B0CB41846E9DCE2993F4A233AC /* JKDialogeViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9FEE903CE1DAF7A4EC1EF14C037DA9C0 /* JKDialogeViewCell.m */; };
+		2B45D32340EF8A1763AEEEAAF840552B /* JKDialogeViewCell.h in Headers */ = {isa = PBXBuildFile; fileRef = B1235189B7C5C004B2226FFB6D8A585C /* JKDialogeViewCell.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		381430A5AF992ACD9E614FDFE1B41E45 /* JKIMImage.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 395FE10B8D8E073B17C55CBD3C61234D /* JKIMImage.bundle */; };
+		4AF13DCA39608651503F4CAA96B3E57E /* NSObject+JKCurrentVC.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AB836AC6D13A058DE94EB20771E35F8 /* NSObject+JKCurrentVC.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		54456C6905CB7ADCE90D6CB4C48EFA65 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5FC5B64354078279927964A795D8D1C /* Foundation.framework */; };
+		63EFAF613CFC53476056AD673D779C11 /* NSObject+JKCurrentVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A82B7C93506734DF39670039C2E6B1A /* NSObject+JKCurrentVC.m */; };
 		653D2027F3C4E6B56E16FDF3FDC713BB /* Pods-JKIMFramework_Example-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E4554D95532EEBFB6488B10EA5AD7F2 /* Pods-JKIMFramework_Example-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		659B60C3115B10C7BC584042326D7B2D /* Pods-JKIMFramework_Tests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = DCF4214831EC24D8E5DA52A6A9424B2C /* Pods-JKIMFramework_Tests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		935C381FBD8EAE66C216E8BF8492A551 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4607EFCA7C5F75397649E792E2AFCB /* Foundation.framework */; };
-		DB5DEB1BE8FE5C9C021C7C48C98A3244 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4607EFCA7C5F75397649E792E2AFCB /* Foundation.framework */; };
-		DE1F63D4E33FAC81C348674BB4B1EDC5 /* JKIMFramework-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 8918EB114EE03354D1DA0504A5E03A63 /* JKIMFramework-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F7D4D09253448216A9C014D68DE8D870 /* ReplaceMe.m in Sources */ = {isa = PBXBuildFile; fileRef = DFE27F9F0B1761C0EF1A13956A0B89C3 /* ReplaceMe.m */; };
-		F8AE94C3B4A6A1DF76EDFB0DD7A8D70D /* JKIMFramework-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 41A979B361CD51F0C7024CC99F619804 /* JKIMFramework-dummy.m */; };
+		66E90ED7AE2E2672D7A8E5701182C653 /* JKMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = F6E20DD9AA0D7579974FA6515B25B602 /* JKMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		68CCE05F0E8866685F6F56135CEF1DDB /* JKFloatBallManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 0927795BEBC6CF11580638F3E46C7EF5 /* JKFloatBallManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		693A78442BE5353587D906D9FB83B067 /* JKDialogModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 10D6A2D9B25284308136F8D6FED6249A /* JKDialogModel.m */; };
+		6C71E62CADF6E7EADA4EC7A3DF914853 /* JKFloatBallManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 73E8EEA52BED94F4DB3D56801A4ABC09 /* JKFloatBallManager.m */; };
+		6DBBF0F2237F8A799057F01E93949849 /* JKIMFramework-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 86AD9C08246EB0D7C520ABC21B2E37B2 /* JKIMFramework-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		81443721C07BD314003E42DB3249AA12 /* JKIMFramework-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 2283061CA47F819C0F72F23680898BB7 /* JKIMFramework-dummy.m */; };
+		84C11A62EC23C4127C70ADB441497E12 /* JKCustomer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5136FA04841618C9532F64ABC80B0402 /* JKCustomer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		861706FCBEDE66C2FA1C15731C1BDE76 /* JKCompanyInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 71A758E9A9D131248953E7985998913A /* JKCompanyInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		91E5C10E1739EDC1C284F160DFA14CD1 /* ReplaceMe.m in Sources */ = {isa = PBXBuildFile; fileRef = 84F0F112381F1B65EF9E06FC4B70FEF3 /* ReplaceMe.m */; };
+		A62CD3D8EECD1560A588084A1FDA5101 /* UIView+JKFloatFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = BEE9F3ED938A6ACC043F48301C3EB6EC /* UIView+JKFloatFrame.m */; };
+		ADDBFE2F40A376BD26C983AF5950A2C5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B0CCBCE02A078B27A4E4EBEFBA662217 /* UIKit.framework */; };
+		B2F16746628CAE4064741D7D6D6683C9 /* JKIMFramework.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8C806F9EB0FF0020547F1603C6F6E49C /* JKIMFramework.bundle */; };
+		B52BF32788B1A5488CC52A42FEB7DED2 /* JKDialogueSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = E8B812B7B6B2779C6CECC5C8763946D4 /* JKDialogueSetting.m */; };
+		BB3B9EBE136530B4E95A2E07DCBCA165 /* JKDialogModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 6AA282C33944077DDAF8201B4B8BA0DE /* JKDialogModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CCCE7F1CC841509839207A5A2ADD9C1A /* JKDialogueViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 026CC4D32686E2B5F31ABDCD053ACEDA /* JKDialogueViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D20695D20B99B2C018BD49F03FC63C57 /* JKFloatBallDefine.h in Headers */ = {isa = PBXBuildFile; fileRef = 49F561FEB6EE683D42F007B8C7992DF1 /* JKFloatBallDefine.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D6D47A701A503CDF236DE95BDFFDE4CB /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 805A377FEB75EAD29F063A0A07513C3E /* MapKit.framework */; };
+		DA8096F297A1B0A0DBE3405501D58B31 /* JKConnectCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AFE87BC8E53BA37F7C71D09D224724D /* JKConnectCenter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DB5DEB1BE8FE5C9C021C7C48C98A3244 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5FC5B64354078279927964A795D8D1C /* Foundation.framework */; };
+		E32266CBC295EDCF9C3925C83E33DB6F /* JKDialogueViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 46F9788F38BF72F25510021B884E6589 /* JKDialogueViewController.m */; };
+		FE4D9AB0F8A05AF0F4DE3861FD1D3E4A /* UIView+JKFloatFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = BD1CE817A09BF398DE4DDF5CF3E5C279 /* UIView+JKFloatFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -24,7 +49,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 7018BBE4EB92210FF9AFE3C0C0DA4105;
+			remoteGlobalIDString = 4A666A954D9514CB57F6EB2D92DC9D15;
 			remoteInfo = JKIMFramework;
 		};
 		7B0B4D748131FC3CE7EE52E00A9AEF51 /* PBXContainerItemProxy */ = {
@@ -34,40 +59,74 @@
 			remoteGlobalIDString = 2B9AE8C8E9669CE6C6426F72E07E8833;
 			remoteInfo = "Pods-JKIMFramework_Example";
 		};
+		BB21761D77714846E0131150E8AD0391 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B1F9003255127FC9CDF7930FF22B37F4;
+			remoteInfo = "JKIMFramework-JKIMFramework";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		026CC4D32686E2B5F31ABDCD053ACEDA /* JKDialogueViewController.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JKDialogueViewController.h; path = JKIMFramework/Classes/JKDialogueViewController.h; sourceTree = "<group>"; };
 		02A3F1898FE746669C9CD2CC18E29BB7 /* Pods-JKIMFramework_Example-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-JKIMFramework_Example-acknowledgements.plist"; sourceTree = "<group>"; };
-		03B25B07EB3E5AEF7AD74598406749EB /* JKIMFramework.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = JKIMFramework.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		1B36B79A1E032B1D30F4A0B3B12FA9DC /* JKIMFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = JKIMFramework.framework; path = JKIMFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		23FF396E202EE47538A4E9D9FB6FF1AC /* JKIMFramework.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = JKIMFramework.xcconfig; sourceTree = "<group>"; };
-		406B0A81773BAC4E7BA095B1BE7B6389 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
-		41A979B361CD51F0C7024CC99F619804 /* JKIMFramework-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "JKIMFramework-dummy.m"; sourceTree = "<group>"; };
+		04013925387DD9356D5C8F56C4817386 /* JKENUMObject.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JKENUMObject.h; path = JKIMFramework/Classes/JKENUMObject.h; sourceTree = "<group>"; };
+		0927795BEBC6CF11580638F3E46C7EF5 /* JKFloatBallManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JKFloatBallManager.h; path = JKIMFramework/Classes/JKFloatBallManager.h; sourceTree = "<group>"; };
+		0DF8E614BF80B40598F11DE8A37EC6F1 /* ResourceBundle-JKIMFramework-JKIMFramework-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "ResourceBundle-JKIMFramework-JKIMFramework-Info.plist"; sourceTree = "<group>"; };
+		10D6A2D9B25284308136F8D6FED6249A /* JKDialogModel.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JKDialogModel.m; path = JKIMFramework/Classes/JKDialogModel.m; sourceTree = "<group>"; };
+		12F3E50079893F88EA5306D1C0E5DF95 /* JKIMFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = JKIMFramework.framework; path = JKIMFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2283061CA47F819C0F72F23680898BB7 /* JKIMFramework-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "JKIMFramework-dummy.m"; sourceTree = "<group>"; };
+		2EEBD850395B841B0D2C1330480D63A2 /* JKIMFramework.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = JKIMFramework.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		395FE10B8D8E073B17C55CBD3C61234D /* JKIMImage.bundle */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "wrapper.plug-in"; name = JKIMImage.bundle; path = JKIMFramework/UIKit/JKIMImage.bundle; sourceTree = "<group>"; };
+		46F9788F38BF72F25510021B884E6589 /* JKDialogueViewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JKDialogueViewController.m; path = JKIMFramework/Classes/JKDialogueViewController.m; sourceTree = "<group>"; };
+		49F561FEB6EE683D42F007B8C7992DF1 /* JKFloatBallDefine.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JKFloatBallDefine.h; path = JKIMFramework/Classes/JKFloatBallDefine.h; sourceTree = "<group>"; };
 		4CD1844726763A234870B5028A78C823 /* Pods-JKIMFramework_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-JKIMFramework_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		4E4554D95532EEBFB6488B10EA5AD7F2 /* Pods-JKIMFramework_Example-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-JKIMFramework_Example-umbrella.h"; sourceTree = "<group>"; };
+		5136FA04841618C9532F64ABC80B0402 /* JKCustomer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JKCustomer.h; path = JKIMFramework/Classes/JKCustomer.h; sourceTree = "<group>"; };
+		5A82B7C93506734DF39670039C2E6B1A /* NSObject+JKCurrentVC.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSObject+JKCurrentVC.m"; path = "JKIMFramework/Classes/NSObject+JKCurrentVC.m"; sourceTree = "<group>"; };
+		5C7D169071A35FED035D0A543FD43871 /* JKSDKFramework.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JKSDKFramework.h; path = JKIMFramework/Classes/JKSDKFramework.h; sourceTree = "<group>"; };
 		5E0F086207D8C76FAD0C7DB3D145A145 /* Pods-JKIMFramework_Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-JKIMFramework_Example.modulemap"; sourceTree = "<group>"; };
 		5FB1F8F60B51F722E43C0DDDFC80B56D /* Pods-JKIMFramework_Tests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-JKIMFramework_Tests.modulemap"; sourceTree = "<group>"; };
+		651980F9D9DF1ED5F474062E83B1A032 /* JKDialogueSetting.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JKDialogueSetting.h; path = JKIMFramework/Classes/JKDialogueSetting.h; sourceTree = "<group>"; };
 		6529F9F5937B20394579CAAA7BA8E22A /* Pods-JKIMFramework_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-JKIMFramework_Example.release.xcconfig"; sourceTree = "<group>"; };
 		675DBCCE76406D19BFE01877D5839704 /* Pods-JKIMFramework_Example-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-JKIMFramework_Example-frameworks.sh"; sourceTree = "<group>"; };
-		6951051D9CA0FD53D1AA3B542F9B41E5 /* JKIMFramework-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "JKIMFramework-Info.plist"; sourceTree = "<group>"; };
-		6A99B6BAE1FEA74B3986DEA0E9F4607E /* Pods_JKIMFramework_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_JKIMFramework_Tests.framework; path = "Pods-JKIMFramework_Tests.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6AA282C33944077DDAF8201B4B8BA0DE /* JKDialogModel.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JKDialogModel.h; path = JKIMFramework/Classes/JKDialogModel.h; sourceTree = "<group>"; };
 		6C8839672D81A1BAC0B8666406CF9A79 /* Pods-JKIMFramework_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-JKIMFramework_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
 		70E59BFBD21F78B5DB87306114D2C5ED /* Pods-JKIMFramework_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-JKIMFramework_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		71A758E9A9D131248953E7985998913A /* JKCompanyInfo.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JKCompanyInfo.h; path = JKIMFramework/Classes/JKCompanyInfo.h; sourceTree = "<group>"; };
+		73E8EEA52BED94F4DB3D56801A4ABC09 /* JKFloatBallManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JKFloatBallManager.m; path = JKIMFramework/Classes/JKFloatBallManager.m; sourceTree = "<group>"; };
+		7AFE0FE942158A939DE146E9DCBABA40 /* libJKIMSDK.a */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = archive.ar; name = libJKIMSDK.a; path = JKIMFramework/Frameworks/libJKIMSDK.a; sourceTree = "<group>"; };
 		7B2A2C80BF82DB141D887A45C7C2E0A6 /* Pods-JKIMFramework_Tests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-JKIMFramework_Tests-Info.plist"; sourceTree = "<group>"; };
+		7C50CDD52FD38DF4052CE5D01A1D4C4A /* JKIMFramework.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = JKIMFramework.modulemap; sourceTree = "<group>"; };
+		805A377FEB75EAD29F063A0A07513C3E /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/MapKit.framework; sourceTree = DEVELOPER_DIR; };
 		81754F1049B5BD5B87B92CEDA1734CF9 /* Pods-JKIMFramework_Example-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-JKIMFramework_Example-acknowledgements.markdown"; sourceTree = "<group>"; };
-		85EDDC4E14EB19FB09CBB25F392A55D0 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE; sourceTree = "<group>"; };
-		8918EB114EE03354D1DA0504A5E03A63 /* JKIMFramework-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "JKIMFramework-umbrella.h"; sourceTree = "<group>"; };
+		84F0F112381F1B65EF9E06FC4B70FEF3 /* ReplaceMe.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = ReplaceMe.m; path = JKIMFramework/Classes/ReplaceMe.m; sourceTree = "<group>"; };
+		86AD9C08246EB0D7C520ABC21B2E37B2 /* JKIMFramework-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "JKIMFramework-umbrella.h"; sourceTree = "<group>"; };
+		8AB836AC6D13A058DE94EB20771E35F8 /* NSObject+JKCurrentVC.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSObject+JKCurrentVC.h"; path = "JKIMFramework/Classes/NSObject+JKCurrentVC.h"; sourceTree = "<group>"; };
+		8AFE87BC8E53BA37F7C71D09D224724D /* JKConnectCenter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JKConnectCenter.h; path = JKIMFramework/Classes/JKConnectCenter.h; sourceTree = "<group>"; };
+		8C806F9EB0FF0020547F1603C6F6E49C /* JKIMFramework.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = JKIMFramework.bundle; path = "JKIMFramework-JKIMFramework.bundle"; sourceTree = BUILT_PRODUCTS_DIR; };
+		961A65D97FDC6EE55EA2339B90A196E5 /* JKIMFramework-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "JKIMFramework-Info.plist"; sourceTree = "<group>"; };
 		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		A01589E66B4C864F5B63EB27754C36D0 /* JKIMFramework-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "JKIMFramework-prefix.pch"; sourceTree = "<group>"; };
-		A4B16E53232ADA1BF763A7742FC284E6 /* JKIMFramework.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = JKIMFramework.modulemap; sourceTree = "<group>"; };
-		CB4607EFCA7C5F75397649E792E2AFCB /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		9FEE903CE1DAF7A4EC1EF14C037DA9C0 /* JKDialogeViewCell.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JKDialogeViewCell.m; path = JKIMFramework/Classes/JKDialogeViewCell.m; sourceTree = "<group>"; };
+		B0CCBCE02A078B27A4E4EBEFBA662217 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		B1235189B7C5C004B2226FFB6D8A585C /* JKDialogeViewCell.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JKDialogeViewCell.h; path = JKIMFramework/Classes/JKDialogeViewCell.h; sourceTree = "<group>"; };
+		B14EAE2F284D1276E33E7F5F03948DF3 /* JKIMFramework.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = JKIMFramework.xcconfig; sourceTree = "<group>"; };
+		B3EF9F03DDA4016A526319BB6B5C9E2C /* JKIMFramework-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "JKIMFramework-prefix.pch"; sourceTree = "<group>"; };
+		B5FC5B64354078279927964A795D8D1C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		BD1CE817A09BF398DE4DDF5CF3E5C279 /* UIView+JKFloatFrame.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIView+JKFloatFrame.h"; path = "JKIMFramework/Classes/UIView+JKFloatFrame.h"; sourceTree = "<group>"; };
+		BD95F615BF24449AE56A96B3789A7604 /* Pods_JKIMFramework_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_JKIMFramework_Tests.framework; path = "Pods-JKIMFramework_Tests.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BEE9F3ED938A6ACC043F48301C3EB6EC /* UIView+JKFloatFrame.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIView+JKFloatFrame.m"; path = "JKIMFramework/Classes/UIView+JKFloatFrame.m"; sourceTree = "<group>"; };
 		D793C4FF9D41687B03348A703161E0B4 /* Pods-JKIMFramework_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-JKIMFramework_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		DCF4214831EC24D8E5DA52A6A9424B2C /* Pods-JKIMFramework_Tests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-JKIMFramework_Tests-umbrella.h"; sourceTree = "<group>"; };
-		DFE27F9F0B1761C0EF1A13956A0B89C3 /* ReplaceMe.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = ReplaceMe.m; path = JKIMFramework/Classes/ReplaceMe.m; sourceTree = "<group>"; };
 		E0548CE8D3F4EF26390101A82881354C /* Pods-JKIMFramework_Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-JKIMFramework_Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
 		E3FC2C5BA6030B1FF43E9E9F54BECA42 /* Pods-JKIMFramework_Example-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-JKIMFramework_Example-Info.plist"; sourceTree = "<group>"; };
-		F5D7D50869F4475ECC9F7834DCEE9BF2 /* Pods_JKIMFramework_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_JKIMFramework_Example.framework; path = "Pods-JKIMFramework_Example.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4305A5AFE153BD275E4CB2FA100EE0E /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
+		E8B812B7B6B2779C6CECC5C8763946D4 /* JKDialogueSetting.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = JKDialogueSetting.m; path = JKIMFramework/Classes/JKDialogueSetting.m; sourceTree = "<group>"; };
+		F0E1BCD64151E4F5568B59EF928DEA36 /* Pods_JKIMFramework_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_JKIMFramework_Example.framework; path = "Pods-JKIMFramework_Example.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6E20DD9AA0D7579974FA6515B25B602 /* JKMessage.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = JKMessage.h; path = JKIMFramework/Classes/JKMessage.h; sourceTree = "<group>"; };
 		F84EE7D941D1A90A29229BA0CCA13841 /* Pods-JKIMFramework_Example-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-JKIMFramework_Example-dummy.m"; sourceTree = "<group>"; };
+		FCAE3187C931869780256CC5350A0C16 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE; sourceTree = "<group>"; };
 		FD387F8D3537CA05A05BDC02CB81033D /* Pods-JKIMFramework_Tests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-JKIMFramework_Tests-dummy.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -88,46 +147,92 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A80FD9812115071ACE8351E6583C4F9E /* Frameworks */ = {
+		CDA637C8ACD4FE5563626C7CD9BFE9BC /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				935C381FBD8EAE66C216E8BF8492A551 /* Foundation.framework in Frameworks */,
+				0E73E939CB28F51C0A67779942171548 /* Foundation.framework in Frameworks */,
+				D6D47A701A503CDF236DE95BDFFDE4CB /* MapKit.framework in Frameworks */,
+				ADDBFE2F40A376BD26C983AF5950A2C5 /* UIKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E017041A1EF2583E41A665BC4DEED2E1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1EC69982086639EDCD0A9DBB703C5B74 /* Products */ = {
+		03C5C200A0787E300053CFA8F53CA094 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				1B36B79A1E032B1D30F4A0B3B12FA9DC /* JKIMFramework.framework */,
-				F5D7D50869F4475ECC9F7834DCEE9BF2 /* Pods_JKIMFramework_Example.framework */,
-				6A99B6BAE1FEA74B3986DEA0E9F4607E /* Pods_JKIMFramework_Tests.framework */,
+				47C35B7037A2EAAAB00727B6ADB6E35E /* iOS */,
 			);
-			name = Products;
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		20F031A861CB5B7980694C89CBE36F54 /* Pod */ = {
+		237EC47AE5AD7A64D350F010C6A6DDB7 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				03B25B07EB3E5AEF7AD74598406749EB /* JKIMFramework.podspec */,
-				85EDDC4E14EB19FB09CBB25F392A55D0 /* LICENSE */,
-				406B0A81773BAC4E7BA095B1BE7B6389 /* README.md */,
+				395FE10B8D8E073B17C55CBD3C61234D /* JKIMImage.bundle */,
 			);
-			name = Pod;
+			name = Resources;
 			sourceTree = "<group>";
 		};
-		68209ED7BBFA4A8451437199C39716D2 /* JKIMFramework */ = {
+		47C35B7037A2EAAAB00727B6ADB6E35E /* iOS */ = {
 			isa = PBXGroup;
 			children = (
-				DFE27F9F0B1761C0EF1A13956A0B89C3 /* ReplaceMe.m */,
-				20F031A861CB5B7980694C89CBE36F54 /* Pod */,
-				CD9EEE70AFD9C90054B75D5F748BAAFD /* Support Files */,
+				B5FC5B64354078279927964A795D8D1C /* Foundation.framework */,
+				805A377FEB75EAD29F063A0A07513C3E /* MapKit.framework */,
+				B0CCBCE02A078B27A4E4EBEFBA662217 /* UIKit.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		5DB48DB7769E30AFB6E3B13568DAFE8B /* JKIMFramework */ = {
+			isa = PBXGroup;
+			children = (
+				71A758E9A9D131248953E7985998913A /* JKCompanyInfo.h */,
+				8AFE87BC8E53BA37F7C71D09D224724D /* JKConnectCenter.h */,
+				5136FA04841618C9532F64ABC80B0402 /* JKCustomer.h */,
+				B1235189B7C5C004B2226FFB6D8A585C /* JKDialogeViewCell.h */,
+				9FEE903CE1DAF7A4EC1EF14C037DA9C0 /* JKDialogeViewCell.m */,
+				6AA282C33944077DDAF8201B4B8BA0DE /* JKDialogModel.h */,
+				10D6A2D9B25284308136F8D6FED6249A /* JKDialogModel.m */,
+				651980F9D9DF1ED5F474062E83B1A032 /* JKDialogueSetting.h */,
+				E8B812B7B6B2779C6CECC5C8763946D4 /* JKDialogueSetting.m */,
+				026CC4D32686E2B5F31ABDCD053ACEDA /* JKDialogueViewController.h */,
+				46F9788F38BF72F25510021B884E6589 /* JKDialogueViewController.m */,
+				04013925387DD9356D5C8F56C4817386 /* JKENUMObject.h */,
+				49F561FEB6EE683D42F007B8C7992DF1 /* JKFloatBallDefine.h */,
+				0927795BEBC6CF11580638F3E46C7EF5 /* JKFloatBallManager.h */,
+				73E8EEA52BED94F4DB3D56801A4ABC09 /* JKFloatBallManager.m */,
+				F6E20DD9AA0D7579974FA6515B25B602 /* JKMessage.h */,
+				5C7D169071A35FED035D0A543FD43871 /* JKSDKFramework.h */,
+				8AB836AC6D13A058DE94EB20771E35F8 /* NSObject+JKCurrentVC.h */,
+				5A82B7C93506734DF39670039C2E6B1A /* NSObject+JKCurrentVC.m */,
+				84F0F112381F1B65EF9E06FC4B70FEF3 /* ReplaceMe.m */,
+				BD1CE817A09BF398DE4DDF5CF3E5C279 /* UIView+JKFloatFrame.h */,
+				BEE9F3ED938A6ACC043F48301C3EB6EC /* UIView+JKFloatFrame.m */,
+				ABA0FEDC2CB72D238D8307C09D2712ED /* Frameworks */,
+				D5F2D91356735C413F9F6B9CD347EA5C /* Pod */,
+				237EC47AE5AD7A64D350F010C6A6DDB7 /* Resources */,
+				CC1EBAF2A2AD2BAE71015D6C01682D84 /* Support Files */,
 			);
 			name = JKIMFramework;
 			path = ../..;
+			sourceTree = "<group>";
+		};
+		660B519EE3DE059714384B1DE710877B /* Development Pods */ = {
+			isa = PBXGroup;
+			children = (
+				5DB48DB7769E30AFB6E3B13568DAFE8B /* JKIMFramework */,
+			);
+			name = "Development Pods";
 			sourceTree = "<group>";
 		};
 		6D1906A5758A2EEA93C86C5055306188 /* Pods-JKIMFramework_Tests */ = {
@@ -146,23 +251,35 @@
 			path = "Target Support Files/Pods-JKIMFramework_Tests";
 			sourceTree = "<group>";
 		};
-		9B055D0CFEA43187E72B03DED11F5662 /* iOS */ = {
+		6E7B90746295701594E975EC46914729 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CB4607EFCA7C5F75397649E792E2AFCB /* Foundation.framework */,
+				8C806F9EB0FF0020547F1603C6F6E49C /* JKIMFramework.bundle */,
+				12F3E50079893F88EA5306D1C0E5DF95 /* JKIMFramework.framework */,
+				F0E1BCD64151E4F5568B59EF928DEA36 /* Pods_JKIMFramework_Example.framework */,
+				BD95F615BF24449AE56A96B3789A7604 /* Pods_JKIMFramework_Tests.framework */,
 			);
-			name = iOS;
+			name = Products;
 			sourceTree = "<group>";
 		};
-		CD9EEE70AFD9C90054B75D5F748BAAFD /* Support Files */ = {
+		ABA0FEDC2CB72D238D8307C09D2712ED /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A4B16E53232ADA1BF763A7742FC284E6 /* JKIMFramework.modulemap */,
-				23FF396E202EE47538A4E9D9FB6FF1AC /* JKIMFramework.xcconfig */,
-				41A979B361CD51F0C7024CC99F619804 /* JKIMFramework-dummy.m */,
-				6951051D9CA0FD53D1AA3B542F9B41E5 /* JKIMFramework-Info.plist */,
-				A01589E66B4C864F5B63EB27754C36D0 /* JKIMFramework-prefix.pch */,
-				8918EB114EE03354D1DA0504A5E03A63 /* JKIMFramework-umbrella.h */,
+				7AFE0FE942158A939DE146E9DCBABA40 /* libJKIMSDK.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CC1EBAF2A2AD2BAE71015D6C01682D84 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				7C50CDD52FD38DF4052CE5D01A1D4C4A /* JKIMFramework.modulemap */,
+				B14EAE2F284D1276E33E7F5F03948DF3 /* JKIMFramework.xcconfig */,
+				2283061CA47F819C0F72F23680898BB7 /* JKIMFramework-dummy.m */,
+				961A65D97FDC6EE55EA2339B90A196E5 /* JKIMFramework-Info.plist */,
+				B3EF9F03DDA4016A526319BB6B5C9E2C /* JKIMFramework-prefix.pch */,
+				86AD9C08246EB0D7C520ABC21B2E37B2 /* JKIMFramework-umbrella.h */,
+				0DF8E614BF80B40598F11DE8A37EC6F1 /* ResourceBundle-JKIMFramework-JKIMFramework-Info.plist */,
 			);
 			name = "Support Files";
 			path = "Example/Pods/Target Support Files/JKIMFramework";
@@ -172,19 +289,21 @@
 			isa = PBXGroup;
 			children = (
 				9D940727FF8FB9C785EB98E56350EF41 /* Podfile */,
-				FA984753EB90A252055D2FD9B21FE14F /* Development Pods */,
-				D210D550F4EA176C3123ED886F8F87F5 /* Frameworks */,
-				1EC69982086639EDCD0A9DBB703C5B74 /* Products */,
+				660B519EE3DE059714384B1DE710877B /* Development Pods */,
+				03C5C200A0787E300053CFA8F53CA094 /* Frameworks */,
+				6E7B90746295701594E975EC46914729 /* Products */,
 				ECD893BE65C7AC751E529A7AA23121F5 /* Targets Support Files */,
 			);
 			sourceTree = "<group>";
 		};
-		D210D550F4EA176C3123ED886F8F87F5 /* Frameworks */ = {
+		D5F2D91356735C413F9F6B9CD347EA5C /* Pod */ = {
 			isa = PBXGroup;
 			children = (
-				9B055D0CFEA43187E72B03DED11F5662 /* iOS */,
+				2EEBD850395B841B0D2C1330480D63A2 /* JKIMFramework.podspec */,
+				FCAE3187C931869780256CC5350A0C16 /* LICENSE */,
+				E4305A5AFE153BD275E4CB2FA100EE0E /* README.md */,
 			);
-			name = Frameworks;
+			name = Pod;
 			sourceTree = "<group>";
 		};
 		D8EDE05E05E0DFC8BE46F4789D1D2E9F /* Pods-JKIMFramework_Example */ = {
@@ -213,22 +332,28 @@
 			name = "Targets Support Files";
 			sourceTree = "<group>";
 		};
-		FA984753EB90A252055D2FD9B21FE14F /* Development Pods */ = {
-			isa = PBXGroup;
-			children = (
-				68209ED7BBFA4A8451437199C39716D2 /* JKIMFramework */,
-			);
-			name = "Development Pods";
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		702D1F18D06374A201666BC3457CDA84 /* Headers */ = {
+		629106CE64E2B9DA3389F4FAB63781DF /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DE1F63D4E33FAC81C348674BB4B1EDC5 /* JKIMFramework-umbrella.h in Headers */,
+				861706FCBEDE66C2FA1C15731C1BDE76 /* JKCompanyInfo.h in Headers */,
+				DA8096F297A1B0A0DBE3405501D58B31 /* JKConnectCenter.h in Headers */,
+				84C11A62EC23C4127C70ADB441497E12 /* JKCustomer.h in Headers */,
+				2B45D32340EF8A1763AEEEAAF840552B /* JKDialogeViewCell.h in Headers */,
+				BB3B9EBE136530B4E95A2E07DCBCA165 /* JKDialogModel.h in Headers */,
+				07A7D71878B4D50F707F8AC0D7B8CD7C /* JKDialogueSetting.h in Headers */,
+				CCCE7F1CC841509839207A5A2ADD9C1A /* JKDialogueViewController.h in Headers */,
+				0CA89EA8944F4DDA8E33D855D2F0874A /* JKENUMObject.h in Headers */,
+				D20695D20B99B2C018BD49F03FC63C57 /* JKFloatBallDefine.h in Headers */,
+				68CCE05F0E8866685F6F56135CEF1DDB /* JKFloatBallManager.h in Headers */,
+				6DBBF0F2237F8A799057F01E93949849 /* JKIMFramework-umbrella.h in Headers */,
+				66E90ED7AE2E2672D7A8E5701182C653 /* JKMessage.h in Headers */,
+				199B76F3EB1CD850D358994CAC3F22A0 /* JKSDKFramework.h in Headers */,
+				4AF13DCA39608651503F4CAA96B3E57E /* NSObject+JKCurrentVC.h in Headers */,
+				FE4D9AB0F8A05AF0F4DE3861FD1D3E4A /* UIView+JKFloatFrame.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,7 +392,7 @@
 			);
 			name = "Pods-JKIMFramework_Tests";
 			productName = "Pods-JKIMFramework_Tests";
-			productReference = 6A99B6BAE1FEA74B3986DEA0E9F4607E /* Pods_JKIMFramework_Tests.framework */;
+			productReference = BD95F615BF24449AE56A96B3789A7604 /* Pods_JKIMFramework_Tests.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		2B9AE8C8E9669CE6C6426F72E07E8833 /* Pods-JKIMFramework_Example */ = {
@@ -286,26 +411,44 @@
 			);
 			name = "Pods-JKIMFramework_Example";
 			productName = "Pods-JKIMFramework_Example";
-			productReference = F5D7D50869F4475ECC9F7834DCEE9BF2 /* Pods_JKIMFramework_Example.framework */;
+			productReference = F0E1BCD64151E4F5568B59EF928DEA36 /* Pods_JKIMFramework_Example.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		7018BBE4EB92210FF9AFE3C0C0DA4105 /* JKIMFramework */ = {
+		4A666A954D9514CB57F6EB2D92DC9D15 /* JKIMFramework */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 10917BBA037047ED9A4040F4B6181B9B /* Build configuration list for PBXNativeTarget "JKIMFramework" */;
+			buildConfigurationList = 04DE1E63C894920820AF1033BF276D06 /* Build configuration list for PBXNativeTarget "JKIMFramework" */;
 			buildPhases = (
-				702D1F18D06374A201666BC3457CDA84 /* Headers */,
-				583D81BC1162E6219BA7657F8E7EC5F3 /* Sources */,
-				A80FD9812115071ACE8351E6583C4F9E /* Frameworks */,
-				9314EC4383383061437CD4B0A29FA4B3 /* Resources */,
+				629106CE64E2B9DA3389F4FAB63781DF /* Headers */,
+				D271AA5191246AE7ACAB9E628366D45D /* Sources */,
+				CDA637C8ACD4FE5563626C7CD9BFE9BC /* Frameworks */,
+				A372D2C4615F10D17F925AEE5F499762 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				60A35659B415EDDDC5265154A7792CE2 /* PBXTargetDependency */,
+			);
+			name = JKIMFramework;
+			productName = JKIMFramework;
+			productReference = 12F3E50079893F88EA5306D1C0E5DF95 /* JKIMFramework.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		B1F9003255127FC9CDF7930FF22B37F4 /* JKIMFramework-JKIMFramework */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7EDAA8644BBAD0F96A0609CF968F0890 /* Build configuration list for PBXNativeTarget "JKIMFramework-JKIMFramework" */;
+			buildPhases = (
+				39D49A59B20534723B4301D4A798CFFB /* Sources */,
+				E017041A1EF2583E41A665BC4DEED2E1 /* Frameworks */,
+				2E79DA25C9882DD5A8706C27A7582F91 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = JKIMFramework;
-			productName = JKIMFramework;
-			productReference = 1B36B79A1E032B1D30F4A0B3B12FA9DC /* JKIMFramework.framework */;
-			productType = "com.apple.product-type.framework";
+			name = "JKIMFramework-JKIMFramework";
+			productName = "JKIMFramework-JKIMFramework";
+			productReference = 8C806F9EB0FF0020547F1603C6F6E49C /* JKIMFramework.bundle */;
+			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
 
@@ -324,11 +467,12 @@
 				en,
 			);
 			mainGroup = CF1408CF629C7361332E53B88F7BD30C;
-			productRefGroup = 1EC69982086639EDCD0A9DBB703C5B74 /* Products */;
+			productRefGroup = 6E7B90746295701594E975EC46914729 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				7018BBE4EB92210FF9AFE3C0C0DA4105 /* JKIMFramework */,
+				4A666A954D9514CB57F6EB2D92DC9D15 /* JKIMFramework */,
+				B1F9003255127FC9CDF7930FF22B37F4 /* JKIMFramework-JKIMFramework */,
 				2B9AE8C8E9669CE6C6426F72E07E8833 /* Pods-JKIMFramework_Example */,
 				20BC25ACFF30C0A0AAFB2C176EB1531B /* Pods-JKIMFramework_Tests */,
 			);
@@ -336,7 +480,7 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		9314EC4383383061437CD4B0A29FA4B3 /* Resources */ = {
+		2E79DA25C9882DD5A8706C27A7582F91 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -350,6 +494,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A372D2C4615F10D17F925AEE5F499762 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B2F16746628CAE4064741D7D6D6683C9 /* JKIMFramework.bundle in Resources */,
+				381430A5AF992ACD9E614FDFE1B41E45 /* JKIMImage.bundle in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B61E3F147B3A2484F11F8D936AD3A5D1 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -360,12 +513,10 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		583D81BC1162E6219BA7657F8E7EC5F3 /* Sources */ = {
+		39D49A59B20534723B4301D4A798CFFB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F8AE94C3B4A6A1DF76EDFB0DD7A8D70D /* JKIMFramework-dummy.m in Sources */,
-				F7D4D09253448216A9C014D68DE8D870 /* ReplaceMe.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -374,6 +525,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				09A9D4C849BA4186B0467F7A3923FD14 /* Pods-JKIMFramework_Example-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D271AA5191246AE7ACAB9E628366D45D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				28D386B0CB41846E9DCE2993F4A233AC /* JKDialogeViewCell.m in Sources */,
+				693A78442BE5353587D906D9FB83B067 /* JKDialogModel.m in Sources */,
+				B52BF32788B1A5488CC52A42FEB7DED2 /* JKDialogueSetting.m in Sources */,
+				E32266CBC295EDCF9C3925C83E33DB6F /* JKDialogueViewController.m in Sources */,
+				6C71E62CADF6E7EADA4EC7A3DF914853 /* JKFloatBallManager.m in Sources */,
+				81443721C07BD314003E42DB3249AA12 /* JKIMFramework-dummy.m in Sources */,
+				63EFAF613CFC53476056AD673D779C11 /* NSObject+JKCurrentVC.m in Sources */,
+				91E5C10E1739EDC1C284F160DFA14CD1 /* ReplaceMe.m in Sources */,
+				A62CD3D8EECD1560A588084A1FDA5101 /* UIView+JKFloatFrame.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -391,7 +558,7 @@
 		1CE6B7E688136BBA77ABB645237261E2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = JKIMFramework;
-			target = 7018BBE4EB92210FF9AFE3C0C0DA4105 /* JKIMFramework */;
+			target = 4A666A954D9514CB57F6EB2D92DC9D15 /* JKIMFramework */;
 			targetProxy = 4A57875EC2F56E2F460D9B4862C59CBF /* PBXContainerItemProxy */;
 		};
 		2FB8778965C98ED4FC82D3EE3B9EF3AD /* PBXTargetDependency */ = {
@@ -399,6 +566,12 @@
 			name = "Pods-JKIMFramework_Example";
 			target = 2B9AE8C8E9669CE6C6426F72E07E8833 /* Pods-JKIMFramework_Example */;
 			targetProxy = 7B0B4D748131FC3CE7EE52E00A9AEF51 /* PBXContainerItemProxy */;
+		};
+		60A35659B415EDDDC5265154A7792CE2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "JKIMFramework-JKIMFramework";
+			target = B1F9003255127FC9CDF7930FF22B37F4 /* JKIMFramework-JKIMFramework */;
+			targetProxy = BB21761D77714846E0131150E8AD0391 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -460,6 +633,37 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 4.2;
 				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Release;
+		};
+		418D791380B85C5E69392AC1D6469C88 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B14EAE2F284D1276E33E7F5F03948DF3 /* JKIMFramework.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/JKIMFramework/JKIMFramework-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/JKIMFramework/JKIMFramework-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/JKIMFramework/JKIMFramework.modulemap";
+				PRODUCT_MODULE_NAME = JKIMFramework;
+				PRODUCT_NAME = JKIMFramework;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
 		};
@@ -594,36 +798,6 @@
 			};
 			name = Release;
 		};
-		7119557A7B7157B23731CCFA757EBAA9 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 23FF396E202EE47538A4E9D9FB6FF1AC /* JKIMFramework.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/JKIMFramework/JKIMFramework-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/JKIMFramework/JKIMFramework-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = "Target Support Files/JKIMFramework/JKIMFramework.modulemap";
-				PRODUCT_MODULE_NAME = JKIMFramework;
-				PRODUCT_NAME = JKIMFramework;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
 		7B4E2270981C0317A9284E3DB14F4A51 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D793C4FF9D41687B03348A703161E0B4 /* Pods-JKIMFramework_Tests.release.xcconfig */;
@@ -651,37 +825,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		7F0C43576A1E00FEC3B6406813350690 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 23FF396E202EE47538A4E9D9FB6FF1AC /* JKIMFramework.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/JKIMFramework/JKIMFramework-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/JKIMFramework/JKIMFramework-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = "Target Support Files/JKIMFramework/JKIMFramework.modulemap";
-				PRODUCT_MODULE_NAME = JKIMFramework;
-				PRODUCT_NAME = JKIMFramework;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -722,9 +865,80 @@
 			};
 			name = Debug;
 		};
+		96840831013612A27A728AF89D94C1AA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B14EAE2F284D1276E33E7F5F03948DF3 /* JKIMFramework.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/JKIMFramework";
+				INFOPLIST_FILE = "Target Support Files/JKIMFramework/ResourceBundle-JKIMFramework-JKIMFramework-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				PRODUCT_NAME = JKIMFramework;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		B90A9B507707A10F096B75D8CA55A5C1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B14EAE2F284D1276E33E7F5F03948DF3 /* JKIMFramework.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/JKIMFramework/JKIMFramework-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/JKIMFramework/JKIMFramework-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/JKIMFramework/JKIMFramework.modulemap";
+				PRODUCT_MODULE_NAME = JKIMFramework;
+				PRODUCT_NAME = JKIMFramework;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		DF31E17CDE838C87A653897C5FECD1B2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B14EAE2F284D1276E33E7F5F03948DF3 /* JKIMFramework.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/JKIMFramework";
+				INFOPLIST_FILE = "Target Support Files/JKIMFramework/ResourceBundle-JKIMFramework-JKIMFramework-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				PRODUCT_NAME = JKIMFramework;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		04DE1E63C894920820AF1033BF276D06 /* Build configuration list for PBXNativeTarget "JKIMFramework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B90A9B507707A10F096B75D8CA55A5C1 /* Debug */,
+				418D791380B85C5E69392AC1D6469C88 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		1034B40E83EE54DB1E5D6B19FF700FD2 /* Build configuration list for PBXNativeTarget "Pods-JKIMFramework_Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -734,20 +948,20 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		10917BBA037047ED9A4040F4B6181B9B /* Build configuration list for PBXNativeTarget "JKIMFramework" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				7119557A7B7157B23731CCFA757EBAA9 /* Debug */,
-				7F0C43576A1E00FEC3B6406813350690 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				421ECB1396280A8D83853C3DDBED1700 /* Debug */,
 				05DF210AC65EBB0E593AAF976B2C2177 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7EDAA8644BBAD0F96A0609CF968F0890 /* Build configuration list for PBXNativeTarget "JKIMFramework-JKIMFramework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				96840831013612A27A728AF89D94C1AA /* Debug */,
+				DF31E17CDE838C87A653897C5FECD1B2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

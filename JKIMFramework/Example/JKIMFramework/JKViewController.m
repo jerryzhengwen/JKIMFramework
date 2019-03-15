@@ -7,7 +7,8 @@
 //
 
 #import "JKViewController.h"
-
+#import <JKIMFramework/JKDialogueViewController.h>
+#import <JKFloatBallManager.h>
 @interface JKViewController ()
 
 @end
@@ -18,6 +19,9 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+        JKDialogueViewController *conter = [[JKDialogueViewController alloc]init];
+    
+        [[JKFloatBallManager  shared]showFloatBallWithViewController:conter];
 }
 
 - (void)didReceiveMemoryWarning

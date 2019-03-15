@@ -71,14 +71,23 @@
             if (setting.customerImage) {
                 self.iconImageView.image = setting.customerImage;
             }else {
-                self.iconImageView.image = [UIImage imageNamed:@"dialogue_list_service"];
+                
+                NSString *bundlePatch =  [[NSBundle bundleForClass:[JKDialogueSetting class]]pathForResource:@"JKIMImage" ofType:@"bundle"];
+                NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"dialogue_list_service"];
+                self.iconImageView.image = [UIImage imageWithContentsOfFile:filePatch];
+                
+//                self.iconImageView.image = [UIImage imageNamed:@"dialogue_list_service"];
             }
             break;
         case JK_Visitor:
             if (setting.visitorImage) {
                 self.iconImageView.image = setting.visitorImage;
             }else {
-                self.iconImageView.image = [UIImage imageNamed:@"dialogue_list_visitor"];
+                NSString *bundlePatch =  [[NSBundle bundleForClass:[JKDialogueSetting class]]pathForResource:@"JKIMImage" ofType:@"bundle"];
+                NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"dialogue_list_visitor"];
+                self.iconImageView.image = [UIImage imageWithContentsOfFile:filePatch];
+                
+//                self.iconImageView.image = [UIImage imageNamed:@"dialogue_list_visitor"];
             }
             break;
         case JK_Roboter:

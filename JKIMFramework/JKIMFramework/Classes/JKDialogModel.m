@@ -31,6 +31,9 @@
             
             self.detailHeight = ceil(contentHeight.height +10);
         }
+        
+        
+        
     }
 }
 

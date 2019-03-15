@@ -6,13 +6,13 @@
 //  Copyright © 2019 于飞. All rights reserved.
 //
 
-#import "ViewController.h"
+#import <UIKit/UIKit.h>
 
 #define BottomToolHeight 50
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface JKDialogueViewController : ViewController
+@interface JKDialogueViewController : UIViewController
 
 @end
 

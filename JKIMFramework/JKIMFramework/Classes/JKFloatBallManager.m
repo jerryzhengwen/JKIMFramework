@@ -10,6 +10,7 @@
 #import "JKFloatBallDefine.h"
 #import "NSObject+JKCurrentVC.h"
 #import "UIView+JKFloatFrame.h"
+#import "JKDialogueViewController.h"
 #import <objc/runtime.h>
 
 /** 悬浮球显示状态 */
@@ -33,6 +34,8 @@ typedef NS_ENUM(NSInteger, FloatShowStyle) {
 @property (nonatomic, strong) UIViewController *floatViewController;
 /** 悬浮球 */
 @property (nonatomic, strong) UIImageView *floatView;
+/** 跳转的第二个控制器*/
+@property(nonatomic, strong)JKDialogueViewController *secondVC;
 
 @end
 
@@ -211,7 +214,10 @@ NSString *const kPopWithPanGes = @"kPopWithPanGes";
         return;
     }
     //    [self.cancelFloatView setCancelFloatViewShowing:YES];
-    [[NSObject currentViewController] setHidesBottomBarWhenPushed:YES];
+    
+    
+    
+    [self.secondVC setHidesBottomBarWhenPushed:YES];
     
     [[NSObject currentNavigationController] pushViewController:self.floatViewController animated:YES];
 }
@@ -358,9 +364,9 @@ NSString *const kPopWithPanGes = @"kPopWithPanGes";
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
     if ([NSObject currentNavigationController].viewControllers.count > 1) {
-        if ([self.monitorVCClasses containsObject:NSStringFromClass([[NSObject currentViewController] class])]) {
+        if ([self.monitorVCClasses containsObject:NSStringFromClass([JKDialogueViewController class])]) {
             [[UIApplication sharedApplication].keyWindow addSubview:self.floatView];
-            self.lastPopViewController = [NSObject currentViewController];
+            self.lastPopViewController = self.secondVC;
         }
         else {
             self.lastPopViewController = nil;
@@ -371,21 +377,6 @@ NSString *const kPopWithPanGes = @"kPopWithPanGes";
 }
 
 #pragma mark - UINavigationControllerDelegate
-/** 转场动画 */
-- (id <UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController
-                                   animationControllerForOperation:(UINavigationControllerOperation)operation
-                                                fromViewController:(UIViewController *)fromVC
-                                                  toViewController:(UIViewController *)toVC
-{
-    return [[JKFloatBallManager shared] floatBallAnimationWithOperation:operation fromViewController:fromVC toViewController:toVC];
-}
-
-/** 转场交互 */
-- (id <UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController
-                          interactionControllerForAnimationController:(id <UIViewControllerAnimatedTransitioning>) animationController
-{
-    return [[JKFloatBallManager shared] floatInteractionControllerForAnimationController:animationController];
-}
 
 - (void)navigationController:(UINavigationController *)navigationController didShowViewController:(UIViewController *)viewController animated:(BOOL)animated
 {
@@ -419,7 +410,19 @@ NSString *const kPopWithPanGes = @"kPopWithPanGes";
 - (UIImageView *)floatView
 {
     if (!_floatView) {
-        _floatView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"contact_icon"]];
+//        NSString *bundlePatch =  [[NSBundle bundleForClass:[JKDialogueViewController class]]pathForResource:@"JKIMImage" ofType:@"bundle"];
+//
+//        NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"contact_icon"];
+//        _floatView = [[UIImageView alloc]initWithImage: [UIImage imageWithContentsOfFile:filePatch]];
+    
+        NSString *bundlePatch =  [[NSBundle bundleForClass:[JKDialogueViewController class]]pathForResource:@"JKIMImage" ofType:@"bundle"];
+        NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"contact_icon"];
+        _floatView = [[UIImageView alloc]initWithImage: [UIImage imageWithContentsOfFile:filePatch]];
+        
+//        NSString* absolutePath = [bundle pathForResource:path ofType:nil];
+        
+//        _floatView = [[UIImageView alloc] init];
+//        _floatView.image = [UIImage imageNamed:@"contact_icon"];
         //        _floatView.layer.cornerRadius = 30;
         //        _floatView.layer.masksToBounds = YES;
         _floatView.backgroundColor = [UIColor clearColor];
@@ -445,7 +448,7 @@ NSString *const kPopWithPanGes = @"kPopWithPanGes";
         self.floatViewController = fromVC;
         self.showStyle = FloatShowStyleShow;
         [[UIApplication sharedApplication].keyWindow addSubview:self.floatView];
-        self.lastPopViewController = [NSObject currentViewController];
+        self.lastPopViewController = self.secondVC;
     }else{
         self.showStyle = FloatShowStyleShow;
     }
@@ -453,77 +456,13 @@ NSString *const kPopWithPanGes = @"kPopWithPanGes";
     self.lastPopViewController = nil;
 }
 
-//- (CancelFloatView *)cancelFloatView
-//{
-//    if (!_cancelFloatView) {
-//        _cancelFloatView = [[CancelFloatView alloc] initWithFrame:CGRectMake(FloatScreenWidth, FloatScreenHeight , RoundViewRadius, RoundViewRadius)];
-//        [[UIApplication sharedApplication].keyWindow addSubview:_cancelFloatView];
-//        [[UIApplication sharedApplication].keyWindow bringSubviewToFront:_floatView];
-//    }
-//    return _cancelFloatView;
-//}
 
-//- (id <UIViewControllerAnimatedTransitioning>)floatBallAnimationWithOperation:(UINavigationControllerOperation)operation
-//                                                           fromViewController:(UIViewController *)fromVC
-//                                                             toViewController:(UIViewController *)toVC
-//{
-//    JKFloatTransitionAnimator *animator;
-//    UIViewController *vc;
-//    if (operation == UINavigationControllerOperationPush) {
-//        if (toVC == self.floatViewController) {
-//            animator = [self createAnimatorWithOperation:operation];
-//            vc = toVC;
-//        }
-//    }
-//    else if (operation == UINavigationControllerOperationPop) {
-//        if (fromVC == self.lastPopViewController) {
-//            animator = [self createAnimatorWithOperation:operation];
-//            vc = fromVC;
-//        }
-//        else {
-//            NSNumber *popWithPanGesNumber = objc_getAssociatedObject([NSObject currentNavigationController], &kPopWithPanGes);
-//            BOOL popWithPanGes = [popWithPanGesNumber boolValue];
-//            //直接点击左上角返回
-//            if (!popWithPanGes &&
-//                [self.monitorVCClasses containsObject:NSStringFromClass([fromVC class])] &&
-//                self.showStyle == FloatShowStyleShowContent) {
-//                animator = [self createAnimatorWithOperation:operation];
-//                vc = fromVC;
-//            }else{
-//
-//                self.floatViewController = fromVC;
-//                self.showStyle = FloatShowStyleShow;
-//                [[UIApplication sharedApplication].keyWindow addSubview:self.floatView];
-//                self.lastPopViewController = [NSObject currentViewController];
-//
-//            }
-//        }
-//    }
-//    if (animator && vc) {
-//        objc_setAssociatedObject(vc, &kAnimatorKey, animator, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-//    }
-//    return animator;
-//}
-
-//- (JKFloatTransitionAnimator *)createAnimatorWithOperation:(UINavigationControllerOperation)operation
-//{
-//    return [JKFloatTransitionAnimator animatorWithStartCenter:self.floatView.center radius:FloatWidth / 2.0 operation:operation];
-//}
-
-//- (id <UIViewControllerInteractiveTransitioning>)floatInteractionControllerForAnimationController:(id <UIViewControllerAnimatedTransitioning>) animationController
-//{
-//    NSNumber *popWithPanGesNumber = objc_getAssociatedObject([NSObject currentNavigationController], &kPopWithPanGes);
-//    BOOL popWithPanGes = [popWithPanGesNumber boolValue];
-//    if (self.lastPopViewController && popWithPanGes) {
-//        JKFloatTransitionAnimator *animator = objc_getAssociatedObject(self.lastPopViewController, &kAnimatorKey);
-//        if ([animationController isEqual:animator] && animator.operation == UINavigationControllerOperationPop) {
-//            UIPercentDrivenInteractiveTransition *interactive = [UIPercentDrivenInteractiveTransition new];
-//            objc_setAssociatedObject(self.lastPopViewController, &kPopInteractiveKey, interactive, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-//            return interactive;
-//        }
-//    }
-//    return nil;
-//}
+- (JKDialogueViewController *)secondVC{
+    if (_secondVC == nil) {
+        _secondVC = [[JKDialogueViewController alloc]init];
+    }
+    return _secondVC;
+}
 
 
 @end

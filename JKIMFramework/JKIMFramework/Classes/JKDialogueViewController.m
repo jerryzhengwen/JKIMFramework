@@ -122,15 +122,21 @@
 }
 
 - (void)sendMessage:(id)sender{
-    if (self.textView.text.length) {
+    
+    if (self.textView.text.length < 1) {
         return;
     }
+    
     JKDialogModel * model = [JKDialogModel alloc];
+    
     model.isRichText = NO;
     model.content = self.textView.text;
     model.time = [self jk_getTimestamp];
     [self.dataArray addObject:model];
+    
+//    [self.tableView reloadData];
     [self tableViewMoveToLastPath];
+    
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         
         BOOL isRobotON = [JKConnectCenter sharedJKConnectCenter].isRobotOn;
@@ -141,6 +147,9 @@
             [self sendAutoReplayWithString:@"我无法回答您的问题，请您点击这里，转向人工客服咨询。"];
         }
     });
+    
+    
+    
     self.textView.text = @"";
 }
 -(void)sendAutoReplayWithString:(NSString *)message {
@@ -150,6 +159,7 @@
     autoModel.msgType = JK_Customer;
     autoModel.time = [self jk_getTimestamp];
     [self.dataArray addObject:autoModel];
+    
     [self tableViewMoveToLastPath];
 }
 /**
@@ -403,7 +413,13 @@
     if (_sendButton == nil) {
         _sendButton = [UIButton buttonWithType:UIButtonTypeCustom];
 //        [_sendButton setTitle:@"发送" forState:UIControlStateNormal];
-        [_sendButton setImage:[UIImage imageNamed:@"sendImage"] forState:UIControlStateNormal];
+        
+        NSString *bundlePatch =  [[NSBundle bundleForClass:[JKDialogueSetting class]]pathForResource:@"JKIMImage" ofType:@"bundle"];
+        NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"sendImage"];
+        
+        [_sendButton setImage:[UIImage imageWithContentsOfFile:filePatch] forState:UIControlStateNormal];
+        
+//        [_sendButton setImage:[UIImage imageNamed:@"sendImage"] forState:UIControlStateNormal];
 //        _sendButton.titleLabel.font = [UIFont systemFontOfSize:14];
 //        _sendButton.backgroundColor = [UIColor blueColor];
 //        _sendButton.layer.cornerRadius = 4;

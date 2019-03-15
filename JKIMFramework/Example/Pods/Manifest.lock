@@ -1,5 +1,5 @@
 PODS:
-  - JKIMFramework (0.1.0)
+  - JKIMFramework (0.0.3)
 
 DEPENDENCIES:
   - JKIMFramework (from `../`)
@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  JKIMFramework: 1f504f639a60b33c7788827d885443c1942d79d4
+  JKIMFramework: 3bee974596abf8d9f3df23ee279461021e525136
 
 PODFILE CHECKSUM: 1bf04440ad1374df7924dcf081951334eb753fe7
 
