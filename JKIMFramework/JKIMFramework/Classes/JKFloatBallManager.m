@@ -11,6 +11,7 @@
 #import "NSObject+JKCurrentVC.h"
 #import "UIView+JKFloatFrame.h"
 #import "JKDialogueViewController.h"
+#import "JKBundleTool.h"
 #import <objc/runtime.h>
 
 /** 悬浮球显示状态 */
@@ -63,23 +64,6 @@ NSString *const kPopWithPanGes = @"kPopWithPanGes";
         [[NSNotificationCenter defaultCenter] addObserver:floatManager selector:@selector(p_animationWillBegin) name:AnimationWillBeginKey object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:floatManager selector:@selector(p_animationWillEnd) name:AnimationWillEndKey object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:floatManager selector:@selector(p_animationDidEnd:) name:AnimationDidEndKey object:nil];
-//        
-//        unsigned int numIvars;
-//        Ivar *vars = class_copyIvarList([UITabBar class], &numIvars);
-//        NSString *key=nil;
-//        for(int i = 0; i < numIvars; i++) {
-//
-//            Ivar thisIvar = vars[i];
-//            key = [NSString stringWithUTF8String:ivar_getName(thisIvar)];
-//            NSLog(@"variable_name :%@", key);
-//            if ([key isEqualToString:@"_title"]) {
-//                const char *memberType = ivar_getTypeEncoding(thisIvar);
-//                 NSString *typeStr = [NSString stringWithCString:memberType encoding:NSUTF8StringEncoding];
-//                ptrdiff_t d = ivar_getOffset(thisIvar);
-//                
-//            }
-//        }
-//
     });
     return floatManager;
 }
@@ -98,14 +82,14 @@ NSString *const kPopWithPanGes = @"kPopWithPanGes";
 
 #pragma mark - Public
 
-- (void)addFloatMonitorVCClasses:(NSArray<NSString *> *)VCClasses
-{
-    for (NSString *classString in VCClasses) {
-        if (![self.monitorVCClasses containsObject:classString]) {
-            [self.monitorVCClasses addObject:classString];
-        }
-    }
-}
+//- (void)addFloatMonitorVCClasses:(NSArray<NSString *> *)VCClasses
+//{
+//    for (NSString *classString in VCClasses) {
+//        if (![self.monitorVCClasses containsObject:classString]) {
+//            [self.monitorVCClasses addObject:classString];
+//        }
+//    }
+//}
 
 
 - (void)didShowViewController:(UIViewController *)viewController navigationController:(UINavigationController *)navigationController
@@ -207,15 +191,16 @@ NSString *const kPopWithPanGes = @"kPopWithPanGes";
 #pragma mark 点击悬浮球，push到缩小的控制器
 - (void)tapFloatView:(UITapGestureRecognizer *)ges
 {
-    if (!self.floatViewController) {
-        return;
-    }
     if ([[[NSObject currentNavigationController].childViewControllers lastObject] isEqual:self.floatView]) {
         return;
     }
     //    [self.cancelFloatView setCancelFloatViewShowing:YES];
     
-    
+    if (self.secondVC == nil) {
+        self.secondVC = [[JKDialogueViewController alloc]init];
+        self.floatViewController = self.secondVC;
+        self.lastPopViewController = self.secondVC;
+    }
     
     [self.secondVC setHidesBottomBarWhenPushed:YES];
     
@@ -410,19 +395,14 @@ NSString *const kPopWithPanGes = @"kPopWithPanGes";
 - (UIImageView *)floatView
 {
     if (!_floatView) {
-//        NSString *bundlePatch =  [[NSBundle bundleForClass:[JKDialogueViewController class]]pathForResource:@"JKIMImage" ofType:@"bundle"];
-//
-//        NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"contact_icon"];
-//        _floatView = [[UIImageView alloc]initWithImage: [UIImage imageWithContentsOfFile:filePatch]];
-    
-        NSString *bundlePatch =  [[NSBundle bundleForClass:[JKDialogueViewController class]]pathForResource:@"JKIMImage" ofType:@"bundle"];
+        
+        
+        _floatView = [[UIImageView alloc] init];
+        NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
         NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"contact_icon"];
-        _floatView = [[UIImageView alloc]initWithImage: [UIImage imageWithContentsOfFile:filePatch]];
+        _floatView.image = [UIImage imageWithContentsOfFile:filePatch];
         
-//        NSString* absolutePath = [bundle pathForResource:path ofType:nil];
         
-//        _floatView = [[UIImageView alloc] init];
-//        _floatView.image = [UIImage imageNamed:@"contact_icon"];
         //        _floatView.layer.cornerRadius = 30;
         //        _floatView.layer.masksToBounds = YES;
         _floatView.backgroundColor = [UIColor clearColor];
@@ -442,27 +422,32 @@ NSString *const kPopWithPanGes = @"kPopWithPanGes";
     self.showStyle = FloatShowStyleShowContent;
 }
 
-- (void)showFloatBallWithViewController:(UIViewController *)fromVC{
+/**
+ 删除聊天界面
+ */
+- (void)removeDialogueVC{
+    [self.secondVC removeFromParentViewController];
+    self.showStyle = FloatShowStyleShowContent;
+    self.lastPopViewController = nil;
+    self.floatViewController = nil;
+    self.showStyle = FloatShowStyleShow;
+    self.secondVC = nil;
+}
+
+/**
+ 显示
+ */
+- (void)showFloatBall{
     
+   
     if (self.showStyle == FloatShowStyleNormal) {
-        self.floatViewController = fromVC;
         self.showStyle = FloatShowStyleShow;
         [[UIApplication sharedApplication].keyWindow addSubview:self.floatView];
-        self.lastPopViewController = self.secondVC;
     }else{
         self.showStyle = FloatShowStyleShow;
     }
-
+    
     self.lastPopViewController = nil;
 }
-
-
-- (JKDialogueViewController *)secondVC{
-    if (_secondVC == nil) {
-        _secondVC = [[JKDialogueViewController alloc]init];
-    }
-    return _secondVC;
-}
-
 
 @end

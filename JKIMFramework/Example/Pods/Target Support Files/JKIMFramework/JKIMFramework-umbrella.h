@@ -10,9 +10,11 @@
 #endif
 #endif
 
+#import "JKBundleTool.h"
 #import "JKCompanyInfo.h"
 #import "JKConnectCenter.h"
 #import "JKCustomer.h"
+#import "JKDialogeContentManager.h"
 #import "JKDialogeViewCell.h"
 #import "JKDialogModel.h"
 #import "JKDialogueSetting.h"
@@ -21,7 +23,12 @@
 #import "JKFloatBallDefine.h"
 #import "JKFloatBallManager.h"
 #import "JKMessage.h"
-#import "JKSDKFramework.h"
+#import "JKRichTextStatue.h"
+#import "JKTextPat.h"
+#import "JK_DialogeContent+CoreDataClass.h"
+#import "JK_DialogeContent+CoreDataProperties.h"
+#import "JYFaceView.h"
+#import "RegexKitLite.h"
 #import "NSObject+JKCurrentVC.h"
 #import "UIView+JKFloatFrame.h"
 

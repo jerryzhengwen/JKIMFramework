@@ -9,11 +9,16 @@
 #import "JKDialogueViewController.h"
 #import "JKFloatBallManager.h"
 #import "JKConnectCenter.h"
-
+#import "JYFaceView.h"
 #import "JKDialogueSetting.h"
+#import "JKDialogeContentManager.h"
+#import "JK_DialogeContent+CoreDataClass.h"
 #import "UIView+JKFloatFrame.h"
 #import "JKDialogModel.h"
 #import "JKDialogeViewCell.h"
+#import "JKRichTextStatue.h"
+#import "JKBundleTool.h"
+#import "RegexKitLite.h"
 #define iPhoneX ([UIScreen mainScreen].bounds.size.width == 375 && [UIScreen mainScreen].bounds.size.height == 812)
 #define iPhoneXR ([UIScreen mainScreen].bounds.size.width == 414 && [UIScreen mainScreen].bounds.size.height == 896)
 #define kStatusBarAndNavigationBarHeight (iPhoneX || iPhoneXR ? 88.f : 64.f)
@@ -34,8 +39,11 @@
 
 @property (nonatomic, strong)UITextView *textView;
 
-@property (nonatomic, strong)UIButton *sendButton;
+@property (nonatomic,strong)JYFaceView *faceView;
 
+@property (nonatomic, strong)UIButton *sendButton;
+///表情按钮
+@property (nonatomic, strong)UIButton *faceButton;
 @property(nonatomic, strong)NSMutableArray <JKDialogModel *>*dataArray;
 
 @property (nonatomic,assign,getter=isRobotOn)BOOL robotOn;
@@ -51,36 +59,30 @@
     [self creatUI];
     [self creatNavigation];
 }
-
+-(JYFaceView *)faceView {
+    if (_faceView == nil) {
+        _faceView = [[JYFaceView alloc] initWithFrame:CGRectMake(0, self.bottomView.bottom, self.view.width, 145)];
+        _faceView.hidden = YES;
+    }
+    return _faceView;
+}
 - (void)creatUI{
     
      self.view.backgroundColor = [UIColor colorWithRed:242/255.0 green:243/255.0 blue:244/255.0 alpha:1];
     self.dataArray = [NSMutableArray array];
     [self.view addSubview:self.tableView];
     [self.view addSubview:self.bottomView];
-    
-    
-    if (kStatusBarAndNavigationBarHeight == 88) {
-        
-        CGFloat safeSeparation = 24;
-        
-        self.tableView.frame = CGRectMake(0, kStatusBarAndNavigationBarHeight, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height - BottomToolHeight - kStatusBarAndNavigationBarHeight - safeSeparation);
-        
-    }else{
-        self.tableView.frame = CGRectMake(0, kStatusBarAndNavigationBarHeight, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height - BottomToolHeight - kStatusBarAndNavigationBarHeight);
-        
-    }
-    self.bottomView.frame = CGRectMake(0, self.tableView.bottom, [UIScreen mainScreen].bounds.size.width, BottomToolHeight);
-    
+    [self bottomViewInitialLayout];
     [self.bottomView addSubview:self.textView];
-    self.textView.frame = CGRectMake(40, 10, [UIScreen mainScreen].bounds.size.width - 40 - 80, BottomToolHeight - 10 * 2);
+    self.textView.frame = CGRectMake(40, 10, [UIScreen mainScreen].bounds.size.width - 40 - 90, BottomToolHeight - 10 * 2);
     [self.bottomView addSubview:self.sendButton];
-    self.sendButton.frame = CGRectMake(self.textView.right + 20 , 0, 30, 30);
-    
+
+    [self.bottomView addSubview:self.faceButton];
+    self.sendButton.frame = CGRectMake(self.view.right - 40 , 0, 30, 30);
     CGPoint sendBtnCenter = self.sendButton.center;
     sendBtnCenter.y = self.textView.center.y;
     self.sendButton.center = sendBtnCenter;
-    
+    self.faceButton.frame = CGRectMake(self.textView.right +10, self.sendButton.top, 30, 30);
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(UIKeyboardWillShowNotification:) name:UIKeyboardWillShowNotification object:nil];
     
@@ -88,6 +90,45 @@
     
     [JKConnectCenter sharedJKConnectCenter].delegate = self;
     
+    [self loadHistoryData];
+    
+}
+
+- (void)loadHistoryData{
+    
+    [[JKDialogeContentManager sharedInstance] selectEntity:[NSArray array] ascending:NO filterString:nil success:^(NSArray * _Nonnull results) {
+        
+        for (int i = 0; i < results.count; i++) {
+            JK_DialogeContent *dataModel = results[i];
+            JKDialogModel *dataDialogModel = [JKDialogModel new];
+            dataDialogModel.imageHeight = dataModel.imageHeight;
+            dataDialogModel.imageWidth  = dataModel.imageWidth;
+            dataDialogModel.messageType = dataModel.messageType;
+            dataDialogModel.message     = dataModel.message;
+            dataDialogModel.iconName    = dataModel.iconName;
+            dataDialogModel.roomId      = dataModel.roomId;
+            dataDialogModel.chatId      = dataModel.chatId;
+            dataDialogModel.iconUrl     = dataModel.iconUrl;
+            dataDialogModel.time        = dataModel.time;
+            NSNumber *number = [NSNumber numberWithInt:dataModel.whoSend];
+            
+            dataDialogModel.whoSend     = number.intValue;
+            dataDialogModel.isRichText  = dataModel.isRichText;
+            
+            [self.dataArray addObject:dataDialogModel];
+        }
+        
+        [self.tableView reloadData];
+        
+    } fail:^(NSError * _Nonnull error) {
+        NSLog(@"失败");
+    }];
+    
+    [self.view addSubview:self.faceView];
+    __weak JKDialogueViewController *weakSelf = self;
+    self.faceView.clickBlock = ^(NSString * faceString) {
+        weakSelf.textView.text = [NSString stringWithFormat:@"%@%@",weakSelf.textView.text,faceString];
+    };
 }
 
 - (void)creatNavigation{
@@ -121,27 +162,59 @@
     }
 }
 
-- (void)sendMessage:(id)sender{
+- (NSMutableDictionary *)sendDataMessageWithModel:(JKDialogModel *)model{
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    [dict setObject:model.roomId ? model.roomId : @"" forKey:@"roomId"];
+    [dict setObject:model.chatId ? model.chatId : @"" forKey:@"chatId"];
+    [dict setObject:model.iconName ? model.iconName : @"" forKey:@"iconName"];
+    [dict setObject:model.iconUrl ? model.iconUrl : @"" forKey:@"iconUrl"];
+    NSNumber *height = [NSNumber numberWithFloat:model.imageHeight];
+    [dict setObject:height forKey:@"imageHeight"];
+    NSNumber *width = [NSNumber numberWithFloat:model.imageWidth];
+    [dict setObject:width forKey:@"imageWidth"];
+    [dict setObject:model.message ? model.message : @"" forKey:@"message"];
     
+    NSNumber *messageT = [NSNumber numberWithInteger:model.messageType];
+    [dict setObject:messageT forKey:@"messageType"];
+    
+    [dict setObject:[self jk_getTimestamp] forKey:@"time"];
+    
+    NSNumber *wSend = [NSNumber numberWithInteger:model.whoSend];
+    [dict setObject:wSend forKey:@"whoSend"];
+    [dict setObject:@(model.isRichText) forKey:@"isRichText"];
+    
+    return dict;
+}
+
+- (void)sendMessage:(id)sender{
     if (self.textView.text.length < 1) {
         return;
     }
     
     JKDialogModel * model = [JKDialogModel alloc];
-    
+
     model.isRichText = NO;
-    model.content = self.textView.text;
-    model.time = [self jk_getTimestamp];
-    [self.dataArray addObject:model];
     
-//    [self.tableView reloadData];
-    [self tableViewMoveToLastPath];
+    model.message = self.textView.text;
+    
+    model.time = [self jk_getTimestamp];
+    
+    NSMutableDictionary *dict = [self sendDataMessageWithModel:model];
+    
+    __weak typeof(self) weakSelf = self;
+    [[JKDialogeContentManager sharedInstance] insertNewEntity:dict success:^{
+        [weakSelf.dataArray addObject:model];
+        [weakSelf tableViewMoveToLastPath];
+        NSLog(@"加入成功");
+    } fail:^(NSError * _Nonnull error) {
+        NSLog(@"加入失败");
+    }];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         
         BOOL isRobotON = [JKConnectCenter sharedJKConnectCenter].isRobotOn;
         
-        if ([model.content isEqualToString:@"转人工"] && isRobotON == YES) {
+        if ([model.message isEqualToString:@"转人工"] && isRobotON == YES) {
             [self sendZhuanRenGong];
         }else{
             [self sendAutoReplayWithString:@"我无法回答您的问题，请您点击这里，转向人工客服咨询。"];
@@ -155,12 +228,24 @@
 -(void)sendAutoReplayWithString:(NSString *)message {
     JKDialogModel * autoModel = [JKDialogModel alloc];
     autoModel.isRichText = YES;
-    autoModel.content = message;
-    autoModel.msgType = JK_Customer;
+    autoModel.message = message;
     autoModel.time = [self jk_getTimestamp];
-    [self.dataArray addObject:autoModel];
+    autoModel.whoSend = JK_Customer;
     
-    [self tableViewMoveToLastPath];
+    
+    
+    NSMutableDictionary *dict = [self sendDataMessageWithModel:autoModel];
+    
+    __weak typeof(self) weakSelf = self;
+    [[JKDialogeContentManager sharedInstance] insertNewEntity:dict success:^{
+        [weakSelf.dataArray addObject:autoModel];
+        [weakSelf tableViewMoveToLastPath];
+        NSLog(@"加入成功");
+    } fail:^(NSError * _Nonnull error) {
+        NSLog(@"加入失败");
+    }];
+    
+    
 }
 /**
  获取时间戳
@@ -213,20 +298,62 @@
             [weakSelf sendZhuanRenGong];
         }
     };
-    
+    cell.skipBlock = ^(NSString * clickText) {
+        [weakSelf skipOtherWithRegular:clickText];
+    };
     return cell;
+}
+-(void)skipOtherWithRegular:(NSString *)clickText {
+    NSArray *urlArray =  [clickText componentsMatchedByRegex:JK_URlREGULAR];
+    NSArray *phoneArray = [clickText componentsMatchedByRegex:JK_PHONENUMBERREGLAR];
+    if (urlArray.count) {
+        NSURL* url = [[NSURL alloc] initWithString:clickText];
+        if ([[UIApplication sharedApplication]canOpenURL:url]) {
+        [[UIApplication sharedApplication ] openURL: url];
+        }
+    }else if (phoneArray.count){
+        NSMutableString * str=[[NSMutableString alloc] initWithFormat:@"tel:%@",clickText];
+        UIWebView * callWebview = [[UIWebView alloc] init];
+        [callWebview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:str]]];
+        [self.view addSubview:callWebview];
+    }
+}
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [self.view endEditing:YES];
+    if (
+        self.faceView.hidden == NO) {
+        self.faceView.hidden = YES;
+        self.faceButton.selected = NO;
+        NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
+        NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"icon_expression"];
+        [self.faceButton setImage:[UIImage imageWithContentsOfFile:filePatch] forState:UIControlStateNormal];
+        [self bottomViewInitialLayout];
+    }
     
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    [self.view endEditing:YES];
-    
+
+/**
+ 下方的view初始位置
+ */
+- (void)bottomViewInitialLayout{
+    if (kStatusBarAndNavigationBarHeight == 88) {
+        CGFloat safeSeparation = 24;
+        
+        self.tableView.frame = CGRectMake(0, kStatusBarAndNavigationBarHeight, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height - BottomToolHeight - kStatusBarAndNavigationBarHeight - safeSeparation);
+        
+    }else{
+        self.tableView.frame = CGRectMake(0, kStatusBarAndNavigationBarHeight, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height - BottomToolHeight - kStatusBarAndNavigationBarHeight);
+        
+    }
+    self.bottomView.frame = CGRectMake(0, self.tableView.bottom, [UIScreen mainScreen].bounds.size.width, BottomToolHeight);
 }
 
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    CGFloat height = self.dataArray[indexPath.row].detailHeight + 30;
-    return  height < 84? 84:height;
+    CGFloat height = self.dataArray[indexPath.row].imageHeight + 30;
+    CGFloat cellBottom = 10;
+    return  height < 84? 84 + cellBottom : height + cellBottom;
 }
 
 /** 滚动到最后一行*/
@@ -273,9 +400,14 @@
 #pragma mark- 通知方法
 -(void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    NSLog(@"JKDialogueViewController 释放了");
 }
 
 - (void)UIKeyboardWillShowNotification:(NSNotification *)noti {
+    self.faceButton.selected = NO;
+    NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
+    NSString *filePatch =  [bundlePatch stringByAppendingPathComponent:@"icon_expression"];
+     [self.faceButton setImage:[UIImage imageWithContentsOfFile:filePatch] forState:UIControlStateNormal];
     
     double duration = [noti.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
     
@@ -292,7 +424,7 @@
     }
     [UIView animateWithDuration:duration animations:^{
         weakSelf.bottomView.frame = rect1;
-        weakSelf.tableView.frame = CGRectMake(0, kStatusBarAndNavigationBarHeight, [UIScreen mainScreen].bounds.size.width, CGRectGetMinY(weakSelf.bottomView.frame) - kStatusBarAndNavigationBarHeight - safeSeparation);
+        weakSelf.tableView.frame = CGRectMake(0, kStatusBarAndNavigationBarHeight, [UIScreen mainScreen].bounds.size.width, CGRectGetMinY(weakSelf.bottomView.frame) - kStatusBarAndNavigationBarHeight);
     }];
     
     [self tableViewMoveToLastPath];
@@ -310,12 +442,17 @@
         self.tableView.size = CGSizeMake( [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height - BottomToolHeight - kStatusBarAndNavigationBarHeight - safeSeparation);
     }];
     
-    
-    [UIView animateWithDuration:duration animations:^{
+    if (self.faceButton.selected) {
+        [UIView performWithoutAnimation:^{
+            self.tableView.size = CGSizeMake( [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height - BottomToolHeight - kStatusBarAndNavigationBarHeight - safeSeparation);
+            self.bottomView.frame = CGRectMake(self.bottomView.left, self.tableView.bottom, self.tableView.width, self.bottomView.height);
+        }];
+    }else {
+        [UIView animateWithDuration:duration animations:^{
         
         weakSelf.bottomView.frame = CGRectMake(0, weakSelf.tableView.bottom, [UIScreen mainScreen].bounds.size.width, BottomToolHeight);
-    }];
-    
+        }];
+    }
 }
 
 /**
@@ -328,14 +465,26 @@
         JKDialogModel * autoModel = [[JKDialogModel alloc] init];
         
         autoModel.isRichText = YES;
-        autoModel.content = messageData.content;
-        autoModel.msgType = JK_Customer;
+        autoModel.message = messageData.content;
+        autoModel.whoSend = JK_Customer;
+        autoModel.imageWidth = [UIScreen mainScreen].bounds.size.width - 170;
         autoModel.time = [self jk_getTimestamp];
         autoModel.customerNumber = count;
-        [self.dataArray addObject:autoModel];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.tableView reloadData];
-        });
+        
+        NSMutableDictionary *dict = [self sendDataMessageWithModel:autoModel];
+        
+        __weak typeof(self) weakSelf = self;
+        [[JKDialogeContentManager sharedInstance] insertNewEntity:dict success:^{
+            [weakSelf.dataArray addObject:autoModel];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf.tableView reloadData];
+            });
+            
+            NSLog(@"加入成功");
+        } fail:^(NSError * _Nonnull error) {
+            NSLog(@"加入失败");
+        }];
         
     }];
 }
@@ -408,21 +557,58 @@
     }
     return _textView;
 }
-
+-(UIButton *)faceButton {
+    if (_faceButton == nil) {
+        _faceButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
+        NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"icon_expression"];
+        [_faceButton setImage:[UIImage imageWithContentsOfFile:filePatch] forState:UIControlStateNormal];
+        [_faceButton addTarget:self action:@selector(clickFaceBtn:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _faceButton;
+}
+-(void)clickFaceBtn:(UIButton *)button {
+    button.selected = !button.isSelected;
+    float duration = 0.1;
+    if (self.textView.isFirstResponder) {
+        [self.textView resignFirstResponder];
+        duration = 0.0;
+    }
+    NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
+    NSString *filePatch = @"";
+    if (button.selected) {
+        self.faceView.hidden = NO;
+        filePatch =  [bundlePatch stringByAppendingPathComponent:@"icon_expression_hl"];
+        [UIView performWithoutAnimation:^{
+            self.tableView.frame = CGRectMake(0, self.tableView.top, self.tableView.width, self.tableView.height - 145);
+            self.bottomView.frame = CGRectMake(0, self.tableView.bottom, self.bottomView.width, self.bottomView.height);
+        }];
+        
+        [UIView animateWithDuration:duration animations:^{
+            self.faceView.frame = CGRectMake(0, self.bottomView.bottom, self.faceView.width, self.faceView.height);
+        }];
+    }else {
+        filePatch =  [bundlePatch stringByAppendingPathComponent:@"icon_expression"];
+        [UIView performWithoutAnimation:^{
+            self.tableView.frame = CGRectMake(0, self.tableView.top, self.tableView.width, self.tableView.height + 145);
+            self.bottomView.frame = CGRectMake(0, self.tableView.bottom, self.bottomView.width, self.bottomView.height);
+        }];
+        
+        [UIView animateWithDuration:0.1 animations:^{
+            self.faceView.frame = CGRectMake(0, self.bottomView.bottom, self.faceView.width, self.faceView.height);
+            self.faceView.hidden = YES;
+        }];
+    }
+    [button setImage:[UIImage imageWithContentsOfFile:filePatch] forState:UIControlStateNormal];
+}
 - (UIButton *)sendButton{
     if (_sendButton == nil) {
         _sendButton = [UIButton buttonWithType:UIButtonTypeCustom];
-//        [_sendButton setTitle:@"发送" forState:UIControlStateNormal];
-        
-        NSString *bundlePatch =  [[NSBundle bundleForClass:[JKDialogueSetting class]]pathForResource:@"JKIMImage" ofType:@"bundle"];
-        NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"sendImage"];
-        
-        [_sendButton setImage:[UIImage imageWithContentsOfFile:filePatch] forState:UIControlStateNormal];
-        
-//        [_sendButton setImage:[UIImage imageNamed:@"sendImage"] forState:UIControlStateNormal];
-//        _sendButton.titleLabel.font = [UIFont systemFontOfSize:14];
-//        _sendButton.backgroundColor = [UIColor blueColor];
-//        _sendButton.layer.cornerRadius = 4;
+        NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
+        NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"sendNormal"];
+        NSString *sendImage = [bundlePatch stringByAppendingPathComponent:@"sendImage"];
+         [_sendButton setImage:[UIImage imageWithContentsOfFile:filePatch] forState:UIControlStateNormal];
+        [_sendButton setImage:[UIImage imageWithContentsOfFile:sendImage] forState:UIControlStateHighlighted];
         [_sendButton addTarget:self action:@selector(sendMessage:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _sendButton;
@@ -454,7 +640,8 @@
     [super viewDidDisappear:animated];
     
     if (self.isPush == NO) {
-        [[JKFloatBallManager shared] showFloatBallWithViewController:self];
+        [[JKFloatBallManager shared]removeDialogueVC];
+        [[JKFloatBallManager shared] showFloatBall];
     }
 }
 

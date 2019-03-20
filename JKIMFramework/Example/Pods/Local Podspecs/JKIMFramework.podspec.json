@@ -1,6 +1,6 @@
 {
   "name": "JKIMFramework",
-  "version": "0.0.3",
+  "version": "1.0.7",
   "summary": "这是一个关于久科IMSDK的初级版",
   "description": "当前版本支持真机和模拟器运行，是关于访客端的SDK，具体使用请联系久科客服进行相关注册等",
   "homepage": "https://github.com/jerryzhengwen/JKIMFramework",
@@ -13,25 +13,21 @@
   },
   "source": {
     "git": "https://github.com/jerryzhengwen/JKIMFramework.git",
-    "tag": "0.0.3"
+    "tag": "1.0.7"
   },
   "platforms": {
     "ios": "9.0"
   },
   "source_files": "JKIMFramework/**/Classes/**/*.{h,m}",
-  "resource_bundles": {
-    "JKIMFramework": [
-      "JKIMFramework/**/Assets/*.png"
-    ]
-  },
   "public_header_files": "JKIMFramework/**/Classes/**/*.h",
   "ios": {
     "vendored_libraries": "JKIMFramework/**/Frameworks/**/*.a"
   },
-  "resources": "JKIMFramework/**/UIKit/**/*.bundle",
+  "resources": "JKIMFramework/**/UIKit/**/{JKDialogeModel.xcdatamodeld,JKFace.plist,JKIMImage.bundle}",
   "libraries": [
     "resolv",
-    "xml2"
+    "xml2",
+    "icucore"
   ],
   "xcconfig": {
     "VALID_ARCHS": "arm64 x86_64 armv7 i386"
@@ -39,5 +35,8 @@
   "frameworks": [
     "UIKit",
     "MapKit"
+  ],
+  "requires_arc": [
+    "JKIMFramework/**/Classes/*.{h,m}"
   ]
 }

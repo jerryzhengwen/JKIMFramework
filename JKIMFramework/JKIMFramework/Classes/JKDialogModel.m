@@ -8,37 +8,51 @@
 
 #import "JKDialogModel.h"
 #import <UIKit/UIKit.h>
+#import "JKRichTextStatue.h"
+
 
 /** 最大的内容宽度*/
-#define MaxContentWidth [UIScreen mainScreen].bounds.size.width - 180
+#define MaxContentWidth [UIScreen mainScreen].bounds.size.width - 170
 
 @implementation JKDialogModel
 
-- (void)setContent:(NSString *)content{
-    _content = content;
+- (void)setMessage:(NSString *)message{
+    _message = message;
     
+    JKRichTextStatue * richText = [[JKRichTextStatue alloc] init];
+    richText.text = message;
     
-    if (_content.length > 0) {
-        
-        if (self.isRichText == YES) {
-            
-            CGSize contentHeight = countStringWordWidth([NSString stringWithFormat:@"%@",content], [UIFont systemFontOfSize:14], CGSizeMake(MaxContentWidth, MAXFLOAT));
-            
-            self.detailHeight = ceil(contentHeight.height +28);
-            
-        }else{
-            CGSize contentHeight = countStringWordWidth([NSString stringWithFormat:@"%@",content], [UIFont systemFontOfSize:14], CGSizeMake(MaxContentWidth, MAXFLOAT));
-            
-            self.detailHeight = ceil(contentHeight.height +10);
-        }
-        
-        
-        
+    CGSize size = [self getAttributedStringHeightWithText:richText.attributedText andWidth:MaxContentWidth andFont:[UIFont systemFontOfSize:14]];
+    
+    self.imageHeight = size.height;
+    if (!self.imageWidth) {
+        self.imageWidth = size.width;
     }
+    
+    
 }
 
-- (void)setTime:(NSString *)time{
+/**
+ *  计算富文本的高度
+ */
+- (CGSize)getAttributedStringHeightWithText:(NSAttributedString *)attributedString andWidth:(CGFloat)width andFont:(UIFont *)font {
+    static UITextView *stringLabel = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{//生成一个同于计算文本高度的label
+        stringLabel = [[UITextView alloc] init];
+        stringLabel.textContainerInset = UIEdgeInsetsMake(5, 5, 5, 5 );
+    });
+    dispatch_async(dispatch_get_main_queue(), ^{
+        stringLabel.font = font;
+    });
+    stringLabel.attributedText = attributedString;
+    CGSize size = [stringLabel sizeThatFits:CGSizeMake(width, MAXFLOAT)];
     
+    return size;
+}
+
+
+- (void)setTime:(NSString *)time{
     NSTimeInterval interval    =[time doubleValue] / 1000;
     NSDate *date               = [NSDate dateWithTimeIntervalSince1970:interval];
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
@@ -56,9 +70,8 @@
         NSString *hours = [dateString componentsSeparatedByString:@" "][1];
         _time = [hours substringToIndex:hours.length - 3];
     }else {
-         _time = [dateString substringToIndex:time.length - 3];
+        _time = [dateString substringToIndex:time.length - 3];
     }
-    
 }
 
 CGSize countStringWordWidth(NSString *aString,UIFont * font, CGSize labelSize) {

@@ -11,6 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef void(^ClickRichText)(void);
+typedef void(^ClickSkipBlock)(NSString *);
 typedef void(^ClickCustomer)(NSString *);
 @interface JKDialogeViewCell : UITableViewCell
 /**
@@ -26,6 +27,7 @@ typedef void(^ClickCustomer)(NSString *);
  点击在线坐席
  */
 @property (nonatomic,copy) ClickCustomer clickCustomer;
+@property (nonatomic,copy) ClickSkipBlock skipBlock;
 @end
 
 NS_ASSUME_NONNULL_END

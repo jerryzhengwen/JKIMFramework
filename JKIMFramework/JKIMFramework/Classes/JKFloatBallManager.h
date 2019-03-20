@@ -71,8 +71,21 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)didShowViewController:(UIViewController *)viewController navigationController:(UINavigationController *)navigationController;
 
+
+/**
+ 隐藏
+ */
 - (void)hiddenFloatBall;
-- (void)showFloatBallWithViewController:(UIViewController *)fromVC;
+
+/**
+ 删除聊天界面
+ */
+- (void)removeDialogueVC;
+
+/**
+ 显示
+ */
+- (void)showFloatBall;
 
 @end
 

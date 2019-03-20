@@ -7,8 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
-
+#import "JKENUMObject.h"
 
 typedef NS_ENUM(NSInteger ,JKMsgSource) {
     JK_Visitor = 0,
@@ -18,17 +17,26 @@ typedef NS_ENUM(NSInteger ,JKMsgSource) {
 };
 
 
+
 NS_ASSUME_NONNULL_BEGIN
 
+@class JKENUMObject;
 @interface JKDialogModel : NSObject
+
 /**
  来源
  */
-@property (nonatomic,assign) JKMsgSource msgType;
+@property (nonatomic,assign) JKMsgSource whoSend;
+
+/**
+ 数据类型
+ */
+@property (nonatomic,assign) JKMessageType messageType;
+
 /**
  内容
  */
-@property (nonatomic,copy) NSString *content;
+@property (nonatomic,copy) NSString *message;
 /**
  房间号
  */
@@ -53,15 +61,23 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  高度
  */
-@property (nonatomic,assign) float detailHeight;
+@property (nonatomic,assign) float imageHeight;
 
 /** 宽度 */
-@property (nonatomic,assign) float detailWidth;
+@property (nonatomic,assign) float imageWidth;
+
+
+@property (nullable, nonatomic, copy) NSString *iconUrl;
+
+@property (nullable, nonatomic, copy) NSString *contentUrl;
+
+@property (nullable, nonatomic, copy) NSString *iconName;
 
 /**
  在线坐席
  */
 @property (nonatomic,assign) int customerNumber;
+
 @end
 
 NS_ASSUME_NONNULL_END

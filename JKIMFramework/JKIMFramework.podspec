@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'JKIMFramework'
-  s.version          = '0.0.4'
+  s.version          = '0.0.6'
   s.summary          = '这是一个关于久科IMSDK的初级版'
 
 # This description is used to generate tags and improve search results.
@@ -31,15 +31,17 @@ Pod::Spec.new do |s|
 
 s.source_files = 'JKIMFramework/**/Classes/**/*.{h,m}'
   
-   s.resource_bundles = {
-     'JKIMFramework' => ['JKIMFramework/**/Assets/*.png']
-   }
-
-    s.public_header_files = 'JKIMFramework/**/Classes/**/*.h'
-  s.ios.vendored_libraries = 'JKIMFramework/**/Frameworks/**/*.a'
-s.resources = 'JKIMFramework/**/UIKit/**/*.bundle'
-s.libraries = "resolv", "xml2"
+# s.resource_bundles = {
+#     'JKIMFramework' => ['JKIMFramework/**/Assets/*.png']
+#  }
+s.public_header_files = 'JKIMFramework/**/Classes/**/*.h'
+s.ios.vendored_libraries = 'JKIMFramework/**/Frameworks/**/*.a'
+s.resources = 'JKIMFramework/**/UIKit/**/{JKDialogeModel.xcdatamodeld,JKFace.plist,JKIMImage.bundle}'
+s.libraries = "resolv", "xml2","icucore"
 s.xcconfig = { 'VALID_ARCHS' => 'arm64 x86_64 armv7 i386', }
 s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
+s.requires_arc = false
+
+s.requires_arc = ['JKIMFramework/**/Classes/*.{h,m}']
+#s.dependency 'RegexKitLite'
 end
