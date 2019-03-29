@@ -15,7 +15,10 @@ NS_ASSUME_NONNULL_BEGIN
  获取图片的bundle地址
  */
 + (NSString *)initBundlePathWithImage;
-
+/**
+ 获取bundle地址
+ */
++ (NSString *)initBundlePathWithResouceName:(NSString *)name type:(NSString *)type;
 
 /**
  获取CoreData数据库的文件地址
@@ -23,6 +26,9 @@ NS_ASSUME_NONNULL_BEGIN
  @param modelName 注意是.xcdatamodeld的文件名
  */
 + (NSURL *)initBundlePathWithCoreDataWithModelName:(NSString *)modelName;
+
+
+
 @end
 
 NS_ASSUME_NONNULL_END

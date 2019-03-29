@@ -23,6 +23,7 @@
 #import "JKFloatBallDefine.h"
 #import "JKFloatBallManager.h"
 #import "JKMessage.h"
+#import "JKPUSKService.h"
 #import "JKRichTextStatue.h"
 #import "JKTextPat.h"
 #import "JK_DialogeContent+CoreDataClass.h"

@@ -110,9 +110,10 @@
             dataDialogModel.chatId      = dataModel.chatId;
             dataDialogModel.iconUrl     = dataModel.iconUrl;
             dataDialogModel.time        = dataModel.time;
-            NSNumber *number = [NSNumber numberWithInt:dataModel.whoSend];
-            
-            dataDialogModel.whoSend     = number.intValue;
+//            NSNumber *number = [NSNumber numberWithInt:dataModel.whoSend];
+            NSString *numberStr = [NSString stringWithFormat:@"%hd",dataModel.whoSend];
+            dataDialogModel.whoSend     = numberStr.intValue;
+//            dataDialogModel.whoSend     = number.intValue;
             dataDialogModel.isRichText  = dataModel.isRichText;
             
             [self.dataArray addObject:dataDialogModel];
@@ -229,9 +230,8 @@
     JKDialogModel * autoModel = [JKDialogModel alloc];
     autoModel.isRichText = YES;
     autoModel.message = message;
-    autoModel.time = [self jk_getTimestamp];
     autoModel.whoSend = JK_Customer;
-    
+    autoModel.time = [self jk_getTimestamp];
     
     
     NSMutableDictionary *dict = [self sendDataMessageWithModel:autoModel];

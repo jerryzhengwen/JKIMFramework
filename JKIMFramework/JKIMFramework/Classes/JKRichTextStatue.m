@@ -10,6 +10,7 @@
 #import "RegexKitLite.h"
 #import "JKTextPat.h"
 #import <UIKit/UIKit.h>
+#import "JKBundleTool.h"
 
 @implementation JKRichTextStatue
 -(void)setText:(NSString *)text {
@@ -29,7 +30,8 @@
 //    NSArray *cmps = [text componentsMatchedByRegex:pattern];
     NSMutableArray *parts = [NSMutableArray array];
     
-    NSString *filePath =[[NSBundle bundleForClass:[self class]]pathForResource:@"JKFace" ofType:@"plist"];
+//    NSString *filePath =[[NSBundle bundleForClass:[self class]]pathForResource:@"JKFace" ofType:@"plist"];
+    NSString *filePath = [JKBundleTool initBundlePathWithResouceName:@"JKFace" type:@"plist"];
     NSArray  *face = [NSArray arrayWithContentsOfFile:filePath];
     
     //遍历所有的特殊字符穿
@@ -79,7 +81,8 @@
     //在这里替换下
     UIFont *font = [UIFont systemFontOfSize:14];
     NSMutableArray *specials = [NSMutableArray array];
-    NSString *bundlePatch =  [[NSBundle bundleForClass:[self class]]pathForResource:@"JKIMImage" ofType:@"bundle"];
+//    NSString *bundlePatch =  [[NSBundle bundleForClass:[self class]]pathForResource:@"JKIMImage" ofType:@"bundle"];
+    NSString *bundlePatch = [JKBundleTool initBundlePathWithImage];
     for (JKTextPat *part in parts) {
         // 等会需要拼接的子串
         NSAttributedString *substr = nil;

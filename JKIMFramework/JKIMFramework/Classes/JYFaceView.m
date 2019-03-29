@@ -7,6 +7,7 @@
 //
 
 #import "JYFaceView.h" //176
+#import "JKBundleTool.h"
 
 @interface JYFaceView ()
 @property (nonatomic,strong)NSArray *titleArray;
@@ -27,7 +28,8 @@
     CGFloat buttonWidth = 40;
     CGFloat heightMargin = (145 - 120)/4;
     CGFloat widmargin = (self.frame.size.width-7*40)/8;
-    NSString *bundlePatch =  [[NSBundle bundleForClass:[self class]]pathForResource:@"JKIMImage" ofType:@"bundle"];
+//    NSString *bundlePatch =  [[NSBundle bundleForClass:[self class]]pathForResource:@"JKIMImage" ofType:@"bundle"];
+    NSString *bundlePatch = [JKBundleTool initBundlePathWithImage];
     NSArray *faceArray =@[@"Expression_1",@"Expression_13",@"Expression_22",@"Expression_14",@"Expression_11",@"Expression_33",@"Expression_7",@"Expression_29",@"Expression_50",@"Expression_17",@"Expression_31",@"Expression_53",@"Expression_80",@"Expression_43",@"Expression_40",@"Expression_90",@"Expression_82",@"Expression_77",@"Expression_64",@"Expression_67",@"Expression_79"];
     for (int i = 0; i < 21; i ++ ) {
         NSString *filePatch = [bundlePatch stringByAppendingPathComponent:faceArray[i]];

@@ -1,6 +1,6 @@
 {
   "name": "JKIMFramework",
-  "version": "1.0.7",
+  "version": "0.0.92",
   "summary": "这是一个关于久科IMSDK的初级版",
   "description": "当前版本支持真机和模拟器运行，是关于访客端的SDK，具体使用请联系久科客服进行相关注册等",
   "homepage": "https://github.com/jerryzhengwen/JKIMFramework",
@@ -13,7 +13,7 @@
   },
   "source": {
     "git": "https://github.com/jerryzhengwen/JKIMFramework.git",
-    "tag": "1.0.7"
+    "tag": "0.0.92"
   },
   "platforms": {
     "ios": "9.0"
