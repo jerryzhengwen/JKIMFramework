@@ -29,7 +29,7 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '9.0'
   s.platform     = :ios, "9.0"
 
-s.source_files = 'JKIMFramework/**/Classes/**/*.{h,m}'
+s.source_files = 'JKIMFramework/**/Classes/**/*.{h,m}','JKIMFramework/**/IM/**/*.{h,m}'
   
 # s.resource_bundles = {
 #     'JKIMFramework' => ['JKIMFramework/**/Assets/*.png']
