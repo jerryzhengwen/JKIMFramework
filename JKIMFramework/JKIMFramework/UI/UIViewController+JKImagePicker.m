@@ -193,7 +193,7 @@ static void *isCut =  @"isCut"; //截取
     
     if ([[URL absoluteString]containsString:@"gif"]) {
         
-        JKIM_YYAnimatedImageView *imageView = [[JKIM_YYAnimatedImageView alloc]init];
+        JK_YYAnimatedImageView *imageView = [[JK_YYAnimatedImageView alloc]init];
         imageView.yy_imageURL = URL;
         
         //这个图片是GIF图片

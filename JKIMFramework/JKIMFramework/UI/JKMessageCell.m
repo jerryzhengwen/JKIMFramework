@@ -288,7 +288,7 @@
 - (void)downloadImageWithModelFrame:(JKMessageFrame *)modelFrame button:(JKMessageContent *)button{
     
 //    __block UIImageView *sView = [[UIImageView alloc]init];
-    [button.backImageView yy_setImageWithURL:[NSURL URLWithString:modelFrame.message.content] placeholder:nil options:JKIM_YYWebImageOptionProgressiveBlur | JKIM_YYWebImageOptionSetImageWithFadeAnimation completion:^(UIImage * _Nullable image, NSURL * _Nonnull url, JKIM_YYWebImageFromType from, JKIM_YYWebImageStage stage, NSError * _Nullable error) {
+    [button.backImageView yy_setImageWithURL:[NSURL URLWithString:modelFrame.message.content] placeholder:nil options:JK_YYWebImageOptionProgressiveBlur | JK_YYWebImageOptionSetImageWithFadeAnimation completion:^(UIImage * _Nullable image, NSURL * _Nonnull url, JK_YYWebImageFromType from, JK_YYWebImageStage stage, NSError * _Nullable error) {
         if (!error)  {
             NSMutableArray *sizeArr = [UIView returnImageViewWidthAndHeightWith:[NSString stringWithFormat:@"%lf",image.size.width] AndHeight:[NSString stringWithFormat:@"%lf",image.size.height]];
 
