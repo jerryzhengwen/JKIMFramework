@@ -62,6 +62,8 @@ NS_ASSUME_NONNULL_BEGIN
  @param fail 失败回调
  */
 - (void)updateEntity:(void(^)(void))success fail:(void(^)(NSError *error))fail;
+
+-(NSMutableArray *)quaryWithConditionArray:(NSArray *)conditionArray;
 @end
 
 NS_ASSUME_NONNULL_END

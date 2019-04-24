@@ -9,9 +9,14 @@
 #import <UIKit/UIKit.h>
 #import "JKCompanyInfo.h"
 #import "JKCustomer.h"
+#import "JKENUMObject.h"
 
-#import "JKMessage.h"
-typedef void (^RobotMessageBlock)(JKMessage *message,int count);
+@class JKMessage;
+@class JKDialogeContentManager;
+
+typedef void (^RobotMessageBlock)(JKMessage * _Nullable message,int count);
+
+typedef void (^JKGetSatisFactionBlock)(id _Nullable result);
 
 @protocol ConnectCenterDelegate<NSObject>
 @required
@@ -20,13 +25,15 @@ typedef void (^RobotMessageBlock)(JKMessage *message,int count);
 
  @param message 消息
  */
-- (void)didReceiveMessage:(JKMessage *)message;
+- (void)receiveMessage:(JKMessage *_Nullable)message;
 /**
  收到新的坐席消息
 
  @param message message
  */
-- (void)receiveNewListChat:(JKMessage *)message;
+@required
+- (void)receiveNewListChat:(JKMessage *_Nullable)message;
+
 
 @end
 
@@ -57,12 +64,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 @property (nonatomic,assign,getter=isRobotOn,readonly)BOOL robotOn;
+/**
+ 未读数
+ */
+@property (nonatomic,assign,readonly)NSInteger unreadCount;
 
 
 /**
  机器人消息回调
  */
 @property (nonatomic, copy) RobotMessageBlock robotMessageBlock;
+
+@property (nonatomic,copy) JKGetSatisFactionBlock satisfactionBlock;
+/**
+ 此时的连接状态
+ */
+@property (nonatomic,assign) JKSocketState socketState;
 
 /**
  返回单例本身
@@ -92,6 +109,40 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 - (void)receiveRobotOn:(NSString *)data;
+
+-(void)getSatisfactionWithBlock:(JKGetSatisFactionBlock)satisfactionBlock;
+
+-(void)submitSatisfactionWithDict:(NSDictionary *)dict Block:(JKGetSatisFactionBlock)satisfactionBlock;
+/**
+ 接收到对话的message
+
+ @param message JKMessage
+ */
+- (void)receiveMessage:(JKMessage *)message;
+
+
+/**
+ 收到对话的邀请消息
+
+ @param message JkMessage
+ */
+-(void)receiveInvitation:(JKMessage *)message;
+
+/**
+ 查询数据
+ 
+ @param selectKays selectKays 数组高级排序（数组里存放实体中的key，顺序按自己需要的先后存放即可），实体key来排序
+ @param isAscending 升序降序
+ @param filterString 查询条件
+ */
+- (NSMutableArray *)selectEntity:(NSArray *)selectKays ascending:(BOOL)isAscending filterString:(NSString *)filterString;
+
+
+/**
+ 消息已读
+ */
+- (void)readMessageFromId:(NSString *)fromId;
+
 
 @end
 

@@ -27,6 +27,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (NSURL *)initBundlePathWithCoreDataWithModelName:(NSString *)modelName;
 
+/**
+ 获取当前系统语言包地址
+ 
+ @return 返回语言包地址
+ */
++ (NSBundle *)getCurrentLocaleLanguageBundle;
 
 
 @end

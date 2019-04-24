@@ -1,0 +1,20 @@
+/* 
+  JK_LocalString.strings
+  JKIMSDKProject
+
+  Created by Jerry on 2019/4/3.
+  Copyright © 2019 于飞. All rights reserved.
+*/
+
+"JK_MainView_instructions" = "如需要正式接对话请点击悬浮窗";
+"JK_Back" = "返回";
+"JK_Dialogue" = "对话";
+"JK_DialogueView_defaultAnswer" = "我无法回答您的问题，请您点击这里，转向人工客服咨询。";
+"JK_DialogueView_ClickRichText" = "这里";
+"JK_SubSatisfaction" = "提交满意度";
+"JK_Submit" = "确定";
+"JK_Cancel" = "取消";
+"JK_Detail" = "请输入详情";
+"JK_SumbitSatisfaction" = "您对本次服务满意吗？";
+"JK_SubmitShowTip" = "您给客服";
+"JK_SubmitTip" = "的评价：";

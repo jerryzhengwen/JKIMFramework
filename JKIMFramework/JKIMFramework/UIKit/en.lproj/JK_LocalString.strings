@@ -1,0 +1,20 @@
+/* 
+  JK_LocalString.strings
+  JKIMSDKProject
+
+  Created by Jerry on 2019/4/3.
+  Copyright © 2019 于飞. All rights reserved.
+*/
+"JK_MainView_instructions" = "If you need to formally answer the conversation, please click on the float window.";
+"JK_Back" = "Back";
+"JK_Dialogue" = "Dialogue";
+"JK_DialogueView_defaultAnswer" = "I can't answer your question. Please click here and turn to manual customer service consultation.";
+"JK_DialogueView_ClickRichText" = "click here";
+"JK_SubSatisfaction" = "Submission Satisfaction";
+"JK_Submit" = "Submit";
+"JK_Cancel" = "Cancel";
+"JK_Detail" = "Please enter details";
+"JK_SumbitSatisfaction" = "Are you satisfied with this service?";
+"JK_SubmitShowTip" = "The assessment you gave to the agent is:";
+"JK_SubmitTip" = "The assessment you gave to the agent is:";
+

@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'JKIMFramework'
-  s.version          = '1.0.4'
+  s.version          = '1.0.2'
   s.summary          = '这是一个关于久科IMSDK的初级版'
 
 # This description is used to generate tags and improve search results.
@@ -29,14 +29,14 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '9.0'
   s.platform     = :ios, "9.0"
 
-s.source_files = 'JKIMFramework/**/Classes/**/*.{h,m}','JKIMFramework/**/IM/**/*.{h,m}'
+s.source_files = 'JKIMFramework/**/Classes/**/*.{h,m}','JKIMFramework/**/UI/**/*.{h,m}',
   
 # s.resource_bundles = {
 #     'JKIMFramework' => ['JKIMFramework/**/Assets/*.png']
 #  }
 s.public_header_files = 'JKIMFramework/**/Classes/**/*.h'
 s.ios.vendored_libraries = 'JKIMFramework/**/Frameworks/**/*.a'
-s.resources = 'JKIMFramework/**/UIKit/**/{JKDialogeModel.xcdatamodeld,JKFace.plist,JKIMImage.bundle}'
+s.resources = 'JKIMFramework/**/UIKit/**/{JKDialogeModel.xcdatamodeld,JKFace.plist,JKIMImage.bundle,JK_LocalString.strings}'
 s.libraries = "resolv", "xml2","icucore"
 s.xcconfig = { 'VALID_ARCHS' => 'arm64 x86_64 armv7 i386', }
 s.frameworks = 'UIKit', 'MapKit'
