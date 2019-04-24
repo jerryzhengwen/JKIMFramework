@@ -22,7 +22,7 @@
 #import "JKBundleTool.h"
 #import "RegexKitLite.h"
 #import "UIViewController+JKImagePicker.h"
-#import "JKIM_YYWebImage.h"
+#import "JK_YYWebImage.h"
 #import "NSString+LocalString.h"
 
 

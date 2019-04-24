@@ -9,7 +9,7 @@
 #import "JKMessageFrame.h"
 #import "JKDialogModel.h"
 #import "JKRichTextStatue.h"
-#import "JKIM_YYWebImage.h"
+#import "JK_YYWebImage.h"
 #import "UIView+JKFloatFrame.h"
 
 @interface JKMessageFrame()

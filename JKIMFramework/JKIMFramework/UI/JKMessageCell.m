@@ -13,7 +13,7 @@
 #import "JKImageAvatarBrowser.h"
 #import "JKBundleTool.h"
 #import "JKRichTextStatue.h"
-#import "JKIM_YYWebImage.h"
+#import "JK_YYWebImage.h"
 #import "NSDate+Utils.h"
 #import "NSString+LocalString.h"
 #import "UIView+JKFloatFrame.h"

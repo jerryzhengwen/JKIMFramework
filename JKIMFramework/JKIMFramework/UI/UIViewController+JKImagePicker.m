@@ -14,7 +14,7 @@
 #import <Photos/Photos.h>
 #import <MobileCoreServices/UTCoreTypes.h>
 #import <AVFoundation/AVCaptureDevice.h>
-#import "JKIM_YYWebImage.h"
+#import "JK_YYWebImage.h"
 
 static void *kImagePickerCompletionHandlerKey = @"kImagePickerCompletionHandlerKey";
 static void *kCameraPickerKey = @"kCameraPickerKey";

@@ -10,7 +10,7 @@
 #import "UIView+JKFloatFrame.h"
 #import "RegexKitLite.h"
 #import "JKPluginModel.h"
-#import "JKIM_YYWebImage.h"
+#import "JK_YYWebImage.h"
 #import "JKBundleTool.h"
 @interface JKPluginView()
 
