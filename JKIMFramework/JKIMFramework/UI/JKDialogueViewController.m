@@ -51,7 +51,16 @@
 @end
 
 @implementation JKDialogueViewController
-
+//-(void)backAction:(id)sender {
+//    NSLog(@"--------");
+//    JKMessage *message = [JKMessage new];
+//    message.content = [NSString stringWithFormat:@"%@",@"11"];
+//    __weak typeof(self) weakSelf = self;
+//    [[JKConnectCenter sharedJKConnectCenter]sendRobotMessage:message robotMessageBlock:^(JKMessage * _Nullable message, int count) {
+//        weakSelf.customerName = @"";
+//        weakSelf.listMessage.to = @"";
+//    }];
+//}
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self creatUI];
@@ -172,7 +181,6 @@
     if (self.textView.text.length < 1) {
         return;
     }
-    
     self.listMessage.messageType = JKMessageWord;
     self.listMessage.msgSendType = JK_SocketMSG;
     self.listMessage.whoSend = JK_Visitor;
@@ -180,19 +188,23 @@
     self.listMessage.isRichText = NO;
     
     [JKIMSendHelp sendTextMessageWithMessageModel:self.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
-                                      [self.dataFrameArray addObject:messageFrame];
-                                      [self tableViewMoveToLastPath];
+        [self.dataFrameArray addObject:messageFrame];
+        [self tableViewMoveToLastPath];
     }];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        
-        BOOL isRobotON = [JKConnectCenter sharedJKConnectCenter].isRobotOn;
-        
-        if ([self.textView.text isEqualToString:@"转人工"] && isRobotON == YES) {
+        if ((!self.listMessage.to.length) && [self.textView.text isEqualToString:@"转人工"]) {
             [self sendZhuanRenGong];
-        } else if (!self.listMessage.chatState){
+        }else if ((!self.listMessage.to.length) && ([JKConnectCenter sharedJKConnectCenter].socketState == JK_SocketConnectOnline)){
             [self sendAutoReplayWithString:@"JK_DialogueView_defaultAnswer".JK_localString];
         }
+        
+//        BOOL isRobotON = [JKConnectCenter sharedJKConnectCenter].isRobotOn;
+//
+//        if ([self.textView.text isEqualToString:@"转人工"] && isRobotON == YES) {
+//        } else if (!self.listMessage.chatState){
+//            [self sendAutoReplayWithString:@"JK_DialogueView_defaultAnswer".JK_localString];
+//        }
     });
     self.textView.text = @"";
 }
@@ -237,17 +249,31 @@
         if (weakSelf.customerName.length) {
          // 接入的动作，以及提示
         }else {
-            weakSelf.customerName = [customeName substringFromIndex:1];
+//            weakSelf.customerName = [customeName substringFromIndex:1];
             int visitorCustomer = customeName.intValue;
             JKMessage *message = [JKMessage new];
             message.content = [NSString stringWithFormat:@"%d",visitorCustomer];
-            [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:message robotMessageBlock:^(JKMessage *message, int count) {}];
+            [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:message robotMessageBlock:^(JKMessage *message, int count) {
+                NSLog(@"---%@",message.content);
+                if (!count) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        JKDialogModel * autoModel = [[JKDialogModel alloc] init];
+                        JKMessageFrame *frameModel = [[JKMessageFrame alloc]init];
+                        autoModel.content = message.content;
+                        autoModel.whoSend = JK_SystemMarkShow;
+                        autoModel.time = autoModel.time;
+                        frameModel.message = autoModel;
+                        [weakSelf.dataFrameArray addObject:frameModel];
+                        [weakSelf tableViewMoveToLastPath];
+                    });
+                };
+            }];
         }
-        [weakSelf sendAutoReplayWithString:[NSString stringWithFormat:@"正在为您接入客服%@中，请稍后！",weakSelf.customerName]];
+//        [weakSelf sendAutoReplayWithString:[NSString stringWithFormat:@"正在为您接入客服%@中，请稍后！",weakSelf.customerName]];
     };
     cell.richText = ^{
         if (weakSelf.customerName.length) {
-            [weakSelf sendAutoReplayWithString:[NSString stringWithFormat:@"正在为您接入客服%@中，请稍后！",weakSelf.customerName]];
+            [weakSelf sendAutoReplayWithString:[NSString stringWithFormat:@"您当前正在和客服%@对话中！",weakSelf.customerName]];
         }else {
             [weakSelf sendZhuanRenGong];
         }
@@ -404,6 +430,7 @@
         if (!autoModel.chatState) {
             self.customerName = nil;
             self.listMessage.chatState = autoModel.chatState;
+            self.listMessage.to = @"";
             self.titleLabel.text = @"JK_Dialogue".JK_localString;
             self.satisfieButton.hidden = YES;
         }
@@ -438,15 +465,15 @@
         }
         message = [NSString stringWithFormat:@"%@%@%@%@",@"JK_SubmitShowTip".JK_localString,value,@"JK_SubmitTip".JK_localString,message];
         
-        self.listMessage.messageType = JKMessageWord;
-        self.listMessage.msgSendType = JK_SocketMSG;
-        self.listMessage.whoSend = JK_SystemMarkShow;
-        self.listMessage.content = message;
-        self.listMessage.isRichText = NO;
+        weakSelf.listMessage.messageType = JKMessageWord;
+        weakSelf.listMessage.msgSendType = JK_SocketMSG;
+        weakSelf.listMessage.whoSend = JK_SystemMarkShow;
+        weakSelf.listMessage.content = message;
+        weakSelf.listMessage.isRichText = NO;
         
-        [JKIMSendHelp sendTextMessageWithMessageModel:self.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
-            [self.dataFrameArray addObject:messageFrame];
-            [self tableViewMoveToLastPath];
+        [JKIMSendHelp sendTextMessageWithMessageModel:weakSelf.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
+            [weakSelf.dataFrameArray addObject:messageFrame];
+            [weakSelf tableViewMoveToLastPath];
         }];
         
     };
@@ -459,6 +486,9 @@
  */
 -(void)receiveNewListChat:(JKMessage *)message {
     self.listMessage = message;
+    self.listMessage.to = message.from;
+    self.customerName = message.from;
+    self.listMessage.from = @"";
     if (self.listMessage.chatterName) {
         self.titleLabel.text = self.listMessage.chatterName;
         self.satisfieButton.hidden = NO;
@@ -530,24 +560,42 @@
  发送转人工
  */
 - (void)sendZhuanRenGong{
-    JKMessage *message = [JKMessage new];
-    message.content = @"转人工";
     __weak typeof(self) weakSelf = self;
-    [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:message robotMessageBlock:^(JKMessage *messageData, int count) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            JKDialogModel * autoModel = [[JKDialogModel alloc] init];
-            JKMessageFrame *frameModel = [[JKMessageFrame alloc]init];
-            autoModel.isRichText = YES;
-            autoModel.content = messageData.content;
-            autoModel.whoSend = JK_Roboter;
-            autoModel.imageWidth = [UIScreen mainScreen].bounds.size.width - 170;
-            autoModel.time = autoModel.time;
-            autoModel.customerNumber = count;
-            frameModel.message = autoModel;
-            [weakSelf.dataFrameArray addObject:frameModel];
-            [self tableViewMoveToLastPath];
-        });
+    [[JKConnectCenter sharedJKConnectCenter] initDialogeWithBlock:^(NSDictionary *blockDict) {
+        BOOL canDialogue = [blockDict[@"result"] boolValue];
+        if (canDialogue) {
+            JKMessage *message = [JKMessage new];
+            message.content = @"转人工";
+            [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:message robotMessageBlock:^(JKMessage *messageData, int count) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    JKDialogModel * autoModel = [[JKDialogModel alloc] init];
+                    JKMessageFrame *frameModel = [[JKMessageFrame alloc]init];
+                    autoModel.isRichText = YES;
+                    autoModel.content = messageData.content;
+                    autoModel.whoSend = JK_Roboter;
+                    autoModel.imageWidth = [UIScreen mainScreen].bounds.size.width - 170;
+                    autoModel.time = autoModel.time;
+                    autoModel.customerNumber = count;
+                    frameModel.message = autoModel;
+                    [weakSelf.dataFrameArray addObject:frameModel];
+                    [weakSelf tableViewMoveToLastPath];
+                });
+            }];
+        }else { //进行错误的提示
+            NSString *errorMSG = blockDict[@"result_msg"];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                JKDialogModel * autoModel = [[JKDialogModel alloc] init];
+                JKMessageFrame *frameModel = [[JKMessageFrame alloc]init];
+                autoModel.content = errorMSG;
+                autoModel.whoSend = JK_SystemMarkShow;
+                autoModel.time = autoModel.time;
+                frameModel.message = autoModel;
+                [weakSelf.dataFrameArray addObject:frameModel];
+                [weakSelf tableViewMoveToLastPath];
+            });
+        }
     }];
+  
 }
 - (UIView *)bottomView{
     if (_bottomView == nil) {

@@ -67,13 +67,13 @@
     model.imageWidth  = [[sizeArr objectAtIndex:0] floatValue];
     model.imageHeight = [[sizeArr objectAtIndex:1] floatValue];
     //获取图片的格式
-    JK_YYImageType imageType = JK_YYImageDetectType((__bridge CFDataRef)imageData);
+    YYImageType imageType = YYImageDetectType((__bridge CFDataRef)imageData);
     
     NSString *photoPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
     
-    if (imageType == JK_YYImageTypeJPEG || imageType == JK_YYImageTypePNG || imageType == JK_YYImageTypeJPEG2000) {
+    if (imageType == YYImageTypeJPEG || imageType == YYImageTypePNG || imageType == YYImageTypeJPEG2000) {
         photoPath = [photoPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.png",model.time]];
-    }else if(imageType == JK_YYImageTypeGIF) {
+    }else if(imageType == YYImageTypeGIF) {
         photoPath = [photoPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.gif",model.time]];
     }
     

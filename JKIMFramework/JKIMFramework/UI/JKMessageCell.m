@@ -13,7 +13,7 @@
 #import "JKImageAvatarBrowser.h"
 #import "JKBundleTool.h"
 #import "JKRichTextStatue.h"
-#import "JK_YYWebImage.h"
+#import "YYWebImage.h"
 #import "NSDate+Utils.h"
 #import "NSString+LocalString.h"
 #import "UIView+JKFloatFrame.h"
@@ -118,6 +118,8 @@
 
     _messageFrame = messageFrame;
     JKDialogModel *message = messageFrame.message;
+    
+   
     
     // 1、设置时间
     self.labelTime.text = [self changeTheDateString:message.time];
@@ -257,6 +259,28 @@
     }
     
     self.btnContent.backgroundImageView.image = normal;
+    
+    //先设置系统提示的Label，如果是，之后的f也就可以不用走了
+    if (message.whoSend == JK_SystemMarkShow) {
+        self.btnContent.systemMarkLabel.hidden = NO;
+        self.btnContent.systemMarkLabel.frame = messageFrame.contentF;
+        self.btnContent.systemMarkLabel.text = message.content;
+        headImageBackView.hidden = YES;
+        self.btnContent.contentTV.hidden = YES;
+        self.btnContent.backImageView.hidden = YES;
+        self.btnContent.backgroundImageView.hidden = YES;
+        
+        CGPoint center = self.btnContent.systemMarkLabel.center;
+        center.y = messageFrame.contentF.size.height / 2;
+        center.x = [UIScreen mainScreen].bounds.size.width / 2;
+        self.btnContent.systemMarkLabel.center = center;
+        self.labelTime.hidden = YES;
+        return;
+    }else{
+        self.btnContent.systemMarkLabel.hidden = YES;
+        headImageBackView.hidden = NO;
+        self.labelTime.hidden = NO;
+    }
 }
 
 
@@ -288,7 +312,7 @@
 - (void)downloadImageWithModelFrame:(JKMessageFrame *)modelFrame button:(JKMessageContent *)button{
     
 //    __block UIImageView *sView = [[UIImageView alloc]init];
-    [button.backImageView yy_setImageWithURL:[NSURL URLWithString:modelFrame.message.content] placeholder:nil options:JK_YYWebImageOptionProgressiveBlur | JK_YYWebImageOptionSetImageWithFadeAnimation completion:^(UIImage * _Nullable image, NSURL * _Nonnull url, JK_YYWebImageFromType from, JK_YYWebImageStage stage, NSError * _Nullable error) {
+    [button.backImageView yy_setImageWithURL:[NSURL URLWithString:modelFrame.message.content] placeholder:nil options:YYWebImageOptionProgressiveBlur | YYWebImageOptionSetImageWithFadeAnimation completion:^(UIImage * _Nullable image, NSURL * _Nonnull url, YYWebImageFromType from, YYWebImageStage stage, NSError * _Nullable error) {
         if (!error)  {
             NSMutableArray *sizeArr = [UIView returnImageViewWidthAndHeightWith:[NSString stringWithFormat:@"%lf",image.size.width] AndHeight:[NSString stringWithFormat:@"%lf",image.size.height]];
 

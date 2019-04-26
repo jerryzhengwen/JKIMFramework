@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#import "JKSystemMarkLabel.h"
+
 @interface JKMessageContent : UIView
 
 //bubble imgae
@@ -17,6 +19,9 @@
 
 ///显示内容的Label
 @property (nonatomic,strong) UITextView   *contentTV;
+
+///提示label
+@property(nonatomic, strong) JKSystemMarkLabel *systemMarkLabel;
 
 //audio
 @property (nonatomic, retain) UIView *voiceBackView;

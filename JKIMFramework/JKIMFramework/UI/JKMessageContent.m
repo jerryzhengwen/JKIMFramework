@@ -7,6 +7,7 @@
 //
 
 #import "JKMessageContent.h"
+#import "JKDialogueHeader.h"
 
 @interface JKMessageContent()
 
@@ -39,6 +40,20 @@
         self.contentTV.textContainerInset = UIEdgeInsetsMake(5, 5, 5, 5 );
         self.contentTV.backgroundColor = [UIColor clearColor];
         [self addSubview:self.contentTV];
+        
+        //提示Label
+        self.systemMarkLabel = [[JKSystemMarkLabel alloc]init];
+        self.systemMarkLabel.textColor = UIColorFromRGB(0xC0C0C0);
+        self.systemMarkLabel.layer.borderWidth = 1;
+        self.systemMarkLabel.layer.borderColor = UIColorFromRGB(0xC0C0C0).CGColor;
+        self.systemMarkLabel.layer.cornerRadius = 4;
+        self.systemMarkLabel.textAlignment = NSTextAlignmentCenter;
+        self.systemMarkLabel.font = [UIFont systemFontOfSize:12];
+        self.systemMarkLabel.numberOfLines = 0;
+        self.systemMarkLabel.contentEdgeInsets = UIEdgeInsetsMake(5, 5, 5, 5);
+        self.systemMarkLabel.backgroundColor = [UIColor whiteColor];
+        [self addSubview:self.systemMarkLabel];
+        
         
         //语音
         self.voiceBackView = [[UIView alloc]init];

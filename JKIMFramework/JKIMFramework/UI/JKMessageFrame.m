@@ -9,7 +9,7 @@
 #import "JKMessageFrame.h"
 #import "JKDialogModel.h"
 #import "JKRichTextStatue.h"
-#import "JK_YYWebImage.h"
+#import "YYWebImage.h"
 #import "UIView+JKFloatFrame.h"
 
 @interface JKMessageFrame()
@@ -75,9 +75,16 @@
     if (_message.whoSend == JK_Visitor) {
         contentX = iconX - contentSize.width  - JKChatMargin;
     }
-    _contentF = CGRectMake(contentX, contentY, contentSize.width + JKChatContentRight, contentSize.height );
     
-    _cellHeight = MAX(CGRectGetMaxY(_contentF), CGRectGetMaxY(_nameF))  + JKChatMargin;
+    
+    if (message.whoSend == JK_SystemMarkShow) {
+        _contentF = CGRectMake(0, 0, contentSize.width + JKChatContentRight, contentSize.height);
+        _cellHeight = CGRectGetMaxY(_contentF) + 10;
+    }else{
+        _contentF = CGRectMake(contentX, contentY, contentSize.width + JKChatContentRight, contentSize.height );
+        _cellHeight = MAX(CGRectGetMaxY(_contentF), CGRectGetMaxY(_nameF))  + JKChatMargin;
+    }
+    
     
 }
 

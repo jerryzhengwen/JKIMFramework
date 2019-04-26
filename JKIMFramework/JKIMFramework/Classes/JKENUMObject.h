@@ -54,4 +54,5 @@ typedef NS_ENUM(NSInteger,JKSocketState) {
     JK_SocketReConnet = 3, //连接正在重练
     JK_SocketConnectRefuse = 4, //连接拒绝
     JK_SocketConnectError = 5, //连接错误
+    JK_SocketExit ,//退出链接
 };

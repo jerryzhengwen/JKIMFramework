@@ -18,6 +18,8 @@ typedef void (^RobotMessageBlock)(JKMessage * _Nullable message,int count);
 
 typedef void (^JKGetSatisFactionBlock)(id _Nullable result);
 
+typedef void(^JKInItDialogueBlock)(NSDictionary *blockDict);
+
 @protocol ConnectCenterDelegate<NSObject>
 @required
 /**
@@ -113,6 +115,8 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)getSatisfactionWithBlock:(JKGetSatisFactionBlock)satisfactionBlock;
 
 -(void)submitSatisfactionWithDict:(NSDictionary *)dict Block:(JKGetSatisFactionBlock)satisfactionBlock;
+
+-(void)initDialogeWithBlock:(JKInItDialogueBlock)block;
 /**
  接收到对话的message
 
@@ -143,7 +147,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)readMessageFromId:(NSString *)fromId;
 
-
+/**
+ 退出登录
+ */
+- (void)exitSockectConnecting;
 @end
 
 NS_ASSUME_NONNULL_END

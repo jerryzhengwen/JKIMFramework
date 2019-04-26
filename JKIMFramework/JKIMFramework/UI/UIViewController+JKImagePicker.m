@@ -14,7 +14,7 @@
 #import <Photos/Photos.h>
 #import <MobileCoreServices/UTCoreTypes.h>
 #import <AVFoundation/AVCaptureDevice.h>
-#import "JK_YYWebImage.h"
+#import "YYWebImage.h"
 
 static void *kImagePickerCompletionHandlerKey = @"kImagePickerCompletionHandlerKey";
 static void *kCameraPickerKey = @"kCameraPickerKey";
@@ -193,7 +193,7 @@ static void *isCut =  @"isCut"; //截取
     
     if ([[URL absoluteString]containsString:@"gif"]) {
         
-        JK_YYAnimatedImageView *imageView = [[JK_YYAnimatedImageView alloc]init];
+        YYAnimatedImageView *imageView = [[YYAnimatedImageView alloc]init];
         imageView.yy_imageURL = URL;
         
         //这个图片是GIF图片

@@ -43,5 +43,5 @@ s.frameworks = 'UIKit', 'MapKit'
 s.requires_arc = false
 
 s.requires_arc = ['JKIMFramework/**/Classes/*.{h,m}']
-#s.dependency 'RegexKitLite'
+s.dependency 'YYWebImage'
 end
