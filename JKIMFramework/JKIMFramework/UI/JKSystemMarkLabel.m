@@ -46,6 +46,7 @@
 }
 
 - (UIEdgeInsets)contentEdgeInsets
+
 {
     _contentEdgeInsets = UIEdgeInsetsMake(_topEdge, _leftEdge, _bottomEdge, _rightEdge);
     return _contentEdgeInsets;

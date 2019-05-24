@@ -80,6 +80,7 @@ static void *isCut =  @"isCut"; //截取
                 [self presentViewController:self.photoLibraryPicker animated:YES completion:nil];
             });
             
+            
         }else {
             UIAlertController * noticeAlertController = [UIAlertController alertControllerWithTitle:@"未开启相册权限，请到设置界面开启" message:nil preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction * cancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {

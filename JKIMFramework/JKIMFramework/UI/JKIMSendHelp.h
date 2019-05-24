@@ -25,7 +25,7 @@ typedef void(^CompleteBlock)(JKMessageFrame *messageFrame);
  */
 + (void)sendTextMessageWithMessageModel:(JKMessage *)messageModel completeBlock:(CompleteBlock)completeBlock;
 
-+ (void)sendImageMessageWithImageData:(NSData *)imageData image:(UIImage *)image completeBlock:(CompleteBlock)completeBlock;
++ (void)sendImageMessageWithImageData:(NSData *)imageData image:(UIImage *)image MessageModel:(JKMessage *)messageModel completeBlock:(CompleteBlock)completeBlock;
 
 @end
 

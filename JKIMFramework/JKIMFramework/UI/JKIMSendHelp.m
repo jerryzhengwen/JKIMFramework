@@ -52,35 +52,37 @@
     
 }
 
-+ (void)sendImageMessageWithImageData:(NSData *)imageData image:(UIImage *)image completeBlock:(CompleteBlock)completeBlock{
++ (void)sendImageMessageWithImageData:(NSData *)imageData image:(UIImage *)image MessageModel:(JKMessage *)messageModel completeBlock:(CompleteBlock)completeBlock{
     
-    JKDialogModel * model = [JKDialogModel alloc];
+//    JKDialogModel * model = [JKDialogModel alloc];
     JKMessageFrame *frameModel = [[JKMessageFrame alloc]init];
-    model.isRichText = NO;
-    model.msgSendType = JK_SocketMSG;
-    model.imageData = imageData;
-    model.messageType = JKMessageImage;
-    model.time = [JKIMSendHelp jk_getTimestamp];
+    messageModel.whoSend = JK_Visitor;
+    messageModel.isRichText = NO;
+    messageModel.msgSendType = JK_SocketMSG;
+    messageModel.imageData = imageData;
+    messageModel.messageType = JKMessageImage;
+    messageModel.time = [JKIMSendHelp jk_getTimestamp];
     
     NSMutableArray *sizeArr = [UIView returnImageViewWidthAndHeightWith:[NSString stringWithFormat:@"%lf",image.size.width] AndHeight:[NSString stringWithFormat:@"%lf",image.size.height]];
     
-    model.imageWidth  = [[sizeArr objectAtIndex:0] floatValue];
-    model.imageHeight = [[sizeArr objectAtIndex:1] floatValue];
+    messageModel.imageWidth  = [[sizeArr objectAtIndex:0] floatValue];
+    messageModel.imageHeight = [[sizeArr objectAtIndex:1] floatValue];
     //获取图片的格式
     YYImageType imageType = YYImageDetectType((__bridge CFDataRef)imageData);
     
     NSString *photoPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
     
     if (imageType == YYImageTypeJPEG || imageType == YYImageTypePNG || imageType == YYImageTypeJPEG2000) {
-        photoPath = [photoPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.png",model.time]];
+        photoPath = [photoPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.png",messageModel.time]];
     }else if(imageType == YYImageTypeGIF) {
-        photoPath = [photoPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.gif",model.time]];
+        photoPath = [photoPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.gif",messageModel.time]];
     }
     
     [imageData writeToFile:photoPath atomically:YES];
     
-    model.content = photoPath;
-    [[JKConnectCenter sharedJKConnectCenter]sendMessage:model];
+    messageModel.content = photoPath;
+    [[JKConnectCenter sharedJKConnectCenter]sendMessage:messageModel];
+    JKDialogModel * model = [JKDialogModel changeMsgTypeWithJKModel:messageModel];
     frameModel.message = model;
     if (completeBlock) {
         completeBlock(frameModel);

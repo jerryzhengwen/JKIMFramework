@@ -171,8 +171,8 @@
         [self.dataFrameArray removeObjectAtIndex:index];
     }
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-    [self tableViewMoveToLastPath];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    [self tableViewMoveToLastPathNeedAnimated:NO];
     });
 
     
@@ -186,10 +186,9 @@
     self.listMessage.whoSend = JK_Visitor;
     self.listMessage.content = self.textView.text;
     self.listMessage.isRichText = NO;
-    
     [JKIMSendHelp sendTextMessageWithMessageModel:self.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
         [self.dataFrameArray addObject:messageFrame];
-        [self tableViewMoveToLastPath];
+        [self tableViewMoveToLastPathNeedAnimated:YES];
     }];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -219,7 +218,7 @@
     
     [JKIMSendHelp sendTextMessageWithMessageModel:self.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
         [self.dataFrameArray addObject:messageFrame];
-        [self tableViewMoveToLastPath];
+        [self tableViewMoveToLastPathNeedAnimated:YES];
     }];
     
 }
@@ -264,8 +263,11 @@
                         autoModel.time = autoModel.time;
                         frameModel.message = autoModel;
                         [weakSelf.dataFrameArray addObject:frameModel];
-                        [weakSelf tableViewMoveToLastPath];
+                        [weakSelf tableViewMoveToLastPathNeedAnimated:YES];
                     });
+                }else{
+                    //再次进行机器人对话
+                    [weakSelf showRobotMessage:message count:count];
                 };
             }];
         }
@@ -335,7 +337,7 @@
 
 
 /** 滚动到最后一行*/
--(void)tableViewMoveToLastPath {
+-(void)tableViewMoveToLastPathNeedAnimated:(BOOL)animated {
     @try {
         if (self.dataFrameArray.count < 1) {
             return;
@@ -344,7 +346,7 @@
         // 4.自动滚动表格到最后一行
         NSIndexPath *lastPath = [NSIndexPath indexPathForRow:self.dataFrameArray.count - 1 inSection:0];
 
-        [self.tableView scrollToRowAtIndexPath:lastPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+        [self.tableView scrollToRowAtIndexPath:lastPath atScrollPosition:UITableViewScrollPositionBottom animated:animated];
     }
     @catch (NSException *exception) {
         NSLog(@"-----%@",exception);
@@ -376,6 +378,7 @@
     }];
     
 }
+#pragma 相册
 - (void)photoAction{
     self.isPushToController = @"YES";
     
@@ -386,10 +389,12 @@
 
 - (void)sendImageWithImageData:(NSData *)imageData image:(UIImage *)image{
     
-    [JKIMSendHelp sendImageMessageWithImageData:imageData image:image completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
+    [JKIMSendHelp sendImageMessageWithImageData:imageData image:image MessageModel:self.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
         [self.dataFrameArray addObject:messageFrame];
-        [self tableViewMoveToLastPath];
+        [self tableViewMoveToLastPathNeedAnimated:YES];
     }];
+    
+    
 }
 
 #pragma -
@@ -438,7 +443,7 @@
         autoModel.time = autoModel.time;
         frameModel.message = autoModel;
         [self.dataFrameArray addObject:frameModel];
-        [self tableViewMoveToLastPath];
+        [self tableViewMoveToLastPathNeedAnimated:YES];
     });
 }
 
@@ -447,7 +452,7 @@
 - (void)showSatisfacionViewFromid:(JKMessage *)model{
     ///判断如果此时已经有展示框就不弹展示弹框
     UIViewController *vc = [NSObject currentViewController];
-    if ([vc isEqual:self]) {
+    if ([vc isKindOfClass:[JKSatisfactionViewController class]]) {
         return;
     }
     [[JKConnectCenter sharedJKConnectCenter]readMessageFromId:model.from];
@@ -473,10 +478,25 @@
         
         [JKIMSendHelp sendTextMessageWithMessageModel:weakSelf.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
             [weakSelf.dataFrameArray addObject:messageFrame];
-            [weakSelf tableViewMoveToLastPath];
+            [weakSelf tableViewMoveToLastPathNeedAnimated:YES];
         }];
         
     };
+}
+
+- (void)showRobotMessage:(JKMessage *)message count:(int)count{
+    
+    JKDialogModel * autoModel = [[JKDialogModel alloc] init];
+    JKMessageFrame *frameModel = [[JKMessageFrame alloc]init];
+    autoModel.isRichText = YES;
+    autoModel.content = message.content;
+    autoModel.whoSend = JK_Roboter;
+    autoModel.imageWidth = [UIScreen mainScreen].bounds.size.width - 170;
+    autoModel.time = autoModel.time;
+    autoModel.customerNumber = count;
+    frameModel.message = autoModel;
+    [self.dataFrameArray addObject:frameModel];
+    [self tableViewMoveToLastPathNeedAnimated:YES];
 }
 
 /**
@@ -528,7 +548,7 @@
         weakSelf.tableView.frame = CGRectMake(0, kStatusBarAndNavigationBarHeight, [UIScreen mainScreen].bounds.size.width, CGRectGetMinY(weakSelf.bottomView.frame) - kStatusBarAndNavigationBarHeight);
     }];
     
-    [self tableViewMoveToLastPath];
+    [self tableViewMoveToLastPathNeedAnimated:NO];
 }
 
 
@@ -568,17 +588,8 @@
             message.content = @"转人工";
             [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:message robotMessageBlock:^(JKMessage *messageData, int count) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    JKDialogModel * autoModel = [[JKDialogModel alloc] init];
-                    JKMessageFrame *frameModel = [[JKMessageFrame alloc]init];
-                    autoModel.isRichText = YES;
-                    autoModel.content = messageData.content;
-                    autoModel.whoSend = JK_Roboter;
-                    autoModel.imageWidth = [UIScreen mainScreen].bounds.size.width - 170;
-                    autoModel.time = autoModel.time;
-                    autoModel.customerNumber = count;
-                    frameModel.message = autoModel;
-                    [weakSelf.dataFrameArray addObject:frameModel];
-                    [weakSelf tableViewMoveToLastPath];
+                    //展示机器人消息
+                    [weakSelf showRobotMessage:messageData count:count];
                 });
             }];
         }else { //进行错误的提示
@@ -591,7 +602,7 @@
                 autoModel.time = autoModel.time;
                 frameModel.message = autoModel;
                 [weakSelf.dataFrameArray addObject:frameModel];
-                [weakSelf tableViewMoveToLastPath];
+                [weakSelf tableViewMoveToLastPathNeedAnimated:YES];
             });
         }
     }];
@@ -649,6 +660,10 @@
     return _faceButton;
 }
 -(void)plugInBtn:(UIButton *)button {
+    if (!self.listMessage.to.length) {
+        return;
+    }
+
     button.selected = !button.isSelected;
     float duration = 0.1;
     if (self.textView.isFirstResponder) {

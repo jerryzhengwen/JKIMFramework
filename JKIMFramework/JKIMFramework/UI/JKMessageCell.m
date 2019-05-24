@@ -65,15 +65,7 @@
         // 4、创建内容
         self.btnContent = [[JKMessageContent alloc]init];
         self.btnContent.contentTV.font = JKChatContentFont;
-        [self.contentView addSubview:self.btnContent];
-        
-//        self.btnContent = [JKMessageContent buttonWithType:UIButtonTypeCustom];
-//        [self.btnContent setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-//        self.btnContent.titleLabel.font = JKChatContentFont;
-//        self.btnContent.titleLabel.numberOfLines = 0;
-//        [self.btnContent addTarget:self action:@selector(btnContentClick)  forControlEvents:UIControlEventTouchUpInside];
-//        [self.contentView addSubview:self.btnContent];
-        
+        [self.contentView addSubview:self.btnContent];        
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(JKAVAudioPlayerDidFinishPlay) name:@"VoicePlayHasInterrupt" object:nil];
 
     }
@@ -250,11 +242,17 @@
     //背景气泡图
     UIImage *normal;
     if (message.whoSend == JK_Visitor) {
-        normal = [UIImage imageNamed:@"chatto_bg_normal"];
+        
+        NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
+        NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"chatto_bg_normal"];
+        normal = [UIImage imageWithContentsOfFile:filePatch];
         normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(35, 10, 10, 22)];
     }
     else{
-        normal = [UIImage imageNamed:@"chatfrom_bg_normal"];
+        
+        NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
+        NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"chatfrom_bg_normal"];
+        normal = [UIImage imageWithContentsOfFile:filePatch];
         normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(35, 22, 10, 10)];
     }
     
@@ -269,7 +267,7 @@
         self.btnContent.contentTV.hidden = YES;
         self.btnContent.backImageView.hidden = YES;
         self.btnContent.backgroundImageView.hidden = YES;
-        
+        [self.btnContent.systemMarkLabel sizeToFit];
         CGPoint center = self.btnContent.systemMarkLabel.center;
         center.y = messageFrame.contentF.size.height / 2;
         center.x = [UIScreen mainScreen].bounds.size.width / 2;
