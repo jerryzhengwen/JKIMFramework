@@ -1,11 +1,3 @@
-/* 
-  JK_LocalString.strings
-  JKIMSDKProject
-
-  Created by Jerry on 2019/4/3.
-  Copyright © 2019 于飞. All rights reserved.
-*/
-
 "JK_MainView_instructions" = "如需要正式接对话请点击悬浮窗";
 "JK_Back" = "返回";
 "JK_Dialogue" = "对话";

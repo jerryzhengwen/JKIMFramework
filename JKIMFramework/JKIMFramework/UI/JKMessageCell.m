@@ -187,13 +187,20 @@
     if (message.whoSend == JK_Visitor) {
         self.btnContent.isMyMessage = YES;
         self.btnContent.contentTV.textColor = [UIColor whiteColor];
-        self.btnContent.contentTV.textContainerInset = UIEdgeInsetsMake(JKChatContentTop, JKChatContentLeft, JKChatContentBottom, JKChatContentRight);
          self.btnContent.contentTV.frame = CGRectMake(0, 0, messageFrame.contentF.size.width, messageFrame.contentF.size.height);
     }else{
         self.btnContent.isMyMessage = NO;
         self.btnContent.contentTV.textColor = [UIColor grayColor];
-        self.btnContent.contentTV.textContainerInset = UIEdgeInsetsMake(JKChatContentTop, JKChatContentLeft, JKChatContentBottom, JKChatContentRight);
+        
          self.btnContent.contentTV.frame = CGRectMake(5, 0, messageFrame.contentF.size.width, messageFrame.contentF.size.height);
+    }
+    
+    
+    //调整文本内间距。
+    if (messageFrame.contentF.size.height == 40) {
+        self.btnContent.contentTV.textContainerInset = UIEdgeInsetsMake(JKChatContentTop + 5, JKChatContentLeft - 2, JKChatContentBottom + 5, JKChatContentRight);
+    }else{
+        self.btnContent.contentTV.textContainerInset = UIEdgeInsetsMake(JKChatContentTop, JKChatContentLeft, JKChatContentBottom, JKChatContentRight);
     }
 
     switch (message.messageType) {

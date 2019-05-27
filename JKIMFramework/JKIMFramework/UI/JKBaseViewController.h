@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "JKDialogueHeader.h"
 #import "UIView+JKFloatFrame.h"
 NS_ASSUME_NONNULL_BEGIN
 

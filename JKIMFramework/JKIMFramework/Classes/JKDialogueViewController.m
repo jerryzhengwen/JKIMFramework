@@ -35,7 +35,7 @@
 @property (nonatomic, strong)UIButton *faceButton;
 
 @property(nonatomic, strong)NSMutableArray <JKDialogModel *>*dataArray;
-@property(nonatomic, strong)NSMutableArray <JKMessageFrame *>*dataFrameArray;
+@property(nonatomic, strong)NSMutableArray *dataFrameArray;
 
 @property (nonatomic,assign,getter=isRobotOn)BOOL robotOn;
 
@@ -88,7 +88,7 @@
     self.view.backgroundColor = [UIColor colorWithRed:242/255.0 green:242/255.0 blue:242/255.0 alpha:1];
     self.dataArray = [NSMutableArray array];
     [self.view addSubview:self.tableView];
-//    [self.view addSubview:self.satisfieButton]; 暂时先隐藏
+    //    [self.view addSubview:self.satisfieButton]; 暂时先隐藏
     [self.view addSubview:self.bottomView];
     [self bottomViewInitialLayout];
     [self.bottomView addSubview:self.textView];
@@ -172,9 +172,9 @@
     }
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-    [self tableViewMoveToLastPathNeedAnimated:NO];
+        [self tableViewMoveToLastPathNeedAnimated:NO];
     });
-
+    
     
 }
 - (void)sendMessage{
@@ -198,12 +198,12 @@
             [self sendAutoReplayWithString:@"JK_DialogueView_defaultAnswer".JK_localString];
         }
         
-//        BOOL isRobotON = [JKConnectCenter sharedJKConnectCenter].isRobotOn;
-//
-//        if ([self.textView.text isEqualToString:@"转人工"] && isRobotON == YES) {
-//        } else if (!self.listMessage.chatState){
-//            [self sendAutoReplayWithString:@"JK_DialogueView_defaultAnswer".JK_localString];
-//        }
+        //        BOOL isRobotON = [JKConnectCenter sharedJKConnectCenter].isRobotOn;
+        //
+        //        if ([self.textView.text isEqualToString:@"转人工"] && isRobotON == YES) {
+        //        } else if (!self.listMessage.chatState){
+        //            [self sendAutoReplayWithString:@"JK_DialogueView_defaultAnswer".JK_localString];
+        //        }
     });
     self.textView.text = @"";
 }
@@ -246,9 +246,9 @@
     __weak JKDialogueViewController * weakSelf = self;
     cell.clickCustomer = ^(NSString * customeName) {
         if (weakSelf.customerName.length) {
-         // 接入的动作，以及提示
+            // 接入的动作，以及提示
         }else {
-//            weakSelf.customerName = [customeName substringFromIndex:1];
+            //            weakSelf.customerName = [customeName substringFromIndex:1];
             int visitorCustomer = customeName.intValue;
             JKMessage *message = [JKMessage new];
             message.content = [NSString stringWithFormat:@"%d",visitorCustomer];
@@ -271,7 +271,7 @@
                 };
             }];
         }
-//        [weakSelf sendAutoReplayWithString:[NSString stringWithFormat:@"正在为您接入客服%@中，请稍后！",weakSelf.customerName]];
+        //        [weakSelf sendAutoReplayWithString:[NSString stringWithFormat:@"正在为您接入客服%@中，请稍后！",weakSelf.customerName]];
     };
     cell.richText = ^{
         if (weakSelf.customerName.length) {
@@ -291,7 +291,7 @@
     if (urlArray.count) {
         NSURL* url = [[NSURL alloc] initWithString:clickText];
         if ([[UIApplication sharedApplication]canOpenURL:url]) {
-        [[UIApplication sharedApplication ] openURL: url];
+            [[UIApplication sharedApplication ] openURL: url];
         }
     }else if (phoneArray.count){
         NSMutableString * str=[[NSMutableString alloc] initWithFormat:@"tel:%@",clickText];
@@ -330,7 +330,9 @@
     self.bottomView.frame = CGRectMake(0, self.tableView.bottom, [UIScreen mainScreen].bounds.size.width, BottomToolHeight);
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    CGFloat height = self.dataFrameArray[indexPath.row].cellHeight;
+    
+    JKMessageFrame * messge = self.dataFrameArray[indexPath.row];
+    CGFloat height = messge.cellHeight;
     return  height;
 }
 
@@ -345,7 +347,7 @@
         [self.tableView reloadData];
         // 4.自动滚动表格到最后一行
         NSIndexPath *lastPath = [NSIndexPath indexPathForRow:self.dataFrameArray.count - 1 inSection:0];
-
+        
         [self.tableView scrollToRowAtIndexPath:lastPath atScrollPosition:UITableViewScrollPositionBottom animated:animated];
     }
     @catch (NSException *exception) {
@@ -428,7 +430,7 @@
         JKDialogModel * autoModel = [message mutableCopy];
         JKMessageFrame *frameModel = [[JKMessageFrame alloc]init];
         if (autoModel.whoSend == JK_SystemMark) {
-        [self showSatisfacionViewFromid:autoModel];
+            [self showSatisfacionViewFromid:autoModel];
             return;
         }
         
@@ -570,8 +572,8 @@
         }];
     }else {
         [UIView animateWithDuration:duration animations:^{
-        
-        weakSelf.bottomView.frame = CGRectMake(0, weakSelf.tableView.bottom, [UIScreen mainScreen].bounds.size.width, BottomToolHeight);
+            
+            weakSelf.bottomView.frame = CGRectMake(0, weakSelf.tableView.bottom, [UIScreen mainScreen].bounds.size.width, BottomToolHeight);
         }];
     }
 }
@@ -606,7 +608,7 @@
             });
         }
     }];
-  
+    
 }
 - (UIView *)bottomView{
     if (_bottomView == nil) {
@@ -663,7 +665,7 @@
     if (!self.listMessage.to.length) {
         return;
     }
-
+    
     button.selected = !button.isSelected;
     float duration = 0.1;
     if (self.textView.isFirstResponder) {
@@ -672,8 +674,8 @@
     }
     if (self.faceButton.selected) {
         self.faceButton.selected = !self.faceButton.selected;
-     NSString *facePath = [self.imageBundlePath stringByAppendingPathComponent:@"icon_expression"];
-    [self.faceButton setImage:[UIImage imageWithContentsOfFile:facePath] forState:UIControlStateNormal];
+        NSString *facePath = [self.imageBundlePath stringByAppendingPathComponent:@"icon_expression"];
+        [self.faceButton setImage:[UIImage imageWithContentsOfFile:facePath] forState:UIControlStateNormal];
         self.tableView.frame = CGRectMake(0, self.tableView.top, self.tableView.width, self.tableView.height + 145);
         self.bottomView.frame = CGRectMake(0, self.tableView.bottom, self.bottomView.width, self.bottomView.height);
         self.faceView.frame = CGRectMake(self.faceView.top, self.bottomView.bottom, self.faceView.width, self.faceView.height);
@@ -794,13 +796,18 @@
     }
     return YES;
 }
-
-- (NSMutableArray<JKMessageFrame *> *)dataFrameArray{
+-(NSMutableArray *)dataFrameArray {
     if (_dataFrameArray == nil) {
-        _dataFrameArray = [NSMutableArray array];
+        _dataFrameArray = [[NSMutableArray alloc] init];
     }
     return _dataFrameArray;
 }
+//- (NSMutableArray<JKMessageFrame *> *)dataFrameArray{
+//    if (_dataFrameArray == nil) {
+//        _dataFrameArray = [NSMutableArray array];
+//    }
+//    return _dataFrameArray;
+//}
 
 - (JKMessage *)listMessage{
     if (_listMessage == nil) {

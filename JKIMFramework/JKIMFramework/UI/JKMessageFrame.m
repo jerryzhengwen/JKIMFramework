@@ -117,7 +117,9 @@
     
     stringLabel.attributedText = attributedString;
     CGSize size = [stringLabel sizeThatFits:CGSizeMake(width, 0)];
-    
+    if (size.height < 30) {
+        size.height = 40;
+    }
     return size;
 }
 
