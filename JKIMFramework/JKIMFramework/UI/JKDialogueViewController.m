@@ -15,7 +15,7 @@
 #import "NSObject+JKCurrentVC.h"
 #import "JKIMSendHelp.h"
 #import "JKConnectCenter.h"
-
+#import "RegexKitLite.h"
 @interface JKDialogueViewController ()<UITableViewDelegate,UITableViewDataSource,UITextViewDelegate,ConnectCenterDelegate,JKMessageCellDelegate>
 
 

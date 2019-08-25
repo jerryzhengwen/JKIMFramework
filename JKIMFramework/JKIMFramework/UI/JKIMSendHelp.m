@@ -11,7 +11,7 @@
 #import "JKMessageFrame.h"
 #import "JKDialogueHeader.h"
 #import "JKConnectCenter.h"
-
+#import "RegexKitLite.h"
 @implementation JKIMSendHelp
 
 
