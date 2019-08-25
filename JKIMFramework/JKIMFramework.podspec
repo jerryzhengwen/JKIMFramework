@@ -36,7 +36,7 @@ s.source_files = 'JKIMFramework/**/Classes/**/*.{h,m}','JKIMFramework/**/UI/**/*
 #  }
 s.public_header_files = 'JKIMFramework/**/Classes/**/*.h'
 s.ios.vendored_libraries = 'JKIMFramework/**/Frameworks/**/*.a'
-s.resources = 'JKIMFramework/**/UIKit/**/{JKDialogeModel.xcdatamodeld,JKFace.plist,JKIMImage.bundle,JK_LocalString.strings}'
+s.resources = 'JKIMFramework/**/UIKit/**/{JKDialogeModel.xcdatamodeld,JKFace.plist,JKIMImage.bundle,style.css}'
 s.libraries = "resolv", "xml2","icucore"
 s.xcconfig = { 'VALID_ARCHS' => 'arm64 x86_64 armv7 i386', }
 s.frameworks = 'UIKit', 'MapKit'
