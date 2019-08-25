@@ -12,6 +12,7 @@
 #import "JKDialogueHeader.h"
 #import "JKConnectCenter.h"
 #import "RegexKitLite.h"
+#import "YYWebImage.h"
 @implementation JKIMSendHelp
 
 
