@@ -15,7 +15,6 @@
 #import "JKRichTextStatue.h"
 #import "YYWebImage.h"
 #import "NSDate+Utils.h"
-#import "NSString+LocalString.h"
 #import "UIView+JKFloatFrame.h"
 #import "JKDialogueHeader.h"
 @interface JKMessageCell ()<UITextViewDelegate>
@@ -235,7 +234,7 @@
 #pragma -
 #pragma mark - textView的代理
 -(BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction  API_AVAILABLE(ios(10.0)){
-    if ([textView.text containsString:@"JK_DialogueView_ClickRichText".JK_localString] && self.messageFrame.message.isRichText) {
+    if (self.messageFrame.message.isRichText) {
         if (self.richText) {
             self.richText();
         }

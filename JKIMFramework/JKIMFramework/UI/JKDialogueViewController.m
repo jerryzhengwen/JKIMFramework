@@ -9,7 +9,6 @@
 #import "JKDialogueViewController.h"
 #import "JKSatisfactionViewController.h"
 #import "JKDialogueHeader.h"
-#import "NSString+LocalString.h"
 #import "JKMessageFrame.h"
 #import "JKMessageCell.h"
 #import "JKWebViewCell.h"
@@ -496,7 +495,7 @@ __weak JKDialogueViewController * weakSelf = self;
             self.customerName = nil;
             self.listMessage.chatState = autoModel.chatState;
             self.listMessage.to = @"";
-            self.titleLabel.text = @"JK_Dialogue".JK_localString;
+            self.titleLabel.text = @"对话";
             self.satisfieButton.hidden = YES;
         }
         autoModel.whoSend = message.whoSend?message.whoSend:JK_Customer;
@@ -538,7 +537,7 @@ __weak JKDialogueViewController * weakSelf = self;
             NSString *username = [array[1] componentsSeparatedByString:@"@openfire-test"].firstObject;
             value = [username componentsSeparatedByString:@"-"].lastObject;
         }
-        message = [NSString stringWithFormat:@"%@%@%@%@",@"JK_SubmitShowTip".JK_localString,value,@"JK_SubmitTip".JK_localString,message];
+        message = [NSString stringWithFormat:@"%@%@%@%@",@"您给客服",value,@"的评价",message];
         
         weakSelf.listMessage.messageType = JKMessageWord;
         weakSelf.listMessage.msgSendType = JK_SocketMSG;
