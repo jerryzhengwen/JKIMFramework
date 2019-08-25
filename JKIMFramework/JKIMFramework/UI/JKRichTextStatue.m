@@ -80,7 +80,7 @@
     }];
     
     //在这里替换下
-    UIFont *font = [UIFont systemFontOfSize:14];
+    UIFont *font = [UIFont fontWithName:@"PingFangSC-Regular" size:15];
     NSMutableArray *specials = [NSMutableArray array];
 //    NSString *bundlePatch =  [[NSBundle bundleForClass:[self class]]pathForResource:@"JKIMImage" ofType:@"bundle"];
     NSString *bundlePatch = [JKBundleTool initBundlePathWithImage];

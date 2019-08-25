@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 +(NSString *)returnImageUrlStringWith:(NSString *)searchText;
 
 +(NSMutableArray *)returnImageViewWidthAndHeightWith:(NSString *)width AndHeight:(NSString *)height;
-
++(UIView *)createBackView;
 @end
 
 NS_ASSUME_NONNULL_END

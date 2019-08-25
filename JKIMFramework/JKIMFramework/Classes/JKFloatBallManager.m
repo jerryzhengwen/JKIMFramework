@@ -246,6 +246,10 @@ NSString *const kPopWithPanGes = @"kPopWithPanGes";
     
     [self.secondVC setHidesBottomBarWhenPushed:YES];
     
+    if ([[NSObject currentNavigationController].topViewController isKindOfClass:[self.floatViewController class]]) {
+        return;
+    }
+    
     [[NSObject currentNavigationController] pushViewController:self.floatViewController animated:YES];
 }
 

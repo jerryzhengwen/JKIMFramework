@@ -76,6 +76,7 @@
 #pragma mark - Date and string convert
 + (NSDate *)dateFromString:(NSString *)string;
 + (NSDate *)dateFromString:(NSString *)string withFormat:(NSString *)format;
++ (NSString *)changeTheDateString:(NSString *)Str;
 - (NSString *)string;
 - (NSString *)stringCutSeconds;
 

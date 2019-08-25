@@ -188,6 +188,13 @@
     
     return CGPointMake(CGRectGetWidth(self.bounds) / 2.f, CGRectGetHeight(self.bounds) / 2.f);
 }
++(UIView *)createBackView {
+    UIView *view = [[UIView alloc] init];
+    view.backgroundColor = [UIColor blackColor];
+    return view;
+}
+
+
 
 +(NSString *)returnImageUrlStringWith:(NSString *)searchText {
     //这个是用来匹配图片的url的   [a-zA-z]+://[^\"]*

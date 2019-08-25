@@ -17,7 +17,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.titleLabel.text = @"JK_SubSatisfaction".JK_localString;
+    self.titleLabel.text = @"提交满意度";
     __weak typeof(self) weakSelf = self;
     [[JKConnectCenter sharedJKConnectCenter] getSatisfactionWithBlock:^(id  _Nullable result) {
         NSArray * array = [NSJSONSerialization JSONObjectWithData:result options:NSJSONReadingMutableContainers error:nil];
@@ -28,7 +28,7 @@
                     if (i == 0) {
                         JKSatisfactionModel *firstModel = [[JKSatisfactionModel alloc] init];
                         model.canClick = NO;
-                        firstModel.name = @"JK_SumbitSatisfaction".JK_localString;
+                        firstModel.name = @"您对本次服务满意吗？";
                         [weakSelf.dataArray addObject:firstModel];
                     }
                     model.name = array[i][@"name"];
@@ -40,7 +40,7 @@
                     JKSatisfactionModel * model = [[JKSatisfactionModel alloc] init];
                     model.canClick = NO;
                     model.isTextView = YES;
-                    model.name = @"JK_Detail".JK_localString;
+                    model.name = @"请输入详情";
                     [weakSelf.dataArray addObject:model];
                 }
             }
@@ -78,9 +78,9 @@
     CGFloat safeSeparation = kStatusBarAndNavigationBarHeight == 88?24: 0;
     for (int i = 0; i < 2; i ++) {
         UIButton * btn = [UIButton buttonWithType:UIButtonTypeCustom];
-        NSString * title = i== 0? @"JK_Cancel".JK_localString:@"JK_Submit".JK_localString;
+        NSString * title = i== 0? @"取消":@"确定";
         [btn setTitle:title forState:UIControlStateNormal];
-        [btn setTitleColor:RGBColor(28, 158, 211, 1) forState:UIControlStateNormal];
+        [btn setTitleColor:RGBColor(236, 86, 66, 1) forState:UIControlStateNormal];
         btn.frame = CGRectMake(i *self.view.middleX, self.view.bottom - 40 - safeSeparation, self.view.width/2, 40);
         [self.view addSubview:btn];
         UIView * lineView = [[UIView alloc] init];
@@ -99,7 +99,7 @@
 }
 -(void)btnClick:(UIButton *)button {
     [self.view endEditing:YES];
-    if ([button.titleLabel.text isEqualToString:@"JK_Cancel".JK_localString]) {
+    if ([button.titleLabel.text isEqualToString:@"取消"]) {
         [self.navigationController popViewControllerAnimated:YES];
     }else { //调接口
         for (JKSatisfactionModel * model in self.dataArray) {
@@ -165,6 +165,13 @@
     return 30;
 }
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    return [[UIView alloc] init];
+    UIView * view = [[UIView alloc] init];
+    if (section == 0) {
+        UILabel * content = [[UILabel alloc]initWithFrame:CGRectMake(10, 0, self.view.frame.size.width - 30, 30)];
+        content.text = self.content;
+        content.font = [UIFont fontWithName:@"PingFangSC-Regular" size:14];
+        [view addSubview:content];
+    }
+    return view;
 }
 @end

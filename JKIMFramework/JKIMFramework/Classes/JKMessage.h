@@ -75,23 +75,27 @@ NS_ASSUME_NONNULL_BEGIN
 /** 宽度 */
 @property (nonatomic,assign) float imageWidth;
 
-/**
- 当前时间
- */
+/** 当前时间 */
 @property (nonatomic,copy) NSString *time;
 
-/**
- 在线坐席
- */
+/**  在线坐席 */
 @property (nonatomic,assign) int customerNumber;
-/**
- 聊天状态
- */
+/** 聊天状态 */
 @property (nonatomic,assign) BOOL chatState;
-/**
- 聊天者名字
- */
+/** 聊天者名字 */
 @property (nonatomic,copy) NSString *chatterName;
+
+@property (nonatomic,strong)NSArray *hotArray;
+///** 热点问题ID */
+//@property (nonatomic,copy) NSString * hotId;
+///** 标准答案ID  */
+//@property (nonatomic,copy) NSString *standardQuestionId;
+///** 热点问题 */
+//@property (nonatomic,copy) NSString *question;
+///** 热点问题排序 */
+//@property (nonatomic,assign) int sort;
+///** 来源ID  */
+//@property (nonatomic,assign) int source;
 @end
 
 NS_ASSUME_NONNULL_END

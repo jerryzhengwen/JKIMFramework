@@ -18,15 +18,41 @@ typedef void (^RobotMessageBlock)(JKMessage * _Nullable message,int count);
 
 typedef void (^JKGetSatisFactionBlock)(id _Nullable result);
 
-typedef void(^JKInItDialogueBlock)(NSDictionary *blockDict);
+typedef void(^JKInItDialogueBlock)(NSDictionary * _Nullable blockDict);
+
+typedef void(^JKGetSimilarQuestionBlock)(id _Nonnull result);
+
+typedef void(^JKSkipChatBlock)(BOOL);
+
+
+
+
+/**
+ 初始化相关数据是否成功
+
+ */
+typedef void(^JKInitCompleteBlock)(BOOL);
+
 
 @protocol ConnectCenterDelegate<NSObject>
+
+-(void)receiveRobotRePlay:(JKMessage *_Nonnull)message;
+/**
+ 收到热点问题的
+
+ @param hotArray 热点问题的Array
+ */
 @required
+-(void)receiveHotJKMessage:(JKMessage *_Nonnull)message;
+
+@optional
+-(void)getRoomHistory:(NSArray<JKMessage *> *)messageArr;
 /**
  收到消息
 
  @param message 消息
  */
+@required
 - (void)receiveMessage:(JKMessage *_Nullable)message;
 /**
  收到新的坐席消息
@@ -78,10 +104,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) RobotMessageBlock robotMessageBlock;
 
 @property (nonatomic,copy) JKGetSatisFactionBlock satisfactionBlock;
-/**
- 此时的连接状态
- */
+
+@property (nonatomic,copy) JKGetSimilarQuestionBlock similarBlock;
+/** 此时的连接状态 */
 @property (nonatomic,assign) JKSocketState socketState;
+/** 是否进入的Block */
+@property (nonatomic,assign) JKSkipChatBlock skipBlock;
 
 /**
  返回单例本身
@@ -89,6 +117,30 @@ NS_ASSUME_NONNULL_BEGIN
  @return 初始化当前单例
  */
 +(instancetype)sharedJKConnectCenter;
+
+
+
+
+
+
+
+
+-(void)checkoutInitCompleteBlock:(JKInitCompleteBlock) completeBlock;
+
+-(void)getSimilarQuestion:(NSString *)question Block:(JKGetSimilarQuestionBlock)block;
+
+-(void)getRobotQuestion:(JKMessage *)message;
+
+/**
+ 初始化公司的相关信息
+ */
+-(void)checkoutInfoWithBlock:(JKSkipChatBlock)skipBlock;
+/**
+ 获取当前的热点问题
+ */
+//-(void)getHostspotQuestionsWithResultBlock:(JKGetHotQuestionBlock)hotQuestionBlock;
+
+
 /**
  验证所需要的公司信息和访客信息
 
@@ -97,18 +149,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 -(void)initWithCompanyInfo:(JKCompanyInfo *)companyInfo customer:(JKCustomer *)customer;
 
-/**
- 发送消息
-
- @param message 发送消息体
- */
+/** 发送消息 @param message 发送消息体 */
 -(void)sendMessage:(JKMessage *)message;
 
-/**
- 发送机器人消息
- */
--(void)sendRobotMessage:(JKMessage *)message robotMessageBlock:(RobotMessageBlock)robotMessageBlock;
+-(void)receiveHistoryArray:(NSArray<JKMessage *> *)messageArr;
 
+/** 发送机器人消息 */
+-(void)sendRobotMessage:(JKMessage *)message robotMessageBlock:(RobotMessageBlock)robotMessageBlock;
 
 - (void)receiveRobotOn:(NSString *)data;
 
@@ -131,6 +178,13 @@ NS_ASSUME_NONNULL_BEGIN
  @param message JkMessage
  */
 -(void)receiveInvitation:(JKMessage *)message;
+
+/**
+ 热点消息的Array
+
+ @param JKMessage 热点消息的JKMessage
+ */
+-(void)sendHotJKMessage:(JKMessage *)message;
 
 /**
  查询数据

@@ -20,7 +20,10 @@ typedef NS_ENUM(NSInteger, JKMessageType) {
     JKMessageImage, // 图片
     JKMessageAudio, //语音
     JKMessageVedio, //视频
+    JKMessageHotMsg,//热点问题
     JKMessageImageText, //图文
+    JKMessageFAQImage,//机器人的图片
+    JKMessageFAQImageText,//机器人的图文
 };
 
 /**
