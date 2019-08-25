@@ -345,11 +345,12 @@ __weak JKDialogueViewController * weakSelf = self;
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     
     JKMessageFrame * messge = self.dataFrameArray[indexPath.row];
-    if (messge.message.messageType == JKMessageFAQImage || messge.message.messageType == JKMessageFAQImageText) {
+    JKDialogModel * message = messge.message;
+    if (message.messageType == JKMessageFAQImage || message.messageType == JKMessageFAQImageText) {
         return 120 + messge.cellHeight;
     }
-    if (messge.message.messageType == JKMessageHotMsg) {
-        return messge.message.hotArray.count * 41 + 20;
+    if (message.messageType == JKMessageHotMsg) {
+        return message.hotArray.count * 41 + 20;
     }
     CGFloat height = messge.cellHeight;
     return  height;
