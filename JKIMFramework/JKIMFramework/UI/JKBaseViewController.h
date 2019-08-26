@@ -16,8 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong)UILabel *titleLabel;
 
 @property (nonatomic,strong)UIButton *endDialogBtn;
-/** 获取图片资源路径 */
-@property (nonatomic,copy)NSString *imageBundlePath;
+
 
 /** 整体数组的DataArray */
 @property(nonatomic, strong)NSMutableArray *dataFrameArray;

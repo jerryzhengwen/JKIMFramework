@@ -10,7 +10,7 @@
 #import "JKSatisfactionModel.h"
 #import "JKStatisfactionCell.h"
 @interface JKSatisfactionViewController ()<UITableViewDataSource,UITableViewDelegate>
-
+@property (nonatomic,strong)NSMutableArray *titleArr;
 @end
 
 @implementation JKSatisfactionViewController
@@ -18,6 +18,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.titleLabel.text = @"提交满意度";
+    self.titleArr = [NSMutableArray array];
     __weak typeof(self) weakSelf = self;
     [[JKConnectCenter sharedJKConnectCenter] getSatisfactionWithBlock:^(id  _Nullable result) {
         NSArray * array = [NSJSONSerialization JSONObjectWithData:result options:NSJSONReadingMutableContainers error:nil];
@@ -29,23 +30,23 @@
                         JKSatisfactionModel *firstModel = [[JKSatisfactionModel alloc] init];
                         model.canClick = NO;
                         firstModel.name = @"您对本次服务满意吗？";
-                        [weakSelf.dataArray addObject:firstModel];
+                        [weakSelf.titleArr addObject:firstModel];
                     }
                     model.name = array[i][@"name"];
                     model.pk = array[i][@"pk"];
                     model.canClick = YES;
-                    [weakSelf.dataArray addObject:model];
+                    [weakSelf.titleArr addObject:model];
                 }
-                if (i == array.count - 1 && weakSelf.dataArray.count > 0) {
+                if (i == array.count - 1 && weakSelf.titleArr.count > 0) {
                     JKSatisfactionModel * model = [[JKSatisfactionModel alloc] init];
                     model.canClick = NO;
                     model.isTextView = YES;
                     model.name = @"请输入详情";
-                    [weakSelf.dataArray addObject:model];
+                    [weakSelf.titleArr addObject:model];
                 }
             }
         }
-        if (weakSelf.dataArray.count) {
+        if (weakSelf.titleArr.count) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [weakSelf.tableView reloadData];
             });
@@ -64,7 +65,7 @@
 //        if (i == titleArray.count - 1) {
 //            model.isTextView = YES;
 //        }
-//        [self.dataArray addObject:model];
+//        [self.titleArr addObject:model];
 //    }
     [self createSubmitBtn];
     [self.view addSubview:self.tableView];
@@ -102,9 +103,9 @@
     if ([button.titleLabel.text isEqualToString:@"取消"]) {
         [self.navigationController popViewControllerAnimated:YES];
     }else { //调接口
-        for (JKSatisfactionModel * model in self.dataArray) {
+        for (JKSatisfactionModel * model in self.titleArr) {
             if (model.showSelect) { // 在这里调用接口
-                JKSatisfactionModel * lastModel = self.dataArray.lastObject;
+                JKSatisfactionModel * lastModel = self.titleArr.lastObject;
                 NSString * pk = model.pk?model.pk:@"";
                 NSString *memo = lastModel.content?lastModel.content:@"";
                 NSDictionary *dict = [NSDictionary dictionaryWithObjects:@[pk,memo] forKeys:@[@"pk",@"memo"]];
@@ -122,7 +123,7 @@
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 0) {
-        return self.dataArray.count - 1;
+        return self.titleArr.count - 1;
     }
     return 1;
 }
@@ -141,16 +142,16 @@
             self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     }
     cell.selectionStyle =  UITableViewCellSelectionStyleNone;
-    cell.model = indexPath.section == 0 ?self.dataArray[indexPath.row]:self.dataArray.lastObject;
+    cell.model = indexPath.section == 0 ?self.titleArr[indexPath.row]:self.titleArr.lastObject;
     return cell;
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    JKSatisfactionModel * model = self.dataArray[indexPath.row];
+    JKSatisfactionModel * model = self.titleArr[indexPath.row];
     if (!model.canClick) {
         return;
     }
-    for (int i = 0; i < self.dataArray.count; i ++) {
-        JKSatisfactionModel * model = self.dataArray[i];
+    for (int i = 0; i < self.titleArr.count; i ++) {
+        JKSatisfactionModel * model = self.titleArr[i];
         model.showSelect = NO;
         if (i == indexPath.row) {
             model.showSelect = YES;

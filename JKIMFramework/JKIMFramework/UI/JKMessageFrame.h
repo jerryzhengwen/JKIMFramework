@@ -21,17 +21,18 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-@class JKDialogModel;
+#import "JKDialogModel.h"
 
 @interface JKMessageFrame : NSObject
 
-@property (nonatomic, assign, readonly) CGRect nameF;
-@property (nonatomic, assign, readonly) CGRect iconF;
-@property (nonatomic, assign, readonly) CGRect timeF;
+@property (nonatomic, assign) CGRect nameF;
+@property (nonatomic, assign) CGRect iconF;
+@property (nonatomic, assign) CGRect timeF;
 @property (nonatomic, assign) CGRect contentF;
 
 @property (nonatomic, assign) CGFloat cellHeight;
-@property (nonatomic, strong) JKDialogModel *message;
+@property (nonatomic, retain) JKDialogModel *message;
+@property (nonatomic, assign) JKMessageType type;
 @property (nonatomic, assign) BOOL showTime;
 
 @end

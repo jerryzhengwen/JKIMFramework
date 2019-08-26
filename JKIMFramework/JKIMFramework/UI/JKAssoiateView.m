@@ -15,10 +15,10 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 33;
 }
--(void)setAssociateArr:(NSArray *)associateArr {
-    _associateArr = associateArr;
-    [self.tableView reloadData];
-}
+//-(void)setAssociateArr:(NSArray *)associateArr {
+//    _associateArr = associateArr;
+//    [self.tableView reloadData];
+//}
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return self.associateArr.count;
 }

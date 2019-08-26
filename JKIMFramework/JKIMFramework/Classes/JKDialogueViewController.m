@@ -18,7 +18,8 @@
 #import "RegexKitLite.h"
 @interface JKDialogueViewController ()<UITableViewDelegate,UITableViewDataSource,UITextViewDelegate,ConnectCenterDelegate,JKMessageCellDelegate>
 
-
+/** 获取图片资源路径 */
+@property (nonatomic,copy)NSString *imageBundlePath;
 
 @property(nonatomic,strong)UIView *bottomView;
 
@@ -49,7 +50,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self creatUI];
-//    [self loadHistoryData]; 不加载本地记录，直接从服务端进行读取
+    //    [self loadHistoryData]; 不加载本地记录，直接从服务端进行读取
     [self createBackButton];
     [self.view addSubview:self.assoiateView];
     __weak JKDialogueViewController *weakSelf = self;
@@ -160,9 +161,9 @@
         [self.dataFrameArray removeObjectAtIndex:index];
     }
     [self tableViewMoveToLastPathNeedAnimated:NO];
-
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//    });
+    
+    //    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    //    });
     
     
 }
@@ -176,19 +177,20 @@
     self.listMessage.content = self.textView.text;
     
     [JKIMSendHelp sendTextMessageWithMessageModel:self.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
+        messageFrame =  [self jisuanMessageFrame:messageFrame];
         [self.dataFrameArray addObject:messageFrame];
         [self tableViewMoveToLastPathNeedAnimated:YES];
     }];
     
     
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//        //在此判断是发给机器人还是房间
-//        if ((!self.listMessage.to.length) && [self.textView.text isEqualToString:@"转人工"]) {
-//            [self sendZhuanRenGong];
-//        }else if ((!self.listMessage.to.length) && ([JKConnectCenter sharedJKConnectCenter].socketState == JK_SocketConnectOnline)){
-//            [self sendAutoReplayWithString:@"JK_DialogueView_defaultAnswer".JK_localString];
-//        }
-//    });
+    //    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    //        //在此判断是发给机器人还是房间
+    //        if ((!self.listMessage.to.length) && [self.textView.text isEqualToString:@"转人工"]) {
+    //            [self sendZhuanRenGong];
+    //        }else if ((!self.listMessage.to.length) && ([JKConnectCenter sharedJKConnectCenter].socketState == JK_SocketConnectOnline)){
+    //            [self sendAutoReplayWithString:@"JK_DialogueView_defaultAnswer".JK_localString];
+    //        }
+    //    });
     self.textView.text = @"";
     self.assoiateView.hidden = YES;
 }
@@ -222,7 +224,7 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-__weak JKDialogueViewController * weakSelf = self;
+    __weak JKDialogueViewController * weakSelf = self;
     JKMessageFrame * messageFrame = self.dataFrameArray[indexPath.row];
     if (messageFrame.message.messageType == JKMessageFAQImageText ||messageFrame.message.messageType == JKMessageFAQImage) {
         static NSString *cellIdentifer = @"JKWebViewCell";
@@ -369,12 +371,12 @@ __weak JKDialogueViewController * weakSelf = self;
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self.tableView reloadData];
                 
-//            CGPoint offset = CGPointMake(0,self.tableView.contentSize.height - self.tableView.frame.size.height);
-//                [self.tableView setContentOffset:offset animated:YES];
+                //            CGPoint offset = CGPointMake(0,self.tableView.contentSize.height - self.tableView.frame.size.height);
+                //                [self.tableView setContentOffset:offset animated:YES];
                 
                 // 4.自动滚动表格到最后一行
                 NSIndexPath *lastPath = [NSIndexPath indexPathForRow:self.dataFrameArray.count - 1 inSection:0];
-
+                
                 [self.tableView scrollToRowAtIndexPath:lastPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
             });
         }];
@@ -457,15 +459,16 @@ __weak JKDialogueViewController * weakSelf = self;
 #pragma mark - 消息的Delegate
 -(void)receiveRobotRePlay:(JKMessage *)message {
     dispatch_async(dispatch_get_main_queue(), ^{
-    JKMessageFrame *framModel = [[JKMessageFrame alloc]init];
-    JKDialogModel *dialog = [JKDialogModel changeMsgTypeWithJKModel:message];
-    JKMessageType type = dialog.messageType;
-    framModel.message = dialog;
+        JKMessageFrame *framModel = [[JKMessageFrame alloc]init];
+        JKDialogModel *dialog = [JKDialogModel changeMsgTypeWithJKModel:message];
+        JKMessageType type = dialog.messageType;
+        framModel.message = dialog;
+        framModel = [self jisuanMessageFrame:framModel];
         if (type == JKMessageFAQImageText || type == JKMessageFAQImage) {
             framModel.cellHeight = 0;
         }
-    [self.dataFrameArray addObject:framModel];
-    [self tableViewMoveToLastPathNeedAnimated:YES];
+        [self.dataFrameArray addObject:framModel];
+        [self tableViewMoveToLastPathNeedAnimated:YES];
     });
 }
 -(void)getRoomHistory:(NSArray<JKMessage *> *)messageArr {
@@ -474,9 +477,13 @@ __weak JKDialogueViewController * weakSelf = self;
             JKDialogModel * autoModel = [message mutableCopy];
             JKMessageFrame *frameModel = [[JKMessageFrame alloc] init];
             frameModel.message = autoModel;
+            frameModel = [self jisuanMessageFrame:frameModel];
+            if (message.messageType == JKMessageFAQImageText || message.messageType == JKMessageFAQImage) {
+                frameModel.cellHeight = 0;
+            }
             [self.dataFrameArray addObject:frameModel];
         }
-         [self tableViewMoveToLastPathNeedAnimated:YES];
+        [self tableViewMoveToLastPathNeedAnimated:YES];
     });
 }
 /**
@@ -515,7 +522,7 @@ __weak JKDialogueViewController * weakSelf = self;
         [self.dataFrameArray addObject:framModel];
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self tableViewMoveToLastPathNeedAnimated:YES];
-        });      
+        });
     });
 }
 - (void)showSatisfacionViewFromid:(JKMessage *)model{
@@ -547,6 +554,7 @@ __weak JKDialogueViewController * weakSelf = self;
         weakSelf.listMessage.isRichText = NO;
         
         [JKIMSendHelp sendTextMessageWithMessageModel:weakSelf.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
+            messageFrame = [self jisuanMessageFrame:messageFrame];
             [weakSelf.dataFrameArray addObject:messageFrame];
             [weakSelf tableViewMoveToLastPathNeedAnimated:YES];
         }];
@@ -729,9 +737,9 @@ __weak JKDialogueViewController * weakSelf = self;
     return _faceButton;
 }
 -(void)plugInBtn:(UIButton *)button {
-//    if (!self.listMessage.to.length) {
-//        return;
-//    }
+    //    if (!self.listMessage.to.length) {
+    //        return;
+    //    }
     
     button.selected = !button.isSelected;
     float duration = 0.1;
@@ -869,24 +877,26 @@ __weak JKDialogueViewController * weakSelf = self;
     }
     return YES;
 }
+-(void)getSimilarWithResult:(id)result {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSArray *array = [NSJSONSerialization JSONObjectWithData:result options:kNilOptions error:nil];
+        if (array.count) {
+            self.assoiateView.hidden = NO;
+            self.assoiateView.associateArr = [[NSMutableArray alloc] initWithArray:array];
+            self.assoiateView.keyWord = self.textView.text;
+            CGFloat height = 33 * array.count;
+            self.assoiateView.frame = CGRectMake(0, self.bottomView.top - height, self.view.width, height);
+             [self.assoiateView.tableView reloadData];
+        }else {
+            self.assoiateView.hidden = YES;
+        }
+    });
+}
 -(void)textViewDidChange:(UITextView *)textView {
     __weak JKDialogueViewController *weakSelf = self;
     [[JKConnectCenter sharedJKConnectCenter] getSimilarQuestion:textView.text Block:^(id  _Nonnull result) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            
-            NSArray *array = [NSJSONSerialization JSONObjectWithData:result options:kNilOptions error:nil];
-            if (array.count) {
-                weakSelf.assoiateView.hidden = NO;
-                weakSelf.assoiateView.associateArr = array;
-                weakSelf.assoiateView.keyWord = textView.text;
-                CGFloat height = 33 * array.count;
-                weakSelf.assoiateView.frame = CGRectMake(0, weakSelf.bottomView.top - height, weakSelf.view.width, height);
-            }else {
-                weakSelf.assoiateView.hidden = YES;
-            }
-        });
-    }]; 
+        [weakSelf getSimilarWithResult:result];
+    }];
 }
 - (JKMessage *)listMessage{
     if (_listMessage == nil) {
@@ -900,5 +910,110 @@ __weak JKDialogueViewController * weakSelf = self;
         _assoiateView.hidden = YES;
     }
     return _assoiateView;
+}
+
+
+
+
+- (JKMessageFrame *)jisuanMessageFrame:(JKMessageFrame *)message{
+    CGFloat screenW = [UIScreen mainScreen].bounds.size.width;
+    
+    // 1、计算时间的位置
+    CGFloat timeY = JKChatMargin;
+    message.timeF = CGRectMake(0, timeY, screenW, 17);
+    CGFloat contentY = CGRectGetMaxY(message.timeF);
+    CGFloat contentX = 0;
+    if (message.message.whoSend !=JK_Visitor) {
+        message.nameF = CGRectMake(24, CGRectGetMaxY(message.timeF) + 30, screenW - 100, 20);
+        contentY = CGRectGetMaxY(message.nameF) + 4;
+        contentX =  20;
+    }else {
+        contentY = contentY + 21;
+    }
+    //根据种类分
+    CGSize contentSize;
+    switch (message.message.messageType) {
+        case JKMessageWord:
+            contentSize = [self jiSuanMessageHeigthWithModel:message.message message:message.message.content font:JKChatContentFont];
+            
+            if ([message.message.content containsString:@"\r\n"] && message.message.whoSend != JK_Visitor) {
+                contentSize.width = JKChatContentW;
+            }
+            
+            break;
+        case JKMessageImage:
+            contentSize = CGSizeMake(message.message.imageWidth, message.message.imageHeight);
+            break;
+        case JKMessageVedio:
+            contentSize = CGSizeMake(120, 20);
+            break;
+        default:
+            break;
+    }
+    if (message.message.whoSend == JK_Visitor) {
+        contentX = screenW -20-contentSize.width - 44;
+    }
+    
+    if (message.message.whoSend == JK_SystemMarkShow) {
+        message.contentF = CGRectMake(0, 0, contentSize.width + 44, contentSize.height);
+        message.cellHeight = CGRectGetMaxY(message.contentF);
+    }else{
+        message.contentF = CGRectMake(contentX, contentY, contentSize.width + 44, contentSize.height);
+        message.cellHeight = MAX(CGRectGetMaxY(message.contentF), CGRectGetMaxY(message.nameF))  ;
+    }
+    
+    return message;
+    
+}
+
+- (CGSize )jiSuanMessageHeigthWithModel:(JKDialogModel *)model message:(NSString *)message font:(UIFont *)font{
+    if (!message.length) {
+        return CGSizeZero;
+    }
+    
+    JKRichTextStatue * richText = [[JKRichTextStatue alloc] init];
+    richText.text = message;
+    //再经过TextView中间过滤一次
+    
+    
+    
+    
+    
+    NSMutableAttributedString *attribute = [self praseHtmlStr:message];
+    [attribute addAttributes:@{NSFontAttributeName: font} range:NSMakeRange(0, attribute.string.length)];
+    
+    CGSize size = [self getAttributedStringHeightWithText:attribute andWidth:JKChatContentW andFont:font];
+    
+    model.imageHeight = size.height;
+    if (!model.imageWidth) {
+        model.imageWidth = size.width;
+    }
+    return size;
+}
+- (NSMutableAttributedString *)praseHtmlStr:(NSString *)htmlStr {
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithData:[htmlStr dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:nil];
+    return attributedString;
+}
+/**
+ *  计算富文本的高度
+ */
+-(CGSize)getAttributedStringHeightWithText:(NSAttributedString *)attributedString andWidth:(CGFloat)width andFont:(UIFont *)font{
+    static UITextView *stringLabel = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{//生成一个同于计算文本高度的label
+        stringLabel = [[UITextView alloc] init];
+        stringLabel.font = font;
+    });
+    
+    stringLabel.attributedText = attributedString;
+    CGSize size = [stringLabel sizeThatFits:CGSizeMake(width, 0)];
+    CGSize ceilSize = CGSizeMake(ceil(size.width), ceil(size.height));
+    return ceilSize;
+}
+- (NSString *)imageBundlePath{
+    if (_imageBundlePath == nil) {
+        _imageBundlePath =  [JKBundleTool initBundlePathWithImage];
+    }
+    return _imageBundlePath;
 }
 @end

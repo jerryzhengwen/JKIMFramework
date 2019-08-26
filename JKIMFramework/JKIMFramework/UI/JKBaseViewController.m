@@ -40,14 +40,14 @@
     
     self.navigation.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, kStatusBarAndNavigationBarHeight);
     self.titleLabel.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 25);
-   
+    
     CGPoint center = self.titleLabel.center;
     center.x = self.navigation.center.x;
     center.y = iPhoneXR || iPhoneX ? self.navigation.center.y + 20 : self.navigation.center.y + 10;
     self.titleLabel.center = center;
 }
 -(void)createCenterImageView {
-    NSString *filePatch =  [self.imageBundlePath stringByAppendingPathComponent:@"jk_customer"];
+    NSString *filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"jk_customer"];
     UIImageView * imageView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:filePatch]];
     CGRect rect = self.navigation.frame;
     imageView.frame = CGRectMake(CGRectGetMidX(rect)-20, CGRectGetMaxY(rect) - 20, 40, 40);
@@ -81,7 +81,7 @@
     CGPoint backButtonCenter = self.backButton.center;
     backButtonCenter.y = self.titleLabel.center.y;
     self.backButton.center = backButtonCenter;
-    self.backButton.imageEdgeInsets = UIEdgeInsetsMake(4, 0, 4, 42); 
+    self.backButton.imageEdgeInsets = UIEdgeInsetsMake(4, 0, 4, 42);
 }
 -(NSMutableArray *)dataArray {
     if (_dataArray == nil) {
@@ -140,7 +140,7 @@
 - (UIButton *)backButton{
     if (!_backButton) {
         _backButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        NSString *filePatch = [self.imageBundlePath stringByAppendingPathComponent:@"jk_return"];
+        NSString *filePatch = [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"jk_return"];
         [_backButton setImage:[UIImage imageWithContentsOfFile:filePatch] forState:UIControlStateNormal];
         [_backButton addTarget:self action:@selector(backAction) forControlEvents:UIControlEventTouchUpInside];
     }
@@ -180,11 +180,6 @@
 - (void)addToucheEvent:(UITapGestureRecognizer *)tap {
     [self.view endEditing:YES];
 }
-- (NSString *)imageBundlePath{
-    if (_imageBundlePath == nil) {
-        _imageBundlePath =  [JKBundleTool initBundlePathWithImage];
-    }
-    return _imageBundlePath;
-}
+
 
 @end
