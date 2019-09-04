@@ -72,7 +72,14 @@
     [self.endDialogBtn addTarget:self action:@selector(endDialogeClick) forControlEvents:UIControlEventTouchUpInside];
 }
 -(void)endDialogeClick {
-    
+//    [[JKConnectCenter sharedJKConnectCenter] getEndChatBlock:^(BOOL satisFaction) {
+//        if (satisFaction) {
+//            
+//        }else {
+//            
+//        }
+//        
+//    }];
 }
 /** 设置返回按钮*/
 - (void)createBackButton{

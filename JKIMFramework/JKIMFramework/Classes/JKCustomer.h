@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic,copy)NSString *email;
 /**
- 电话  非必填
+ 电话  必填
  */
 @property (nonatomic,copy)NSString *mobile_phone;
 /// qq 非必填

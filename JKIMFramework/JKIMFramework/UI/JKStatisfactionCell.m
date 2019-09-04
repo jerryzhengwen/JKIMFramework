@@ -33,7 +33,7 @@
     if (model.isTextView) {
         self.textView.hidden = NO;
         self.textLabel.hidden =  YES;
-        if (model.content) {
+        if (model.content.length) {
             self.textView.text = model.content;
             self.textView.textColor = [UIColor blackColor];
         }else {

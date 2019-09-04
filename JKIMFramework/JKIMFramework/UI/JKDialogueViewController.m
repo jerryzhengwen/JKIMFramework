@@ -19,7 +19,7 @@
 @interface JKDialogueViewController ()<UITableViewDelegate,UITableViewDataSource,UITextViewDelegate,ConnectCenterDelegate,JKMessageCellDelegate>
 
 /** 获取图片资源路径 */
-@property (nonatomic,copy)NSString *imageBundlePath;
+//@property (nonatomic,copy)NSString *imageBundlePath;
 
 @property(nonatomic,strong)UIView *bottomView;
 
@@ -42,8 +42,8 @@
 //收到新的消息时的Message
 @property(nonatomic, strong)JKMessage *listMessage;
 ///点赞按钮
-@property(nonatomic, strong)UIButton *satisfieButton;
-
+//@property(nonatomic, strong)UIButton *satisfieButton;
+@property(nonatomic,assign) BOOL isLoadHistory;
 @end
 
 @implementation JKDialogueViewController
@@ -59,8 +59,23 @@
     };
     [self createRightButton];
     [self createCenterImageView];
+    MJRefreshNormalHeader * refresh = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        [weakSelf loadHistoryData];
+    }];
+    self.tableView.mj_header = refresh;
 }
-
+-(void)endDialogeClick {
+    __weak JKDialogueViewController *weakSelf = self;
+    [[JKConnectCenter sharedJKConnectCenter] getEndChatBlock:^(BOOL satisFaction) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (satisFaction) { //跳转满意度界面
+                [weakSelf showSatisfacionViewFromid:[[JKMessage alloc]init]];
+            }else { //关闭当前界面
+                [weakSelf.navigationController popViewControllerAnimated:YES];
+            }
+        });
+    }];
+}
 -(JYFaceView *)faceView {
     if (_faceView == nil) {
         _faceView = [[JYFaceView alloc] initWithFrame:CGRectMake(0, self.bottomView.bottom, self.view.width, 145)];
@@ -127,43 +142,46 @@
             [weakSelf photoAction];
         }
     };
-    
-    
-    self.satisfieButton.frame = CGRectMake([UIScreen mainScreen].bounds.size.width - 60, self.tableView.bottom - 60, 50, 50);
-    self.satisfieButton.hidden = YES;
-    
-    
 }
 
 - (void)loadHistoryData{
-    self.dataArray = [[JKConnectCenter sharedJKConnectCenter]selectEntity:[NSArray array] ascending:NO filterString:nil];
-    
-    NSInteger index = -1;
-    for (int i = 0; i < self.dataArray.count; i++) {
-        JKMessage *model = self.dataArray[i];
+    if (self.isLoadHistory == NO) {
+        self.isLoadHistory = YES;
+    }else {
+        return;
+    }
+    NSMutableArray *historyArr = [[JKConnectCenter sharedJKConnectCenter]selectEntity:[NSArray array] ascending:NO filterString:nil];
+    [self.tableView.mj_header endRefreshing];
+    [historyArr enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        JKMessage *historyModel = historyArr[idx];
+        for (JKMessageFrame *frameModel in self.dataArray) {
+            JKMessage * model =frameModel.message;
+            if ([historyModel.messageId isEqualToString:model.messageId]) {
+                [historyArr removeObject:historyModel];
+            }
+        }
+    }];
+    for (int i = 0; i < historyArr.count; i++) {
+        JKMessage *model = historyArr[i];
         JKMessageFrame *framModel = [[JKMessageFrame alloc]init];
         JKDialogModel *dialog = [JKDialogModel changeMsgTypeWithJKModel:model];
         dialog.time = model.time;
         framModel.message = dialog;
-        if (model.whoSend == JK_SystemMark) {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [self showSatisfacionViewFromid:model];
-            });
-            index = i;
+        if (model.whoSend != JK_SystemMark) {
+            framModel = [self jisuanMessageFrame:framModel];
+            if (model.messageType == JKMessageFAQImageText || model.messageType == JKMessageFAQImage) {
+                framModel.cellHeight = 0;
+            }
+            [self.dataFrameArray insertObject:framModel atIndex:0];
         }
-        
-        [self.dataFrameArray addObject:framModel];
     }
     
-    if (index >= 0) {
-        //评价的信号文字不用显示
-        [self.dataArray removeObjectAtIndex:index];
-        [self.dataFrameArray removeObjectAtIndex:index];
-    }
+//    if (index >= 0) {
+//        //评价的信号文字不用显示
+//        [self.dataArray removeObjectAtIndex:index];
+//        [self.dataFrameArray removeObjectAtIndex:index];
+//    }
     [self tableViewMoveToLastPathNeedAnimated:NO];
-    
-    //    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-    //    });
     
     
 }
@@ -235,9 +253,13 @@
         cell.messageFrame = messageFrame;
         cell.userInteractionEnabled = YES;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        cell.webHeightBlock = ^{
-            [weakSelf tableViewMoveToLastPathNeedAnimated:YES];
+        cell.reloadRow = (int)indexPath.row;
+        cell.webHeightBlock = ^(int row) {
+            [weakSelf reloadCellWithRow:row];
         };
+//        cell.webHeightBlock = ^{
+//            [weakSelf tableViewMoveToLastPathNeedAnimated:YES];
+//        };
         return cell;
     }
     if (messageFrame.message.messageType == JKMessageHotMsg) {
@@ -321,7 +343,7 @@
     if (self.faceView.hidden == NO) {
         self.faceView.hidden = YES;
         self.faceButton.selected = NO;
-        NSString *filePatch = [self.imageBundlePath stringByAppendingPathComponent:@"icon_expression"];
+        NSString *filePatch = [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"icon_expression"];
         [self.faceButton setImage:[UIImage imageWithContentsOfFile:filePatch] forState:UIControlStateNormal];
         [self bottomViewInitialLayout];
     }
@@ -348,18 +370,26 @@
     
     JKMessageFrame * messge = self.dataFrameArray[indexPath.row];
     JKDialogModel * message = messge.message;
-    if (message.messageType == JKMessageFAQImage || message.messageType == JKMessageFAQImageText) {
-        return 120 + messge.cellHeight;
+    if (message.messageType == JKMessageFAQImage || message.messageType == JKMessageFAQImageText) { //所有的高度都在加10
+        return 120 + messge.cellHeight + 10;
     }
     if (message.messageType == JKMessageHotMsg) {
-        return message.hotArray.count * 41 + 20;
+        return message.hotArray.count * 41 + 40; //热点问题在最上面，不加10
     }
     CGFloat height = messge.cellHeight;
-    return  height;
+    return  height + 10;
 }
 
 
-
+-(void)reloadCellWithRow:(int)row {
+    NSIndexPath *indexPath=[NSIndexPath indexPathForRow:row inSection:0];
+    [self.refreshQ cancelAllOperations];
+    [self.refreshQ addOperationWithBlock:^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath,nil] withRowAnimation:UITableViewRowAnimationNone];
+        });
+    }];
+}
 /** 滚动到最后一行*/
 -(void)tableViewMoveToLastPathNeedAnimated:(BOOL)animated {
     @try {
@@ -390,7 +420,6 @@
         
     }
 }
-
 //刷新数据
 - (void)reloadPath{
     if (self.dataFrameArray.count < 1) {
@@ -415,7 +444,6 @@
         [self sendImageWithImageData:imageData image:image];
         
     }];
-    
 }
 #pragma 相册
 - (void)photoAction{
@@ -453,8 +481,6 @@
     }];
     
 }
-
-
 #pragma -
 #pragma mark - 消息的Delegate
 -(void)receiveRobotRePlay:(JKMessage *)message {
@@ -483,7 +509,8 @@
             }
             [self.dataFrameArray addObject:frameModel];
         }
-        [self tableViewMoveToLastPathNeedAnimated:YES];
+        [self reloadPath];
+//        [self tableViewMoveToLastPathNeedAnimated:YES];
     });
 }
 /**
@@ -491,11 +518,20 @@
  @param message 消息
  */
 - (void)receiveMessage:(JKMessage *)message{
+    __weak JKDialogueViewController *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
         JKDialogModel * autoModel = [message mutableCopy];
         JKMessageFrame *frameModel = [[JKMessageFrame alloc]init];
-        if (autoModel.whoSend == JK_SystemMark) {
-            [self showSatisfacionViewFromid:autoModel];
+        if (autoModel.whoSend == JK_SystemMark) { //在这里判断初始化context_id，以及判断是否弹满意度
+            [[JKConnectCenter sharedJKConnectCenter] getEndChatBlock:^(BOOL satisFaction) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (satisFaction) { //跳转满意度界面
+                        [weakSelf showSatisfacionViewFromid:autoModel];
+                    }
+                });
+            }];
+            //初始化一下context_id;
+            [[JKConnectCenter sharedJKConnectCenter] initDialogeWIthSatisFaction];
             return;
         }
         
@@ -504,7 +540,7 @@
             self.listMessage.chatState = autoModel.chatState;
             self.listMessage.to = @"";
             self.titleLabel.text = @"对话";
-            self.satisfieButton.hidden = YES;
+//            self.satisfieButton.hidden = YES;
         }
         autoModel.whoSend = message.whoSend?message.whoSend:JK_Customer;
         autoModel.time = autoModel.time;
@@ -537,29 +573,29 @@
     self.isPushToController = @"YES";
     [self.navigationController pushViewController:view animated:YES];
     
-    __weak typeof(self) weakSelf = self;
-    view.returnMessageBlock = ^(NSString * _Nonnull message) {
-        NSString *value = @"";
-        NSArray * array = [model.from componentsSeparatedByString:@"/"];
-        if (array.count > 1) {
-            NSString *username = [array[1] componentsSeparatedByString:@"@openfire-test"].firstObject;
-            value = [username componentsSeparatedByString:@"-"].lastObject;
-        }
-        message = [NSString stringWithFormat:@"%@%@%@%@",@"您给客服",value,@"的评价",message];
-        
-        weakSelf.listMessage.messageType = JKMessageWord;
-        weakSelf.listMessage.msgSendType = JK_SocketMSG;
-        weakSelf.listMessage.whoSend = JK_SystemMarkShow;
-        weakSelf.listMessage.content = message;
-        weakSelf.listMessage.isRichText = NO;
-        
-        [JKIMSendHelp sendTextMessageWithMessageModel:weakSelf.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
-            messageFrame = [self jisuanMessageFrame:messageFrame];
-            [weakSelf.dataFrameArray addObject:messageFrame];
-            [weakSelf tableViewMoveToLastPathNeedAnimated:YES];
-        }];
-        
-    };
+//    __weak typeof(self) weakSelf = self;
+//    view.returnMessageBlock = ^(NSString * _Nonnull message) {
+//        NSString *value = @"";
+//        NSArray * array = [model.from componentsSeparatedByString:@"/"];
+//        if (array.count > 1) {
+//            NSString *username = [array[1] componentsSeparatedByString:@"@openfire-test"].firstObject;
+//            value = [username componentsSeparatedByString:@"-"].lastObject;
+//        }
+//        message = [NSString stringWithFormat:@"%@%@%@%@",@"您给客服",value,@"的评价",message];
+//
+//        weakSelf.listMessage.messageType = JKMessageWord;
+//        weakSelf.listMessage.msgSendType = JK_SocketMSG;
+//        weakSelf.listMessage.whoSend = JK_SystemMarkShow;
+//        weakSelf.listMessage.content = message;
+//        weakSelf.listMessage.isRichText = NO;
+//
+//        [JKIMSendHelp sendTextMessageWithMessageModel:weakSelf.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
+//            messageFrame = [self jisuanMessageFrame:messageFrame];
+//            [weakSelf.dataFrameArray addObject:messageFrame];
+//            [weakSelf tableViewMoveToLastPathNeedAnimated:YES];
+//        }];
+//
+//    };
 }
 
 - (void)showRobotMessage:(JKMessage *)message count:(int)count{
@@ -589,7 +625,7 @@
     self.listMessage.from = @"";
     if (self.listMessage.chatterName) {
         self.titleLabel.text = self.listMessage.chatterName;
-        self.satisfieButton.hidden = NO;
+//        self.satisfieButton.hidden = NO;
     }
 }
 
@@ -602,8 +638,8 @@
 - (void)UIKeyboardWillShowNotification:(NSNotification *)noti {
     self.faceButton.selected = NO;
     self.moreBtn.selected = NO;
-    NSString *filePatch =  [self.imageBundlePath stringByAppendingPathComponent:@"icon_expression"];
-    NSString *morePatch =  [self.imageBundlePath stringByAppendingPathComponent:@"jk_morebtn"];
+    NSString *filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"icon_expression"];
+    NSString *morePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"jk_morebtn"];
     [self.faceButton setImage:[UIImage imageWithContentsOfFile:filePatch] forState:UIControlStateNormal];
     [self.moreBtn setImage:[UIImage imageWithContentsOfFile:morePatch] forState:UIControlStateNormal];
     self.faceView.frame = CGRectMake(self.faceView.left, self.view.bottom, self.faceView.width, self.faceView.height);
@@ -717,20 +753,20 @@
     return _textView;
 }
 
-- (UIButton *)satisfieButton{
-    if (_satisfieButton == nil) {
-        _satisfieButton = [[UIButton alloc]init];
-        NSString *filePatch =  [self.imageBundlePath stringByAppendingPathComponent:@"satisfied"];
-        [_satisfieButton setImage:[UIImage imageWithContentsOfFile:filePatch] forState:UIControlStateNormal];
-    }
-    return _satisfieButton;
-}
+//- (UIButton *)satisfieButton{
+//    if (_satisfieButton == nil) {
+//        _satisfieButton = [[UIButton alloc]init];
+//        NSString *filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"satisfied"];
+//        [_satisfieButton setImage:[UIImage imageWithContentsOfFile:filePatch] forState:UIControlStateNormal];
+//    }
+//    return _satisfieButton;
+//}
 
 
 -(UIButton *)faceButton {
     if (_faceButton == nil) {
         _faceButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        NSString *filePatch = [self.imageBundlePath stringByAppendingPathComponent:@"icon_expression"];
+        NSString *filePatch = [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"icon_expression"];
         [_faceButton setImage:[UIImage imageWithContentsOfFile:filePatch] forState:UIControlStateNormal];
         [_faceButton addTarget:self action:@selector(clickFaceBtn:) forControlEvents:UIControlEventTouchUpInside];
     }
@@ -749,7 +785,7 @@
     }
     if (self.faceButton.selected) {
         self.faceButton.selected = !self.faceButton.selected;
-        NSString *facePath = [self.imageBundlePath stringByAppendingPathComponent:@"icon_expression"];
+        NSString *facePath = [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"icon_expression"];
         [self.faceButton setImage:[UIImage imageWithContentsOfFile:facePath] forState:UIControlStateNormal];
         self.tableView.frame = CGRectMake(0, self.tableView.top, self.tableView.width, self.tableView.height + 145);
         self.bottomView.frame = CGRectMake(0, self.tableView.bottom, self.bottomView.width, self.bottomView.height);
@@ -758,7 +794,7 @@
     NSString *filePatch = @"";
     if (button.selected) {
         self.plugInView.hidden = NO;
-        filePatch =  [self.imageBundlePath stringByAppendingPathComponent:@"jkmoreclick"];
+        filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"jkmoreclick"];
         [UIView performWithoutAnimation:^{
             self.tableView.frame = CGRectMake(0, self.tableView.top, self.tableView.width, self.tableView.height - 109);
             self.bottomView.frame = CGRectMake(0, self.tableView.bottom, self.bottomView.width, self.bottomView.height);
@@ -768,7 +804,7 @@
             self.plugInView.frame = CGRectMake(0, self.bottomView.bottom, self.plugInView.width, self.plugInView.height);
         }];
     }else {
-        filePatch =  [self.imageBundlePath stringByAppendingPathComponent:@"jk_morebtn"];
+        filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"jk_morebtn"];
         [UIView performWithoutAnimation:^{
             self.tableView.frame = CGRectMake(0, self.tableView.top, self.tableView.width, self.tableView.height + 109);
             self.bottomView.frame = CGRectMake(0, self.tableView.bottom, self.bottomView.width, self.bottomView.height);
@@ -790,7 +826,7 @@
     }
     if (self.moreBtn.selected) {
         self.moreBtn.selected = !self.moreBtn.selected;
-        NSString *morePath = [self.imageBundlePath stringByAppendingPathComponent:@"jk_morebtn"];
+        NSString *morePath = [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"jk_morebtn"];
         [self.moreBtn setImage:[UIImage imageWithContentsOfFile:morePath] forState:UIControlStateNormal];
         self.tableView.frame = CGRectMake(0, self.tableView.top, self.tableView.width, self.tableView.height + 109);
         self.bottomView.frame = CGRectMake(0, self.tableView.bottom, self.bottomView.width, self.bottomView.height);
@@ -799,7 +835,7 @@
     NSString *filePatch = @"";
     if (button.selected) {
         self.faceView.hidden = NO;
-        filePatch =  [self.imageBundlePath stringByAppendingPathComponent:@"icon_expression_hl"];
+        filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"icon_expression_hl"];
         [UIView performWithoutAnimation:^{
             self.tableView.frame = CGRectMake(0, self.tableView.top, self.tableView.width, self.tableView.height - 145);
             self.bottomView.frame = CGRectMake(0, self.tableView.bottom, self.bottomView.width, self.bottomView.height);
@@ -809,7 +845,7 @@
             self.faceView.frame = CGRectMake(0, self.bottomView.bottom, self.faceView.width, self.faceView.height);
         }];
     }else {
-        filePatch =  [self.imageBundlePath stringByAppendingPathComponent:@"icon_expression"];
+        filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"icon_expression"];
         [UIView performWithoutAnimation:^{
             self.tableView.frame = CGRectMake(0, self.tableView.top, self.tableView.width, self.tableView.height + 145);
             self.bottomView.frame = CGRectMake(0, self.tableView.bottom, self.bottomView.width, self.bottomView.height);
@@ -825,8 +861,8 @@
 -(UIButton *)moreBtn {
     if (_moreBtn == nil) {
         _moreBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        NSString *filePatch = [self.imageBundlePath stringByAppendingPathComponent:@"jk_morebtn"];
-        NSString *sendImage = [self.imageBundlePath stringByAppendingPathComponent:@"jkmoreclick"];
+        NSString *filePatch = [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"jk_morebtn"];
+        NSString *sendImage = [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"jkmoreclick"];
         [_moreBtn setImage:[UIImage imageWithContentsOfFile:filePatch] forState:UIControlStateNormal];
         [_moreBtn setImage:[UIImage imageWithContentsOfFile:sendImage] forState:UIControlStateHighlighted];
         [_moreBtn addTarget:self action:@selector(plugInBtn:) forControlEvents:UIControlEventTouchUpInside];
@@ -842,6 +878,7 @@
         self.navigationController.navigationBar.hidden = YES;
     }
     if ([self.isPushToController isEqualToString:@"YES"]) {
+        self.isPushToController = @"NO";
         return;
     }
     [[JKConnectCenter sharedJKConnectCenter] checkoutInitCompleteBlock:^(BOOL isComplete) {
@@ -858,6 +895,8 @@
     [super viewWillDisappear:animated];
     if ([self.isPushToController isEqualToString:@"YES"]) {
         [[JKFloatBallManager shared] hiddenFloatBall];
+    }else {
+        self.navigationController.navigationBar.hidden = NO;
     }
 }
 
@@ -1010,10 +1049,10 @@
     CGSize ceilSize = CGSizeMake(ceil(size.width), ceil(size.height));
     return ceilSize;
 }
-- (NSString *)imageBundlePath{
-    if (_imageBundlePath == nil) {
-        _imageBundlePath =  [JKBundleTool initBundlePathWithImage];
-    }
-    return _imageBundlePath;
-}
+//- (NSString *)imageBundlePath{
+//    if (_imageBundlePath == nil) {
+//        _imageBundlePath =  [JKBundleTool initBundlePathWithImage];
+//    }
+//    return _imageBundlePath;
+//}
 @end

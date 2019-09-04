@@ -24,6 +24,8 @@ typedef void(^JKGetSimilarQuestionBlock)(id _Nonnull result);
 
 typedef void(^JKSkipChatBlock)(BOOL);
 
+typedef void(^JKGetEndChatBlock)(BOOL satisFaction);
+
 
 
 
@@ -109,7 +111,8 @@ NS_ASSUME_NONNULL_BEGIN
 /** 此时的连接状态 */
 @property (nonatomic,assign) JKSocketState socketState;
 /** 是否进入的Block */
-@property (nonatomic,assign) JKSkipChatBlock skipBlock;
+@property (nonatomic,copy) JKSkipChatBlock skipBlock;
+//@property (nonatomic,copy) JKGetEndChatBlock endChatBlock;
 
 /**
  返回单例本身
@@ -135,11 +138,6 @@ NS_ASSUME_NONNULL_BEGIN
  初始化公司的相关信息
  */
 -(void)checkoutInfoWithBlock:(JKSkipChatBlock)skipBlock;
-/**
- 获取当前的热点问题
- */
-//-(void)getHostspotQuestionsWithResultBlock:(JKGetHotQuestionBlock)hotQuestionBlock;
-
 
 /**
  验证所需要的公司信息和访客信息
@@ -164,6 +162,16 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)submitSatisfactionWithDict:(NSDictionary *)dict Block:(JKGetSatisFactionBlock)satisfactionBlock;
 
 -(void)initDialogeWithBlock:(JKInItDialogueBlock)block;
+/**
+ 结束对话收到满意度需要初始化一下context_id;
+ */
+-(void)initDialogeWIthSatisFaction;
+
+/**
+ 结束对话的Block
+ @param block 结束对话
+ */
+-(void)getEndChatBlock:(JKGetEndChatBlock)block;
 /**
  接收到对话的message
 
@@ -205,6 +213,13 @@ NS_ASSUME_NONNULL_BEGIN
  退出登录
  */
 - (void)exitSockectConnecting;
+/**
+ 用户信息同步 必填visitor_name、mobile_phone字段
+ 如果退出，传nil即可。
+ @param customer 用户的基本信息
+ */
+-(void)JKIM_statueChangeWithCustomer:(JKCustomer *)customer;
+
 @end
 
 NS_ASSUME_NONNULL_END

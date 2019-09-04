@@ -12,7 +12,7 @@
 #import "NSDate+Utils.h"
 @interface JKWebViewCell()<WKNavigationDelegate,WKUIDelegate>
 @property (nonatomic,strong)UIImageView *backImageView;
-@property (nonatomic, strong)  WKWebView                        *webView;
+@property (nonatomic, strong)WKWebView *webView;
 @property (nonatomic,strong) UILabel *labelTime;
 @property (nonatomic,strong) UILabel *nameLabel;
 @end
@@ -84,7 +84,7 @@
         selfWeak.webView.frame = CGRectMake(0, 0, self.contentView.frame.size.width - 170, height);
         selfWeak.messageFrame.cellHeight = height;
         if (selfWeak.webHeightBlock) {
-            selfWeak.webHeightBlock();
+            selfWeak.webHeightBlock(self.reloadRow);
         }
     }];
 }

@@ -37,7 +37,7 @@
 }
 -(void)layoutSubviews {
     [super layoutSubviews];
-    self.hotView.frame = CGRectMake(20, 10, self.frame.size.width - 44, self.model.hotArray.count *41);
+    self.hotView.frame = CGRectMake(20, 30, self.frame.size.width - 44, self.model.hotArray.count *41);
     
 }
 - (void)awakeFromNib {

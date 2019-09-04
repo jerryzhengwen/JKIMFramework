@@ -10,7 +10,10 @@
 #import "JKSatisfactionModel.h"
 #import "JKStatisfactionCell.h"
 @interface JKSatisfactionViewController ()<UITableViewDataSource,UITableViewDelegate>
-@property (nonatomic,strong)NSMutableArray *titleArr;
+@property (nonatomic,strong)UITableView * satisTableView;
+@property (nonatomic,strong)NSMutableArray *sectionOneArr;
+@property (nonatomic,strong)NSMutableArray *sectionTwoArr;
+
 @end
 
 @implementation JKSatisfactionViewController
@@ -18,62 +21,99 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.titleLabel.text = @"提交满意度";
-    self.titleArr = [NSMutableArray array];
+    self.sectionOneArr = [NSMutableArray array];
+    self.sectionTwoArr = [NSMutableArray array];
     __weak typeof(self) weakSelf = self;
     [[JKConnectCenter sharedJKConnectCenter] getSatisfactionWithBlock:^(id  _Nullable result) {
         NSArray * array = [NSJSONSerialization JSONObjectWithData:result options:NSJSONReadingMutableContainers error:nil];
-        if (array.count) {
-            for (int i  = 0; i < array.count; i++) {
-                JKSatisfactionModel * model = [[JKSatisfactionModel alloc] init];
-                if ([array[i] valueForKey:@"name"] && [array[i] valueForKey:@"pk"]) {
-                    if (i == 0) {
-                        JKSatisfactionModel *firstModel = [[JKSatisfactionModel alloc] init];
-                        model.canClick = NO;
-                        firstModel.name = @"您对本次服务满意吗？";
-                        [weakSelf.titleArr addObject:firstModel];
+        if ([[array superclass] isKindOfClass:[NSMutableDictionary class]]) {
+            [weakSelf.navigationController popViewControllerAnimated:YES];
+            return ;
+        }
+        if (array.count) { //双层数组
+            for (int i = 0;i <array.count;i ++) {
+                NSArray *satisArr = array[i];
+                for (int j  = 0; j < satisArr.count; j++) {
+                    if ([satisArr[j] valueForKey:@"name"] && [satisArr[j] valueForKey:@"pk"]) {
+                        JKSatisfactionModel * model = [[JKSatisfactionModel alloc] init];
+                        model.name = satisArr[j][@"name"];
+                        model.pk = satisArr[j][@"pk"];
+                        model.canClick = YES;
+                        model.showSelect = j == 0?YES:NO;
+                        if (i == 0) {
+                            if (j == 0) {
+                                JKSatisfactionModel *firstModel = [[JKSatisfactionModel alloc] init];
+                                firstModel.canClick = NO;
+                                firstModel.name = @"您对本次服务满意吗？";
+                                [weakSelf.sectionOneArr addObject:firstModel];
+                            }
+                            [weakSelf.sectionOneArr addObject:model];
+                        }else{
+                          [weakSelf.sectionTwoArr addObject:model];
+                        }
                     }
-                    model.name = array[i][@"name"];
-                    model.pk = array[i][@"pk"];
-                    model.canClick = YES;
-                    [weakSelf.titleArr addObject:model];
                 }
-                if (i == array.count - 1 && weakSelf.titleArr.count > 0) {
+                if (i == array.count - 1) {
                     JKSatisfactionModel * model = [[JKSatisfactionModel alloc] init];
                     model.canClick = NO;
                     model.isTextView = YES;
                     model.name = @"请输入详情";
-                    [weakSelf.titleArr addObject:model];
+                    [weakSelf.sectionTwoArr addObject:model];
                 }
             }
         }
-        if (weakSelf.titleArr.count) {
+        if (weakSelf.sectionOneArr.count) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [weakSelf.tableView reloadData];
+                [weakSelf.satisTableView reloadData];
             });
         }else {
             [weakSelf.navigationController popViewControllerAnimated:YES];
         }
     }];
-//    NSArray * titleArray= @[@"您对本次服务满意吗？",@"满意",@"一般",@"不满意",@"还行",@"请输入详情"];
-//    for (int i = 0; i < titleArray.count; i ++) {
-//        JKSatisfactionModel * model = [[JKSatisfactionModel alloc] init];
-//        model.name = titleArray[i];
-//        model.canClick = YES;
-//        if (i == 0 || i == titleArray.count - 1 ) {
-//            model.canClick = NO;
-//        }
-//        if (i == titleArray.count - 1) {
-//            model.isTextView = YES;
-//        }
-//        [self.titleArr addObject:model];
-//    }
     [self createSubmitBtn];
-    [self.view addSubview:self.tableView];
-    self.tableView.tableFooterView = [[UIView alloc] init];
+    [self.view addSubview:self.satisTableView];
     CGFloat safeSeparation = kStatusBarAndNavigationBarHeight == 88?24: 0;
-    self.tableView.frame = CGRectMake(0, kStatusBarAndNavigationBarHeight, self.view.width, self.view.height-kStatusBarAndNavigationBarHeight - 40 - safeSeparation);
+    self.satisTableView.frame = CGRectMake(0, kStatusBarAndNavigationBarHeight, self.view.width, self.view.height-kStatusBarAndNavigationBarHeight - safeSeparation - 40);
     self.view.backgroundColor = RGBColor(230, 230, 230, 1);
-    self.tableView.backgroundColor = RGBColor(230, 230, 230, 1);
+    self.satisTableView.backgroundColor = RGBColor(230, 230, 230, 1);
+    [self initGestureWithTableView];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(UIKeyboardWillShowNotification:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyBoardWillHidden:) name:UIKeyboardWillHideNotification object:nil];
+    self.satisTableView.tableFooterView = [[UIView alloc] init];
+}
+- (void)UIKeyboardWillShowNotification:(NSNotification *)noti {
+    double duration = [noti.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    
+    NSDictionary *dict = [noti userInfo];
+    NSValue *frameValue = [dict valueForKey:UIKeyboardFrameEndUserInfoKey];
+    CGRect rect = [frameValue CGRectValue];
+    CGFloat height = CGRectGetHeight(rect);
+    [UIView animateWithDuration:duration animations:^{
+        CGRect rect1 = self.view.frame;
+        rect1.origin.y = 0 -height;
+        self.view.frame = rect1;
+    }];
+}
+- (void)keyBoardWillHidden:(NSNotification *)noti {
+    double duration = [noti.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    CGFloat safeSeparation = 0.0f;
+    if (kStatusBarAndNavigationBarHeight == 88) {
+        safeSeparation = 24.0f;
+    }
+    [UIView animateWithDuration:duration animations:^{
+        CGRect rect1 = self.view.frame;
+        rect1.origin.y = 0;
+        self.view.frame = rect1;
+    }];
+}
+
+-(void)initGestureWithTableView {
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(addToucheEvent:)];
+    [self.satisTableView addGestureRecognizer:tap];
+    tap.cancelsTouchesInView = NO;
+}
+- (void)addToucheEvent:(UITapGestureRecognizer *)tap {
+    [self.view endEditing:YES];
 }
 -(void)createSubmitBtn {
     CGFloat safeSeparation = kStatusBarAndNavigationBarHeight == 88?24: 0;
@@ -103,32 +143,46 @@
     if ([button.titleLabel.text isEqualToString:@"取消"]) {
         [self.navigationController popViewControllerAnimated:YES];
     }else { //调接口
-        for (JKSatisfactionModel * model in self.titleArr) {
+        NSString * satisfactionPk = @"";
+        NSString * solutionPk = @"";
+        NSString * name = @"";
+        for (JKSatisfactionModel * model in self.sectionOneArr) {
             if (model.showSelect) { // 在这里调用接口
-                JKSatisfactionModel * lastModel = self.titleArr.lastObject;
-                NSString * pk = model.pk?model.pk:@"";
-                NSString *memo = lastModel.content?lastModel.content:@"";
-                NSDictionary *dict = [NSDictionary dictionaryWithObjects:@[pk,memo] forKeys:@[@"pk",@"memo"]];
-                __weak typeof(self) weakSelf = self;
-                [[JKConnectCenter sharedJKConnectCenter] submitSatisfactionWithDict:dict Block:^(id  _Nullable result) {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        if (weakSelf.returnMessageBlock) { weakSelf.returnMessageBlock(model.name);
-                        }
-                        [weakSelf.navigationController popViewControllerAnimated:YES];
-                    });
-                }];
+                satisfactionPk = model.pk;
+                name = model.name;
             }
         }
+        for (JKSatisfactionModel * model in self.sectionTwoArr) {
+            if (model.showSelect) {
+                solutionPk = model.pk;
+                if (!name.length) {
+                    name = model.name;
+                }
+            }
+        }
+        JKSatisfactionModel * lastModel = self.sectionTwoArr.lastObject;
+        NSString *memo = lastModel.content?lastModel.content:@"";
+        NSDictionary *dict = [NSDictionary dictionaryWithObjects:@[satisfactionPk,solutionPk,memo] forKeys:@[@"satisfactionPk",@"solutionPk",@"memo"]];
+        __weak typeof(self) weakSelf = self;
+        [[JKConnectCenter sharedJKConnectCenter] submitSatisfactionWithDict:dict Block:^(id  _Nullable result) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+//                if (weakSelf.returnMessageBlock) { weakSelf.returnMessageBlock(name);
+//                }
+                [weakSelf.navigationController popViewControllerAnimated:YES];
+            });
+        }];
     }
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 0) {
-        return self.titleArr.count - 1;
+        return self.sectionOneArr.count;
+    }else if (section == 1) {
+        return self.sectionTwoArr.count - 1;
     }
     return 1;
 }
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 2;
+    return 3;
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     static NSString * identifer = @"cell";
@@ -136,43 +190,70 @@
     if (!cell) {
         cell = [[JKStatisfactionCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:identifer];
     }
-    if (indexPath.section == 0) {
-        self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    if (indexPath.section == 0 || indexPath.section == 1) {
+        self.satisTableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     }else {
-            self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        self.satisTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     }
     cell.selectionStyle =  UITableViewCellSelectionStyleNone;
-    cell.model = indexPath.section == 0 ?self.titleArr[indexPath.row]:self.titleArr.lastObject;
+    if (indexPath.section == 0 || indexPath.section == 1) {
+        NSArray *array = indexPath.section == 0 ?self.sectionOneArr:self.sectionTwoArr;
+        cell.model = array[indexPath.row];
+    }else{
+        cell.model = self.sectionTwoArr.lastObject;
+    }
     return cell;
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    JKSatisfactionModel * model = self.titleArr[indexPath.row];
+    NSArray * array = indexPath.section == 0?self.sectionOneArr:self.sectionTwoArr;
+    JKSatisfactionModel * model = array[indexPath.row];
     if (!model.canClick) {
         return;
     }
-    for (int i = 0; i < self.titleArr.count; i ++) {
-        JKSatisfactionModel * model = self.titleArr[i];
+    for (int i = 0; i < array.count; i ++) {
+        JKSatisfactionModel * model = array[i];
         model.showSelect = NO;
         if (i == indexPath.row) {
             model.showSelect = YES;
         }
     }
-    [self.tableView reloadData];
+    [self.satisTableView reloadData];
 }
--(CGFloat)tableView:(UITableView *)tableView eorRowAtIndexPath:(NSIndexPath *)indexPath {
-    return indexPath.section == 0 ? 44: 150;
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return indexPath.section == 2 ? 150:44;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return 30;
+    return section == 0?50:30;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    return 0;
+}
+-(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
+    return [[UIView alloc] init];
 }
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     UIView * view = [[UIView alloc] init];
     if (section == 0) {
-        UILabel * content = [[UILabel alloc]initWithFrame:CGRectMake(10, 0, self.view.frame.size.width - 30, 30)];
+        UILabel * content = [[UILabel alloc]initWithFrame:CGRectMake(10, 0, self.view.frame.size.width - 30, 50)];
         content.text = self.content;
+        content.numberOfLines = 0;
+        content.lineBreakMode = NSLineBreakByWordWrapping;
         content.font = [UIFont fontWithName:@"PingFangSC-Regular" size:14];
         [view addSubview:content];
     }
     return view;
+}
+-(UITableView *)satisTableView {
+    if (_satisTableView == nil) {
+        _satisTableView = [[UITableView alloc]initWithFrame:CGRectZero style:UITableViewStyleGrouped];
+        _satisTableView.delegate = self;
+        _satisTableView.dataSource = self;
+//        if(@available(iOS 11.0, *)) {
+//            _satisTableView.estimatedRowHeight =0;
+//            _satisTableView.estimatedSectionHeaderHeight =0;
+//            _satisTableView.estimatedSectionFooterHeight =0;
+//        }
+    }
+    return _satisTableView;
 }
 @end

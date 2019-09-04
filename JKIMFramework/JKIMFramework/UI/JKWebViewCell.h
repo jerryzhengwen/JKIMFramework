@@ -12,10 +12,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 //@class JKMessageFrame;
 
-typedef void(^JKGetWebHeightBlock)(void);
+typedef void(^JKGetWebHeightBlock)(int row);
 
 @interface JKWebViewCell : UITableViewCell
 @property (nonatomic, strong)JKMessageFrame *messageFrame;
+@property (nonatomic,assign) int reloadRow;
 @property (nonatomic,copy)JKGetWebHeightBlock webHeightBlock;
 @end
 

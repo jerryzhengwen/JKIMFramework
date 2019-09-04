@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'JKIMFramework'
-  s.version          = '1.1.0'
+  s.version          = '1.1.1'
   s.summary          = '这是一个关于久科IMSDK的初级版'
 
 # This description is used to generate tags and improve search results.
@@ -26,8 +26,8 @@ Pod::Spec.new do |s|
   s.source           = { :git => 'https://github.com/jerryzhengwen/JKIMFramework.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.ios.deployment_target = '9.0'
-  s.platform     = :ios, "9.0"
+  s.ios.deployment_target = '8.0'
+  s.platform     = :ios, "8.0"
 
 s.source_files = 'JKIMFramework/**/Classes/**/*.{h,m}','JKIMFramework/**/UI/**/*.{h,m}',
   
@@ -43,5 +43,5 @@ s.frameworks = 'UIKit', 'MapKit'
 s.requires_arc = false
 
 s.requires_arc = ['JKIMFramework/**/Classes/*.{h,m}']
-s.dependency 'YYWebImage'
+s.dependency 'YYWebImage','MJRefresh'
 end

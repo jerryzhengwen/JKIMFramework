@@ -17,6 +17,8 @@
 #import "NSDate+Utils.h"
 #import "UIView+JKFloatFrame.h"
 #import "JKDialogueHeader.h"
+#import "RegexKitLite.h"
+#import "JKMessageOpenUrl.h"
 @interface JKMessageCell ()<UITextViewDelegate>
 {
     AVAudioPlayer *player;
@@ -233,24 +235,52 @@
 
 #pragma -
 #pragma mark - textView的代理
--(BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction  API_AVAILABLE(ios(10.0)){
-    if (self.messageFrame.message.isRichText) {
-        if (self.richText) {
-            self.richText();
-        }
-    }else if (self.messageFrame.message.isRichText) {
-        NSString *clickText = [textView.text substringWithRange:characterRange];
-        if (self.clickCustomer) {
-            self.clickCustomer(clickText);
-        }
-    }else {
-        NSString *clickText = [textView.text substringWithRange:characterRange];
-        if (self.skipBlock) {
-            self.skipBlock(clickText);
-        }
+-(BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange {
+    NSString *clickString = self.messageFrame.message.content;
+   
+    
+//    if (self.messageFrame.message.isRichText) {
+//        if (self.richText) {
+//            self.richText();
+//        }
+//    }else if (self.messageFrame.message.isRichText) {
+//        NSString *clickText = [textView.text substringWithRange:characterRange];
+//        if (self.clickCustomer) {
+//            self.clickCustomer(clickText);
+//        }
+//    }else {
+//        NSString *clickText = [textView.text substringWithRange:characterRange];
+//        if (self.skipBlock) {
+//            self.skipBlock(clickText);
+//        }
+//    }
+    NSString *clickText = [textView.text substringWithRange:characterRange];
+     NSArray *urlArray =  [clickText componentsMatchedByRegex:JK_URlREGULAR];
+    if (urlArray.count) { //链接
+         [[JKMessageOpenUrl sharedOpenUrl] JK_ClickMessageOpenUrl:clickString];
+    }else { ///<a>标签
+         [[JKMessageOpenUrl sharedOpenUrl] JK_ClickHyperMediaMessageOpenUrl:clickString];
     }
     return YES;
 }
+//-(BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction {
+//    if (self.messageFrame.message.isRichText) {
+//        if (self.richText) {
+//            self.richText();
+//        }
+//    }else if (self.messageFrame.message.isRichText) {
+//        NSString *clickText = [textView.text substringWithRange:characterRange];
+//        if (self.clickCustomer) {
+//            self.clickCustomer(clickText);
+//        }
+//    }else {
+//        NSString *clickText = [textView.text substringWithRange:characterRange];
+//        if (self.skipBlock) {
+//            self.skipBlock(clickText);
+//        }
+//    }
+//    return YES;
+//}
 
 
 /**
