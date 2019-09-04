@@ -43,5 +43,6 @@ s.frameworks = 'UIKit', 'MapKit'
 s.requires_arc = false
 
 s.requires_arc = ['JKIMFramework/**/Classes/*.{h,m}']
-s.dependency 'YYWebImage','MJRefresh'
+s.dependency 'YYWebImage'
+s.dependency 'MJRefresh'
 end
