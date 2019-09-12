@@ -16,6 +16,7 @@
 #import "JKIMSendHelp.h"
 #import "JKConnectCenter.h"
 #import "RegexKitLite.h"
+#import "MJRefresh.h"
 @interface JKDialogueViewController ()<UITableViewDelegate,UITableViewDataSource,UITextViewDelegate,ConnectCenterDelegate,JKMessageCellDelegate>
 
 /** 获取图片资源路径 */
