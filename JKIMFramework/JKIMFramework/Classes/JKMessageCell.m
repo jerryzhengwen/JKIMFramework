@@ -265,7 +265,7 @@
     }else { ///<a>标签
          [[JKMessageOpenUrl sharedOpenUrl] JK_ClickHyperMediaMessageOpenUrl:clickString];
     }
-    return YES;
+    return NO;
 }
 //-(BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction {
 //    if (self.messageFrame.message.isRichText) {

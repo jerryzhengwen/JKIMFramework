@@ -883,10 +883,10 @@
 }
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-    
-    if (self.navigationController) {
-        self.navigationController.navigationBar.hidden = YES;
-    }
+    self.navigationController.navigationBarHidden = YES;
+//    if (self.navigationController) {
+//        self.navigationController.navigationBar.hidden = YES;
+//    }
 }
 - (void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
@@ -896,7 +896,8 @@
 
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
-    self.navigationController.navigationBar.hidden = NO;
+//    self.navigationController.navigationBar.hidden = NO;
+    self.navigationController.navigationBarHidden = NO;
 }
 
 - (void)viewDidDisappear:(BOOL)animated{
