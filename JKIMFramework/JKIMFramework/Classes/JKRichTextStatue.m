@@ -78,9 +78,12 @@
         // part1放前面, part2放后面
         return NSOrderedAscending;
     }];
-    
-    //在这里替换下
-    UIFont *font = [UIFont fontWithName:@"PingFangSC-Regular" size:15];
+    UIFont *font;
+    if ([[UIDevice currentDevice].systemVersion doubleValue] < 9.0) {
+        font =  [UIFont systemFontOfSize:15];
+    }else {//在这里替换下
+        font  = [UIFont fontWithName:@"PingFangSC-Regular" size:15];
+    }
     NSMutableArray *specials = [NSMutableArray array];
 //    NSString *bundlePatch =  [[NSBundle bundleForClass:[self class]]pathForResource:@"JKIMImage" ofType:@"bundle"];
     NSString *bundlePatch = [JKBundleTool initBundlePathWithImage];

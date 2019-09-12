@@ -34,5 +34,5 @@
 @property (nonatomic, retain) JKDialogModel *message;
 @property (nonatomic, assign) JKMessageType type;
 @property (nonatomic, assign) BOOL showTime;
-
+@property (nonatomic, assign) BOOL moveToLast;
 @end

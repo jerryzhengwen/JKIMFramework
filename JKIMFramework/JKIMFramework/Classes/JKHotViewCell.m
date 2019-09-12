@@ -62,7 +62,11 @@
 -(UILabel *)titleLabel {
     if (!_titleLabel) {
         _titleLabel = [[UILabel alloc] init];
-        _titleLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:15];
+        if ([[UIDevice currentDevice].systemVersion doubleValue] < 9.0) {
+            _titleLabel.font =  [UIFont systemFontOfSize:15];
+        }else {
+            _titleLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:15];
+        }
         _titleLabel.textColor = UIColorFromRGB(0x3E3E3E);
     }
     return _titleLabel;

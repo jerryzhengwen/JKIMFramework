@@ -238,7 +238,11 @@
         content.text = self.content;
         content.numberOfLines = 0;
         content.lineBreakMode = NSLineBreakByWordWrapping;
-        content.font = [UIFont fontWithName:@"PingFangSC-Regular" size:14];
+        if ([[UIDevice currentDevice].systemVersion doubleValue] < 9.0) {
+            content.font =  [UIFont systemFontOfSize:14];
+        }else {
+            content.font = [UIFont fontWithName:@"PingFangSC-Regular" size:14];
+        }
         [view addSubview:content];
     }
     return view;

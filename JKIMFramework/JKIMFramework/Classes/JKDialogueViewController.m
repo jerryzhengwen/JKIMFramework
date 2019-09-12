@@ -23,7 +23,7 @@
 
 @property(nonatomic,strong)UIView *bottomView;
 
-@property(nonatomic, strong)NSString *isPushToController;
+//@property(nonatomic, strong)NSString *isPushToController;
 
 @property (nonatomic, strong)UITextView *textView;
 
@@ -49,8 +49,9 @@
 @implementation JKDialogueViewController
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [[JKConnectCenter sharedJKConnectCenter] checkoutInitCompleteBlock:^(BOOL isComplete) {
+    }];
     [self creatUI];
-    //    [self loadHistoryData]; 不加载本地记录，直接从服务端进行读取
     [self createBackButton];
     [self.view addSubview:self.assoiateView];
     __weak JKDialogueViewController *weakSelf = self;
@@ -63,6 +64,11 @@
         [weakSelf loadHistoryData];
     }];
     self.tableView.mj_header = refresh;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reneedInit) name:UIApplicationDidBecomeActiveNotification object:nil];
+}
+-(void)reneedInit {
+    [[JKConnectCenter sharedJKConnectCenter] checkoutInitCompleteBlock:^(BOOL isComplete) {
+    }];
 }
 -(void)endDialogeClick {
     __weak JKDialogueViewController *weakSelf = self;
@@ -103,8 +109,8 @@
     self.textView.returnKeyType = UIReturnKeySend;
     self.textView.delegate = self;
     self.textView.frame = CGRectMake(10, 11, [UIScreen mainScreen].bounds.size.width - 84, 32);
-    [self.bottomView addSubview:self.moreBtn];
-    [self.bottomView addSubview:self.faceButton];
+//    [self.bottomView addSubview:self.moreBtn];
+//    [self.bottomView addSubview:self.faceButton];
     self.moreBtn.frame = CGRectMake(self.view.right - 32 , 0, 22, 22);
     CGPoint sendBtnCenter = self.moreBtn.center;
     sendBtnCenter.y = self.textView.center.y;
@@ -145,6 +151,7 @@
 }
 
 - (void)loadHistoryData{
+    NSLog(@"---%@",[JKConnectCenter sharedJKConnectCenter].chat_id);
     if (self.isLoadHistory == NO) {
         self.isLoadHistory = YES;
     }else {
@@ -254,9 +261,12 @@
         cell.userInteractionEnabled = YES;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.reloadRow = (int)indexPath.row;
-        cell.webHeightBlock = ^(int row) {
-            [weakSelf reloadCellWithRow:row];
+        cell.webHeightBlock = ^(int row, BOOL moveToLast) {
+            [weakSelf reloadCellWithRow:row MoveToLast:moveToLast];
         };
+//        cell.webHeightBlock = ^(int row) {
+//            [weakSelf reloadCellWithRow:row];
+//        };
 //        cell.webHeightBlock = ^{
 //            [weakSelf tableViewMoveToLastPathNeedAnimated:YES];
 //        };
@@ -381,7 +391,11 @@
 }
 
 
--(void)reloadCellWithRow:(int)row {
+-(void)reloadCellWithRow:(int)row MoveToLast:(BOOL)moveTo {
+    if (moveTo) {
+        [self tableViewMoveToLastPathNeedAnimated:YES];
+        return;
+    }
     NSIndexPath *indexPath=[NSIndexPath indexPathForRow:row inSection:0];
     [self.refreshQ cancelAllOperations];
     [self.refreshQ addOperationWithBlock:^{
@@ -437,7 +451,7 @@
 
 - (void)cameraAction{
     
-    self.isPushToController = @"YES";
+//    self.isPushToController = @"YES";
     
     [self presentChoseCameraWithCompletionHandler:^(NSData * _Nonnull imageData, UIImage * _Nonnull image) {
         
@@ -447,8 +461,6 @@
 }
 #pragma 相册
 - (void)photoAction{
-    self.isPushToController = @"YES";
-    
     [self presentChosePhotoAlbumWithCompletionHandler:^(NSData * _Nonnull imageData, UIImage * _Nonnull image) {
         [self sendImageWithImageData:imageData image:image];
     }];
@@ -492,6 +504,7 @@
         framModel = [self jisuanMessageFrame:framModel];
         if (type == JKMessageFAQImageText || type == JKMessageFAQImage) {
             framModel.cellHeight = 0;
+            framModel.moveToLast = YES;
         }
         [self.dataFrameArray addObject:framModel];
         [self tableViewMoveToLastPathNeedAnimated:YES];
@@ -540,7 +553,6 @@
             self.listMessage.chatState = autoModel.chatState;
             self.listMessage.to = @"";
             self.titleLabel.text = @"对话";
-//            self.satisfieButton.hidden = YES;
         }
         autoModel.whoSend = message.whoSend?message.whoSend:JK_Customer;
         autoModel.time = autoModel.time;
@@ -570,7 +582,6 @@
     [[JKConnectCenter sharedJKConnectCenter]readMessageFromId:model.from];
     JKSatisfactionViewController * view = [[JKSatisfactionViewController alloc]init];
     view.content = model.content;
-    self.isPushToController = @"YES";
     [self.navigationController pushViewController:view animated:YES];
     
 //    __weak typeof(self) weakSelf = self;
@@ -871,19 +882,10 @@
 }
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-    [[JKFloatBallManager shared] hiddenFloatBall];
-    
     
     if (self.navigationController) {
         self.navigationController.navigationBar.hidden = YES;
     }
-    if ([self.isPushToController isEqualToString:@"YES"]) {
-        self.isPushToController = @"NO";
-        return;
-    }
-    [[JKConnectCenter sharedJKConnectCenter] checkoutInitCompleteBlock:^(BOOL isComplete) {
-    }];
-    self.isPushToController = @"NO";
 }
 - (void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
@@ -893,19 +895,11 @@
 
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
-    if ([self.isPushToController isEqualToString:@"YES"]) {
-        [[JKFloatBallManager shared] hiddenFloatBall];
-    }else {
-        self.navigationController.navigationBar.hidden = NO;
-    }
+    self.navigationController.navigationBar.hidden = NO;
 }
 
 - (void)viewDidDisappear:(BOOL)animated{
     [super viewDidDisappear:animated];
-    if ([self.isPushToController isEqualToString:@"NO"]) {
-        [[JKFloatBallManager shared]removeDialogueVC];
-        [[JKFloatBallManager shared] showFloatBall];
-    }
 }
 //send键发送
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {

@@ -57,7 +57,11 @@
     if (_endDialogBtn == nil) {
         _endDialogBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [_endDialogBtn setTitle:@"结束会话" forState:UIControlStateNormal];
-        _endDialogBtn.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:16];
+        if ([[UIDevice currentDevice].systemVersion doubleValue] < 9.0) {
+            _endDialogBtn.titleLabel.font =  [UIFont systemFontOfSize:16];
+        }else {
+            _endDialogBtn.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:16];
+        }
         [_endDialogBtn setTitleColor:JKDefaultColor forState:UIControlStateNormal];
     }
     return _endDialogBtn;

@@ -43,7 +43,11 @@
             otherWidth = self.width * (j/8);
             j = j % 8;
         }
-        button.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:14];
+        if ([[UIDevice currentDevice].systemVersion doubleValue] < 9.0) {
+          button.titleLabel.font =  [UIFont systemFontOfSize:14];
+        }else {
+            button.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:14];
+        }
         [button setTitleColor:UIColorFromRGB(0x9B9B9B) forState:UIControlStateNormal];
         [button setTitle:titleArr[i] forState:UIControlStateNormal];
         button.frame = CGRectMake(margin + (j%4) *(width + margin)+otherWidth, heightMargin +(j/4)*(width + 10 + 13+ heightMargin), width, 90);

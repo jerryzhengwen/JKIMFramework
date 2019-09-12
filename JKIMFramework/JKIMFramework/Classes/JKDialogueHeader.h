@@ -41,8 +41,8 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 #define JKWeakSelf __weak typeof (self)weakSelf = self
 
 //时间字体
-#define JKChatTimeFont [UIFont fontWithName:@"PingFangSC-Regular" size:12]
+#define JKChatTimeFont [[UIDevice currentDevice].systemVersion doubleValue] <9.0?    [UIFont systemFontOfSize:12]:[UIFont fontWithName:@"PingFangSC-Regular" size:12]
 //内容字体
-#define JKChatContentFont  [UIFont fontWithName:@"PingFangSC-Regular" size:15]
+#define JKChatContentFont [[UIDevice currentDevice].systemVersion doubleValue] <9.0?    [UIFont systemFontOfSize:15]: [UIFont fontWithName:@"PingFangSC-Regular" size:15]
 
 #endif /* JKDialogueHeader_h */

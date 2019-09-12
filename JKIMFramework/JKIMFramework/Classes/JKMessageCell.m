@@ -49,7 +49,11 @@
         self.nameLabel = [[UILabel alloc] init];
         self.nameLabel.textColor = UIColorFromRGB(0x9B9B9B);
         self.nameLabel.textAlignment = NSTextAlignmentLeft;
-        self.nameLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:14];
+        if ([[UIDevice currentDevice].systemVersion doubleValue] < 9.0) {
+           self.nameLabel.font =  [UIFont systemFontOfSize:14];
+        }else {
+            self.nameLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:14];
+        }
         [self.contentView addSubview:self.nameLabel];
         
         // 4、创建内容

@@ -112,7 +112,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,assign) JKSocketState socketState;
 /** 是否进入的Block */
 @property (nonatomic,copy) JKSkipChatBlock skipBlock;
-//@property (nonatomic,copy) JKGetEndChatBlock endChatBlock;
+@property (nonatomic,copy) NSString *chat_id;
 
 /**
  返回单例本身

@@ -10,6 +10,8 @@
 #import <WebKit/WebKit.h>
 #import "JKDialogueHeader.h"
 #import "NSDate+Utils.h"
+#import "YYWebImage.h"
+#import "JKImageAvatarBrowser.h"
 @interface JKWebViewCell()<WKNavigationDelegate,WKUIDelegate>
 @property (nonatomic,strong)UIImageView *backImageView;
 @property (nonatomic, strong)WKWebView *webView;
@@ -31,7 +33,7 @@
         _backImageView = [[UIImageView alloc] init];
         NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
         NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"chatfrom_bg_normal"];
-      UIImage *normal = [UIImage imageWithContentsOfFile:filePatch];
+        UIImage *normal = [UIImage imageWithContentsOfFile:filePatch];
         normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(35, 20, 10, 10)];
         _backImageView.image = normal;
     }
@@ -43,10 +45,14 @@
     self.nameLabel = [[UILabel alloc] init];
     self.nameLabel.textColor = UIColorFromRGB(0x9B9B9B);
     self.nameLabel.textAlignment = NSTextAlignmentLeft;
-    self.nameLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:14];
+    if ([[UIDevice currentDevice].systemVersion doubleValue] < 9.0) {
+        self.nameLabel.font =  [UIFont systemFontOfSize:14];
+    }else {
+        self.nameLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:14];
+    }
     [self.contentView addSubview:self.nameLabel];
     
-    
+
     self.labelTime = [[UILabel alloc] init];
     self.labelTime.textAlignment = NSTextAlignmentCenter;
     self.labelTime.textColor = UIColorFromRGB(0x9B9B9B);
@@ -75,6 +81,20 @@
 }
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation {
     if (self.messageFrame.cellHeight) {
+        static NSString * const jsGetImages = @"function getImages(){var objs =document.getElementsByTagName(\"img\");var imgScr = '';for(var i=0;i<objs.length;i++){imgScr = imgScr + objs[i].src + '+';};return imgScr;};";
+        [self.webView evaluateJavaScript:jsGetImages completionHandler:^(id obj, NSError * _Nullable error) {
+            NSLog(@"---%@",obj);
+        }];
+        [self.webView evaluateJavaScript:@"getImages()"completionHandler:^(id obj, NSError * _Nullable error) {
+            NSLog(@"---%@",obj);
+        }];
+        static NSString * const jsClickImage = @"function registerImageClickAction(){var imgs=document.getElementsByTagName('img');var length=imgs.length;for(var i=0;i<length;i++){img=imgs[i];img.onclick=function(){window.location.href='image-preview:'+this.src}}}";
+        [self.webView evaluateJavaScript:jsClickImage completionHandler:^(id obj, NSError * _Nullable error) {
+            NSLog(@"---%@",obj);
+        }];
+        [self.webView evaluateJavaScript:@"registerImageClickAction()"completionHandler:^(id obj, NSError * _Nullable error) {
+            NSLog(@"---%@",obj);
+        }];
         return;
     }
     __weak typeof(self) selfWeak = self;
@@ -84,9 +104,15 @@
         selfWeak.webView.frame = CGRectMake(0, 0, self.contentView.frame.size.width - 170, height);
         selfWeak.messageFrame.cellHeight = height;
         if (selfWeak.webHeightBlock) {
-            selfWeak.webHeightBlock(self.reloadRow);
+            selfWeak.webHeightBlock(self.reloadRow,self.messageFrame.moveToLast);
         }
     }];
+    
+    
+    //    //调用自定义js
+    //    [webView evaluateJavaScript:jsGetImages completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+    //        NSLog(@"%@",result);
+    //    }];
 }
 - (void)layoutSubviews {
     [super layoutSubviews];
@@ -109,7 +135,7 @@
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
-
+    
     // Configure the view for the selected state
 }
 #pragma mark - 拼接html 内容
@@ -130,5 +156,26 @@
     [html appendString:@"</body>"];
     [html appendString:@"</html>"];
     return html;
+}
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler {
+    //捕获跳转链接
+    NSURL *URL = navigationAction.request.URL;
+    NSString *str = [NSString stringWithFormat:@"%@",URL];
+    UIImageView *imageView = [UIImageView new];
+    if ([str containsString:@"image-preview:"]) {
+        //查看大图
+        decisionHandler(WKNavigationActionPolicyCancel); // 必须实现 不加载
+        NSString *url = [[str componentsSeparatedByString:@"image-preview:"] componentsJoinedByString:@""];
+        imageView.center = self.center;
+        [imageView yy_setImageWithURL:[NSURL URLWithString:url] placeholder:nil options:YYWebImageOptionSetImageWithFadeAnimation completion:^(UIImage * _Nullable image, NSURL * _Nonnull url, YYWebImageFromType from, YYWebImageStage stage, NSError * _Nullable error) {
+            if (!error) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [JKImageAvatarBrowser showImage:imageView];
+                });
+            }
+        }];
+    }else {
+        decisionHandler(WKNavigationActionPolicyAllow);  // 必须实现 加载
+    }
 }
 @end
