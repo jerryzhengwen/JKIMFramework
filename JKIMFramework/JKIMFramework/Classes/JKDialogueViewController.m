@@ -63,6 +63,28 @@
     }];
     self.tableView.mj_header = refresh;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reneedInit) name:UIApplicationDidBecomeActiveNotification object:nil];
+    if (self.isNeedResend) { //重新发送一遍问题
+        NSString * reText = @"";
+        for (int i = (int)self.dataFrameArray.count - 1; i >=0; i--) {
+            JKMessageFrame *frameModel = self.dataFrameArray[i];
+            JKMessage * message = frameModel.message;
+            if (message.whoSend == JK_Visitor) {
+                reText = message.content;
+                break;
+            }
+        }
+        
+        self.listMessage.messageType = JKMessageWord;
+        self.listMessage.msgSendType = JK_SocketMSG;
+        self.listMessage.whoSend = JK_Visitor;
+        self.listMessage.content = reText;
+        
+        [JKIMSendHelp sendTextMessageWithMessageModel:self.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
+            messageFrame =  [self jisuanMessageFrame:messageFrame];
+            [self.dataFrameArray addObject:messageFrame];
+            [self tableViewMoveToLastPathNeedAnimated:YES];
+        }];
+    }
 }
 -(void)reneedInit {
     [[JKConnectCenter sharedJKConnectCenter] checkoutInitCompleteBlock:^(BOOL isComplete) {
@@ -551,29 +573,6 @@
         }
         [self reloadPath];
 //        [self tableViewMoveToLastPathNeedAnimated:YES];
-        if (self.isNeedResend) { //重新发送一遍问题
-            //        绅士手
-            NSString * reText = @"";
-            for (int i = (int)self.dataFrameArray.count - 1; i >=0; i--) {
-                JKMessageFrame *frameModel = self.dataFrameArray[i];
-                JKMessage * message = frameModel.message;
-                if (message.whoSend == JK_Visitor) {
-                    reText = message.content;
-                    break;
-                }
-            }
-            
-            self.listMessage.messageType = JKMessageWord;
-            self.listMessage.msgSendType = JK_SocketMSG;
-            self.listMessage.whoSend = JK_Visitor;
-            self.listMessage.content = reText;
-            
-            [JKIMSendHelp sendTextMessageWithMessageModel:self.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
-                messageFrame =  [self jisuanMessageFrame:messageFrame];
-                [self.dataFrameArray addObject:messageFrame];
-                [self tableViewMoveToLastPathNeedAnimated:YES];
-            }];
-        }
     });
 }
 /**

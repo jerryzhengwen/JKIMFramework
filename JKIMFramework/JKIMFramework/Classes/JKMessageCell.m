@@ -263,7 +263,11 @@
     if (urlArray.count) { //链接
          [[JKMessageOpenUrl sharedOpenUrl] JK_ClickMessageOpenUrl:clickString];
     }else { ///<a>标签
-         [[JKMessageOpenUrl sharedOpenUrl] JK_ClickHyperMediaMessageOpenUrl:clickString];
+        NSString *clickStr = [textView.text substringWithRange:characterRange];
+        NSString *regular = [NSString stringWithFormat:@"<a[^>]*>(%@)",clickStr];
+        NSString *hrefStr = [self returnSpanContent:clickString AndZhengZe:regular];
+        NSArray *hrefUrl =  [hrefStr componentsMatchedByRegex:JK_URlREGULAR];
+         [[JKMessageOpenUrl sharedOpenUrl] JK_ClickHyperMediaMessageOpenUrl:hrefUrl.firstObject];
     }
     return NO;
 }
