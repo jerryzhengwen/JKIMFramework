@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface JKDialogueViewController : JKBaseViewController
 
 @property(nonatomic,strong)JKAssoiateView *assoiateView;
+/** 是否需要重新带入问题展示 */
+@property(nonatomic,assign)BOOL isNeedResend;
 
 @end
 

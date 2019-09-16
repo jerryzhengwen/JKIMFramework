@@ -26,7 +26,7 @@ typedef void(^JKSkipChatBlock)(BOOL);
 
 typedef void(^JKGetEndChatBlock)(BOOL satisFaction);
 
-
+typedef void(^JKLoadHistoryBlock)(NSArray<JKMessage *> *array);
 
 
 /**
@@ -99,7 +99,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic,assign,readonly)NSInteger unreadCount;
 
-
+@property (nonatomic,assign) BOOL isHttps;
 /**
  机器人消息回调
  */
@@ -162,6 +162,14 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)submitSatisfactionWithDict:(NSDictionary *)dict Block:(JKGetSatisFactionBlock)satisfactionBlock;
 
 -(void)initDialogeWithBlock:(JKInItDialogueBlock)block;
+
+/**
+ 加载历史记录的Block
+
+ @param block 历史记录的Block
+ */
+-(void)JK_LoadHistoryWithBlock:(JKLoadHistoryBlock)block;
+
 /**
  结束对话收到满意度需要初始化一下context_id;
  */
