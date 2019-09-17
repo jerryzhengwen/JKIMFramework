@@ -266,8 +266,12 @@
         NSString *clickStr = [textView.text substringWithRange:characterRange];
         NSString *regular = [NSString stringWithFormat:@"<a[^>]*>(%@)",clickStr];
         NSString *hrefStr = [self returnSpanContent:clickString AndZhengZe:regular];
-        NSArray *hrefUrl =  [hrefStr componentsMatchedByRegex:JK_URlREGULAR];
-         [[JKMessageOpenUrl sharedOpenUrl] JK_ClickHyperMediaMessageOpenUrl:hrefUrl.firstObject];
+//        NSArray *hrefUrl =  [hrefStr componentsMatchedByRegex:JK_URlREGULAR];
+        NSString *url = [self returnSpanContent:hrefStr AndZhengZe:@"[a-zA-z]+://(.*?)\""];
+        if (url.length > 0) {
+            url = [url substringToIndex:url.length -1];
+        }
+         [[JKMessageOpenUrl sharedOpenUrl] JK_ClickHyperMediaMessageOpenUrl:url];
     }
     return NO;
 }

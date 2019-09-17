@@ -175,7 +175,7 @@
             dispatch_async(dispatch_get_main_queue(), ^{
 //                if (weakSelf.returnMessageBlock) { weakSelf.returnMessageBlock(name);
 //                }
-                [weakSelf.navigationController popViewControllerAnimated:YES];
+                [weakSelf.navigationController popToRootViewControllerAnimated:YES];
             });
         }];
     }

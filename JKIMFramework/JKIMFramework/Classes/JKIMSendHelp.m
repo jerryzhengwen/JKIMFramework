@@ -43,14 +43,13 @@
         }
     }
     messageModel.sendContent = imgContent;
-    //在这里判断下model 中是否包含表情
-    [[JKConnectCenter sharedJKConnectCenter]sendMessage:messageModel];
     JKDialogModel * model = [JKDialogModel changeMsgTypeWithJKModel:messageModel];
     frameModel.message = model;
     if (completeBlock) {
         completeBlock(frameModel);
     }
-    
+    //在这里判断下model 中是否包含表情
+    [[JKConnectCenter sharedJKConnectCenter]sendMessage:messageModel];
 }
 
 + (void)sendImageMessageWithImageData:(NSData *)imageData image:(UIImage *)image MessageModel:(JKMessage *)messageModel completeBlock:(CompleteBlock)completeBlock{

@@ -52,7 +52,7 @@
     }
     [self.contentView addSubview:self.nameLabel];
     
-
+    
     self.labelTime = [[UILabel alloc] init];
     self.labelTime.textAlignment = NSTextAlignmentCenter;
     self.labelTime.textColor = UIColorFromRGB(0x9B9B9B);
@@ -86,7 +86,14 @@
             NSLog(@"---%@",obj);
         }];
         [self.webView evaluateJavaScript:@"getImages()"completionHandler:^(id obj, NSError * _Nullable error) {
-            NSLog(@"---%@",obj);
+            if ([obj isKindOfClass:[NSString class]]) {
+                NSString *url = (NSString *)obj;
+                if ([url containsString:@"+"]) {
+                    NSString *imgUrl = [url substringToIndex:url.length -1];
+                    UIImageView * img = [[UIImageView alloc] init];
+                    img.yy_imageURL = [NSURL URLWithString:imgUrl];
+                }
+            }
         }];
         static NSString * const jsClickImage = @"function registerImageClickAction(){var imgs=document.getElementsByTagName('img');var length=imgs.length;for(var i=0;i<length;i++){img=imgs[i];img.onclick=function(){window.location.href='image-preview:'+this.src}}}";
         [self.webView evaluateJavaScript:jsClickImage completionHandler:^(id obj, NSError * _Nullable error) {

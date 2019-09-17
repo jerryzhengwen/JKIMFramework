@@ -87,8 +87,9 @@
     }
 }
 -(void)reneedInit {
-    [[JKConnectCenter sharedJKConnectCenter] checkoutInitCompleteBlock:^(BOOL isComplete) {
-    }];
+    [[JKConnectCenter sharedJKConnectCenter] initDialogeWIthSatisFaction]; //人工消息的时候需要判断下
+//    [[JKConnectCenter sharedJKConnectCenter] checkoutInitCompleteBlock:^(BOOL isComplete) {
+//    }];
 }
 -(void)endDialogeClick {
     __weak JKDialogueViewController *weakSelf = self;
@@ -613,6 +614,11 @@
     });
 }
 -(void)receiveHotJKMessage:(JKMessage *)message {
+    for (JKMessageFrame *model in self.dataFrameArray) {
+        if (model.message.hotArray.count) {
+            return;
+        }
+    }
     dispatch_async(dispatch_get_main_queue(), ^{
         JKMessageFrame *framModel = [[JKMessageFrame alloc]init];
         JKDialogModel * model = [JKDialogModel changeMsgTypeWithJKModel:message];
