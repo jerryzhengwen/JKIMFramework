@@ -63,11 +63,12 @@
     }];
     self.tableView.mj_header = refresh;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reneedInit) name:UIApplicationDidBecomeActiveNotification object:nil];
+    
 }
 -(void)reneedInit {
     [[JKConnectCenter sharedJKConnectCenter] initDialogeWIthSatisFaction]; //人工消息的时候需要判断下
-//    [[JKConnectCenter sharedJKConnectCenter] checkoutInitCompleteBlock:^(BOOL isComplete) {
-//    }];
+    //    [[JKConnectCenter sharedJKConnectCenter] checkoutInitCompleteBlock:^(BOOL isComplete) {
+    //    }];
 }
 -(void)endDialogeClick {
     __weak JKDialogueViewController *weakSelf = self;
@@ -108,8 +109,8 @@
     self.textView.returnKeyType = UIReturnKeySend;
     self.textView.delegate = self;
     self.textView.frame = CGRectMake(10, 11, [UIScreen mainScreen].bounds.size.width - 84, 32);
-//    [self.bottomView addSubview:self.moreBtn];
-//    [self.bottomView addSubview:self.faceButton];
+    //    [self.bottomView addSubview:self.moreBtn];
+    //    [self.bottomView addSubview:self.faceButton];
     self.moreBtn.frame = CGRectMake(self.view.right - 32 , 0, 22, 22);
     CGPoint sendBtnCenter = self.moreBtn.center;
     sendBtnCenter.y = self.textView.center.y;
@@ -155,7 +156,7 @@
         [weakSelf.tableView.mj_header endRefreshing];
         dispatch_async(dispatch_get_main_queue(), ^{
             for (int i = (int)array.count - 1; i>=0; i--) {
-//            for (int i = 0; i < array.count; i++) {
+                //            for (int i = 0; i < array.count; i++) {
                 JKMessage *message = array[i];
                 JKDialogModel * autoModel = [message mutableCopy];
                 JKMessageFrame *frameModel = [[JKMessageFrame alloc] init];
@@ -166,57 +167,57 @@
                 }
                 [weakSelf.dataFrameArray insertObject:frameModel atIndex:0];
             }
-//            for (JKMessage * message in array) {
-//                JKDialogModel * autoModel = [message mutableCopy];
-//                JKMessageFrame *frameModel = [[JKMessageFrame alloc] init];
-//                frameModel.message = autoModel;
-//                frameModel = [weakSelf jisuanMessageFrame:frameModel];
-//                if (message.messageType == JKMessageFAQImageText || message.messageType == JKMessageFAQImage) {
-//                    frameModel.cellHeight = 0;
-//                }
-//                [weakSelf.dataFrameArray insertObject:frameModel atIndex:0];
-//            }
+            //            for (JKMessage * message in array) {
+            //                JKDialogModel * autoModel = [message mutableCopy];
+            //                JKMessageFrame *frameModel = [[JKMessageFrame alloc] init];
+            //                frameModel.message = autoModel;
+            //                frameModel = [weakSelf jisuanMessageFrame:frameModel];
+            //                if (message.messageType == JKMessageFAQImageText || message.messageType == JKMessageFAQImage) {
+            //                    frameModel.cellHeight = 0;
+            //                }
+            //                [weakSelf.dataFrameArray insertObject:frameModel atIndex:0];
+            //            }
             [weakSelf reloadPath];
         });
     }];
-//    NSLog(@"---%@",[JKConnectCenter sharedJKConnectCenter].chat_id);
-//    if (self.isLoadHistory == NO) {
-//        self.isLoadHistory = YES;
-//    }else {
-//        return;
-//    }
-//    NSMutableArray *historyArr = [[JKConnectCenter sharedJKConnectCenter]selectEntity:[NSArray array] ascending:NO filterString:nil];
-//    [self.tableView.mj_header endRefreshing];
-//    [historyArr enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//        JKMessage *historyModel = historyArr[idx];
-//        for (JKMessageFrame *frameModel in self.dataArray) {
-//            JKMessage * model =frameModel.message;
-//            if ([historyModel.messageId isEqualToString:model.messageId]) {
-//                [historyArr removeObject:historyModel];
-//            }
-//        }
-//    }];
-//    for (int i = 0; i < historyArr.count; i++) {
-//        JKMessage *model = historyArr[i];
-//        JKMessageFrame *framModel = [[JKMessageFrame alloc]init];
-//        JKDialogModel *dialog = [JKDialogModel changeMsgTypeWithJKModel:model];
-//        dialog.time = model.time;
-//        framModel.message = dialog;
-//        if (model.whoSend != JK_SystemMark) {
-//            framModel = [self jisuanMessageFrame:framModel];
-//            if (model.messageType == JKMessageFAQImageText || model.messageType == JKMessageFAQImage) {
-//                framModel.cellHeight = 0;
-//            }
-//            [self.dataFrameArray insertObject:framModel atIndex:0];
-//        }
-//    }
-//
-////    if (index >= 0) {
-////        //评价的信号文字不用显示
-////        [self.dataArray removeObjectAtIndex:index];
-////        [self.dataFrameArray removeObjectAtIndex:index];
-////    }
-//    [self tableViewMoveToLastPathNeedAnimated:NO];
+    //    NSLog(@"---%@",[JKConnectCenter sharedJKConnectCenter].chat_id);
+    //    if (self.isLoadHistory == NO) {
+    //        self.isLoadHistory = YES;
+    //    }else {
+    //        return;
+    //    }
+    //    NSMutableArray *historyArr = [[JKConnectCenter sharedJKConnectCenter]selectEntity:[NSArray array] ascending:NO filterString:nil];
+    //    [self.tableView.mj_header endRefreshing];
+    //    [historyArr enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    //        JKMessage *historyModel = historyArr[idx];
+    //        for (JKMessageFrame *frameModel in self.dataArray) {
+    //            JKMessage * model =frameModel.message;
+    //            if ([historyModel.messageId isEqualToString:model.messageId]) {
+    //                [historyArr removeObject:historyModel];
+    //            }
+    //        }
+    //    }];
+    //    for (int i = 0; i < historyArr.count; i++) {
+    //        JKMessage *model = historyArr[i];
+    //        JKMessageFrame *framModel = [[JKMessageFrame alloc]init];
+    //        JKDialogModel *dialog = [JKDialogModel changeMsgTypeWithJKModel:model];
+    //        dialog.time = model.time;
+    //        framModel.message = dialog;
+    //        if (model.whoSend != JK_SystemMark) {
+    //            framModel = [self jisuanMessageFrame:framModel];
+    //            if (model.messageType == JKMessageFAQImageText || model.messageType == JKMessageFAQImage) {
+    //                framModel.cellHeight = 0;
+    //            }
+    //            [self.dataFrameArray insertObject:framModel atIndex:0];
+    //        }
+    //    }
+    //
+    ////    if (index >= 0) {
+    ////        //评价的信号文字不用显示
+    ////        [self.dataArray removeObjectAtIndex:index];
+    ////        [self.dataFrameArray removeObjectAtIndex:index];
+    ////    }
+    //    [self tableViewMoveToLastPathNeedAnimated:NO];
     
     
 }
@@ -292,12 +293,12 @@
         cell.webHeightBlock = ^(int row, BOOL moveToLast) {
             [weakSelf reloadCellWithRow:row MoveToLast:moveToLast];
         };
-//        cell.webHeightBlock = ^(int row) {
-//            [weakSelf reloadCellWithRow:row];
-//        };
-//        cell.webHeightBlock = ^{
-//            [weakSelf tableViewMoveToLastPathNeedAnimated:YES];
-//        };
+        //        cell.webHeightBlock = ^(int row) {
+        //            [weakSelf reloadCellWithRow:row];
+        //        };
+        //        cell.webHeightBlock = ^{
+        //            [weakSelf tableViewMoveToLastPathNeedAnimated:YES];
+        //        };
         return cell;
     }
     if (messageFrame.message.messageType == JKMessageHotMsg) {
@@ -443,9 +444,6 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self.tableView reloadData];
                 
-                //            CGPoint offset = CGPointMake(0,self.tableView.contentSize.height - self.tableView.frame.size.height);
-                //                [self.tableView setContentOffset:offset animated:YES];
-                
                 // 4.自动滚动表格到最后一行
                 NSIndexPath *lastPath = [NSIndexPath indexPathForRow:self.dataFrameArray.count - 1 inSection:0];
                 
@@ -479,7 +477,7 @@
 
 - (void)cameraAction{
     
-//    self.isPushToController = @"YES";
+    //    self.isPushToController = @"YES";
     
     [self presentChoseCameraWithCompletionHandler:^(NSData * _Nonnull imageData, UIImage * _Nonnull image) {
         
@@ -551,7 +549,7 @@
             [self.dataFrameArray addObject:frameModel];
         }
         [self reloadPath];
-//        [self tableViewMoveToLastPathNeedAnimated:YES];
+        //        [self tableViewMoveToLastPathNeedAnimated:YES];
     });
 }
 /**
@@ -619,29 +617,29 @@
     view.content = model.content;
     [self.navigationController pushViewController:view animated:YES];
     
-//    __weak typeof(self) weakSelf = self;
-//    view.returnMessageBlock = ^(NSString * _Nonnull message) {
-//        NSString *value = @"";
-//        NSArray * array = [model.from componentsSeparatedByString:@"/"];
-//        if (array.count > 1) {
-//            NSString *username = [array[1] componentsSeparatedByString:@"@openfire-test"].firstObject;
-//            value = [username componentsSeparatedByString:@"-"].lastObject;
-//        }
-//        message = [NSString stringWithFormat:@"%@%@%@%@",@"您给客服",value,@"的评价",message];
-//
-//        weakSelf.listMessage.messageType = JKMessageWord;
-//        weakSelf.listMessage.msgSendType = JK_SocketMSG;
-//        weakSelf.listMessage.whoSend = JK_SystemMarkShow;
-//        weakSelf.listMessage.content = message;
-//        weakSelf.listMessage.isRichText = NO;
-//
-//        [JKIMSendHelp sendTextMessageWithMessageModel:weakSelf.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
-//            messageFrame = [self jisuanMessageFrame:messageFrame];
-//            [weakSelf.dataFrameArray addObject:messageFrame];
-//            [weakSelf tableViewMoveToLastPathNeedAnimated:YES];
-//        }];
-//
-//    };
+    //    __weak typeof(self) weakSelf = self;
+    //    view.returnMessageBlock = ^(NSString * _Nonnull message) {
+    //        NSString *value = @"";
+    //        NSArray * array = [model.from componentsSeparatedByString:@"/"];
+    //        if (array.count > 1) {
+    //            NSString *username = [array[1] componentsSeparatedByString:@"@openfire-test"].firstObject;
+    //            value = [username componentsSeparatedByString:@"-"].lastObject;
+    //        }
+    //        message = [NSString stringWithFormat:@"%@%@%@%@",@"您给客服",value,@"的评价",message];
+    //
+    //        weakSelf.listMessage.messageType = JKMessageWord;
+    //        weakSelf.listMessage.msgSendType = JK_SocketMSG;
+    //        weakSelf.listMessage.whoSend = JK_SystemMarkShow;
+    //        weakSelf.listMessage.content = message;
+    //        weakSelf.listMessage.isRichText = NO;
+    //
+    //        [JKIMSendHelp sendTextMessageWithMessageModel:weakSelf.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
+    //            messageFrame = [self jisuanMessageFrame:messageFrame];
+    //            [weakSelf.dataFrameArray addObject:messageFrame];
+    //            [weakSelf tableViewMoveToLastPathNeedAnimated:YES];
+    //        }];
+    //
+    //    };
 }
 
 - (void)showRobotMessage:(JKMessage *)message count:(int)count{
@@ -671,7 +669,7 @@
     self.listMessage.from = @"";
     if (self.listMessage.chatterName) {
         self.titleLabel.text = self.listMessage.chatterName;
-//        self.satisfieButton.hidden = NO;
+        //        self.satisfieButton.hidden = NO;
     }
 }
 
@@ -918,9 +916,6 @@
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     self.navigationController.navigationBarHidden = YES;
-//    if (self.navigationController) {
-//        self.navigationController.navigationBar.hidden = YES;
-//    }
     if (self.isNeedResend) { //重新发送一遍问题
         NSString * reText = @"";
         for (int i = (int)self.dataFrameArray.count - 1; i >=0; i--) {
@@ -940,9 +935,15 @@
         [JKIMSendHelp sendTextMessageWithMessageModel:self.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
             messageFrame =  [self jisuanMessageFrame:messageFrame];
             [self.dataFrameArray addObject:messageFrame];
-            [self tableViewMoveToLastPathNeedAnimated:YES];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self tableViewMoveToLastPathNeedAnimated:YES];
+            });
         }];
+        self.isNeedResend = NO;
     }
+    //    if (self.navigationController) {
+    //        self.navigationController.navigationBar.hidden = YES;
+    //    }
 }
 - (void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
@@ -952,7 +953,7 @@
 
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
-//    self.navigationController.navigationBar.hidden = NO;
+    //    self.navigationController.navigationBar.hidden = NO;
     self.navigationController.navigationBarHidden = NO;
 }
 
@@ -977,7 +978,7 @@
             self.assoiateView.keyWord = self.textView.text;
             CGFloat height = 33 * array.count;
             self.assoiateView.frame = CGRectMake(0, self.bottomView.top - height, self.view.width, height);
-             [self.assoiateView.tableView reloadData];
+            [self.assoiateView.tableView reloadData];
         }else {
             self.assoiateView.hidden = YES;
         }
