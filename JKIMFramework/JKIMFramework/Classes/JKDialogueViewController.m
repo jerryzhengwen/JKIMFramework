@@ -439,15 +439,25 @@
         if (self.dataFrameArray.count < 1) {
             return;
         }
+        dispatch_queue_t q = dispatch_queue_create("chuan_xing", DISPATCH_QUEUE_SERIAL);
         [self.refreshQ cancelAllOperations];
         [self.refreshQ addOperationWithBlock:^{
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.tableView reloadData];
+            dispatch_async(q, ^{
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.tableView reloadData];
+                });
+            });
+            dispatch_async(q, ^{
                 
-                // 4.自动滚动表格到最后一行
-                NSIndexPath *lastPath = [NSIndexPath indexPathForRow:self.dataFrameArray.count - 1 inSection:0];
-                
-                [self.tableView scrollToRowAtIndexPath:lastPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    
+                    //                 dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    // 4.自动滚动表格到最后一行
+                    NSIndexPath *lastPath = [NSIndexPath indexPathForRow:self.dataFrameArray.count - 1 inSection:0];
+                    
+                    [self.tableView scrollToRowAtIndexPath:lastPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+                });
             });
         }];
         
@@ -548,8 +558,10 @@
             }
             [self.dataFrameArray addObject:frameModel];
         }
-        [self reloadPath];
-        //        [self tableViewMoveToLastPathNeedAnimated:YES];
+        //        [self reloadPath];
+        //    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self tableViewMoveToLastPathNeedAnimated:YES];
+        //        });
     });
 }
 /**
