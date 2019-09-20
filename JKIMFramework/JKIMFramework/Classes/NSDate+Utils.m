@@ -442,4 +442,17 @@
     }
     return [NSString stringWithFormat:@"%@ %@:%02d",dateStr,hour,(int)[lastDate minute]];
 }
++(NSString *)getTimeStringWithIntervalString:(NSString *)tempStr {
+    // 把时间戳转化成时间
+    NSTimeInterval interval=[tempStr doubleValue] / 1000.0;
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:interval];
+    NSDateFormatter *objDateformat = [[NSDateFormatter alloc] init];
+    [objDateformat setDateFormat:@"yyyy-MM-dd HH:mm"];//年月日时分秒
+    NSString * timeStr = [NSString stringWithFormat:@"%@",[objDateformat stringFromDate: date]];
+    NSString *nowDate = [NSDate stringYearMonthDayWithDate:nil];
+    if ([timeStr containsString:nowDate]) {
+        timeStr = [timeStr componentsSeparatedByString:@" "].lastObject;
+    }
+    return timeStr;
+}
 @end

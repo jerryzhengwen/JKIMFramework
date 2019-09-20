@@ -449,7 +449,7 @@
             });
             dispatch_async(q, ^{
                 
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.4f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                     
                     //                 dispatch_async(dispatch_get_main_queue(), ^{
                     
@@ -979,11 +979,72 @@
         [self sendMessage];
         return NO;
     }
+    if ([self stringContainsEmoji:text]) {
+        return NO;
+    }
+    if ([[textView.textInputMode primaryLanguage] isEqualToString:@"emoji"] || ![textView.textInputMode primaryLanguage]) {
+        return NO;
+    }
     return YES;
 }
+//表情符号的判断
+- (BOOL)stringContainsEmoji:(NSString *)string {
+    
+    __block BOOL returnValue = NO;
+    
+    [string enumerateSubstringsInRange:NSMakeRange(0, [string length])
+                               options:NSStringEnumerationByComposedCharacterSequences
+                            usingBlock:^(NSString *substring, NSRange substringRange, NSRange enclosingRange, BOOL *stop) {
+                                const unichar hs = [substring characterAtIndex:0];
+                                if (0xd800 <= hs && hs <= 0xdbff) {
+                                    if (substring.length > 1) {
+                                        const unichar ls = [substring characterAtIndex:1];
+                                        const int uc = ((hs - 0xd800) * 0x400) + (ls - 0xdc00) + 0x10000;
+                                        if (0x1d000 <= uc && uc <= 0x1f77f) {
+                                            returnValue = YES;
+                                        }
+                                    }
+                                } else if (substring.length > 1) {
+                                    const unichar ls = [substring characterAtIndex:1];
+                                    if (ls == 0x20e3) {
+                                        returnValue = YES;
+                                    }
+                                } else {
+                                    if (0x2100 <= hs && hs <= 0x27ff) {
+                                        if (0x278b <= hs && hs <= 0x2792) {
+                                            //自带九宫格拼音键盘
+                                            returnValue = NO;;
+                                        }else if (0x263b == hs) {
+                                            returnValue = NO;;
+                                        }else {
+                                            returnValue = YES;
+                                        }
+                                    } else if (0x2B05 <= hs && hs <= 0x2b07) {
+                                        returnValue = YES;
+                                    } else if (0x2934 <= hs && hs <= 0x2935) {
+                                        returnValue = YES;
+                                    } else if (0x3297 <= hs && hs <= 0x3299) {
+                                        returnValue = YES;
+                                    } else if (hs == 0xa9 || hs == 0xae || hs == 0x303d || hs == 0x3030 || hs == 0x2b55 || hs == 0x2b1c || hs == 0x2b1b || hs == 0x2b50) {
+                                        returnValue = YES;
+                                    }
+                                }
+                            }];
+    
+    return returnValue;
+}
+
 -(void)getSimilarWithResult:(id)result {
     dispatch_async(dispatch_get_main_queue(), ^{
         NSArray *array = [NSJSONSerialization JSONObjectWithData:result options:kNilOptions error:nil];
+        if ([array containsObject:@"sys_err_06"]) {
+            [[JKConnectCenter sharedJKConnectCenter] initDialogeWIthSatisFaction];
+            return ;
+        }
+        if (!self.textView.text.length) {
+            self.assoiateView.hidden = YES;
+            return;
+        }
         if (array.count) {
             self.assoiateView.hidden = NO;
             self.assoiateView.associateArr = [[NSMutableArray alloc] initWithArray:array];

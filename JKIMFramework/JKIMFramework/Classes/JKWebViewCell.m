@@ -73,7 +73,8 @@
 }
 -(void)setMessageFrame:(JKMessageFrame *)messageFrame {
     _messageFrame = messageFrame;
-    self.labelTime.text = [NSDate changeTheDateString:messageFrame.message.time];
+    NSString * time = [NSDate getTimeStringWithIntervalString:messageFrame.message.time];
+    self.labelTime.text = time;
     NSString * name = messageFrame.message.from.length?messageFrame.message.from:@"robot";
     self.nameLabel.text = name;
     NSURL *baseurl = [NSURL URLWithString:@"file:///"];

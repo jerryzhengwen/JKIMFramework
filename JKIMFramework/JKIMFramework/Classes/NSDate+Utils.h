@@ -79,5 +79,11 @@
 + (NSString *)changeTheDateString:(NSString *)Str;
 - (NSString *)string;
 - (NSString *)stringCutSeconds;
+/**
+ 时间戳转化为时间 当天的只显示时分，以往的现实年月日，时分
 
+ @param tempStr 当前的时间戳
+ @return 时间字符串。
+ */
++ (NSString *)getTimeStringWithIntervalString:(NSString *)tempStr;
 @end

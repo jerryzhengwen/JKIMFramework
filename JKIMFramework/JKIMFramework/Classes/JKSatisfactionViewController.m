@@ -175,6 +175,7 @@
             dispatch_async(dispatch_get_main_queue(), ^{
 //                if (weakSelf.returnMessageBlock) { weakSelf.returnMessageBlock(name);
 //                }
+                weakSelf.navigationController.navigationBarHidden = NO;
                 [weakSelf.navigationController popToRootViewControllerAnimated:YES];
             });
         }];
@@ -197,8 +198,10 @@
     if (!cell) {
         cell = [[JKStatisfactionCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:identifer];
     }
+    
     if (indexPath.section == 0 || indexPath.section == 1) {
         self.satisTableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+//        self.satisTableView.separatorColor = UIColorFromRGB(0xcccccc);
     }else {
         self.satisTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     }

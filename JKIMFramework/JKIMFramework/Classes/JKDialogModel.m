@@ -80,50 +80,50 @@
 
 //"08-10 晚上08:09:41.0" ->
 //"昨天 上午10:09"或者"2012-08-10 凌晨07:09"
-- (NSString *)changeTheDateString:(NSString *)Str
-{
-    // 格式化时间
-    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
-    formatter.timeZone = [NSTimeZone timeZoneWithName:@"shanghai"];
-    [formatter setDateStyle:NSDateFormatterMediumStyle];
-    [formatter setTimeStyle:NSDateFormatterShortStyle];
-    [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-    
-    // 毫秒值转化为秒
-    NSDate* lastDate = [NSDate dateWithTimeIntervalSince1970:[Str doubleValue]/ 1000.0];
-    
-    NSString *dateStr;  //年月日
-    NSString *period;   //时间段
-    NSString *hour;     //时
-    
-//    if ([lastDate year]==[[NSDate date] year]) {
-//        NSInteger days = [NSDate daysOffsetBetweenStartDate:lastDate endDate:[NSDate date]];
-//        if (days <= 2) {
-//            dateStr = [lastDate stringYearMonthDayCompareToday];
-//        }else{
-//            dateStr = [lastDate stringMonthDay];
-//        }
+//- (NSString *)changeTheDateString:(NSString *)Str
+//{
+//    // 格式化时间
+//    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+//    formatter.timeZone = [NSTimeZone timeZoneWithName:@"shanghai"];
+//    [formatter setDateStyle:NSDateFormatterMediumStyle];
+//    [formatter setTimeStyle:NSDateFormatterShortStyle];
+//    [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+//
+//    // 毫秒值转化为秒
+//    NSDate* lastDate = [NSDate dateWithTimeIntervalSince1970:[Str doubleValue]/ 1000.0];
+//
+//    NSString *dateStr;  //年月日
+//    NSString *period;   //时间段
+//    NSString *hour;     //时
+//
+////    if ([lastDate year]==[[NSDate date] year]) {
+////        NSInteger days = [NSDate daysOffsetBetweenStartDate:lastDate endDate:[NSDate date]];
+////        if (days <= 2) {
+////            dateStr = [lastDate stringYearMonthDayCompareToday];
+////        }else{
+////            dateStr = [lastDate stringMonthDay];
+////        }
+////    }else{
+//        dateStr = [lastDate stringYearMonthDay];
+////    }
+//
+//
+//    if ([lastDate hour]>=5 && [lastDate hour]<12) {
+//        period = @"AM";
+//        hour = [NSString stringWithFormat:@"%02d",(int)[lastDate hour]];
+//    }else if ([lastDate hour]>=12 && [lastDate hour]<=18){
+//        period = @"PM";
+//        hour = [NSString stringWithFormat:@"%02d",(int)[lastDate hour]-12];
+//    }else if ([lastDate hour]>18 && [lastDate hour]<=23){
+//        period = @"Night";
+//        hour = [NSString stringWithFormat:@"%02d",(int)[lastDate hour]-12];
 //    }else{
-        dateStr = [lastDate stringYearMonthDay];
+//        period = @"Dawn";
+//        hour = [NSString stringWithFormat:@"%02d",(int)[lastDate hour]];
 //    }
-    
-    
-    if ([lastDate hour]>=5 && [lastDate hour]<12) {
-        period = @"AM";
-        hour = [NSString stringWithFormat:@"%02d",(int)[lastDate hour]];
-    }else if ([lastDate hour]>=12 && [lastDate hour]<=18){
-        period = @"PM";
-        hour = [NSString stringWithFormat:@"%02d",(int)[lastDate hour]-12];
-    }else if ([lastDate hour]>18 && [lastDate hour]<=23){
-        period = @"Night";
-        hour = [NSString stringWithFormat:@"%02d",(int)[lastDate hour]-12];
-    }else{
-        period = @"Dawn";
-        hour = [NSString stringWithFormat:@"%02d",(int)[lastDate hour]];
-    }
-//    return [NSString stringWithFormat:@"%@ %@ %@:%02d",dateStr,period,hour,(int)[lastDate minute]];
-    return [NSString stringWithFormat:@"%@ %@:%02d",dateStr,hour,(int)[lastDate minute]];
-}
+////    return [NSString stringWithFormat:@"%@ %@ %@:%02d",dateStr,period,hour,(int)[lastDate minute]];
+//    return [NSString stringWithFormat:@"%@ %@:%02d",dateStr,hour,(int)[lastDate minute]];
+//}
 
 /**
  *  计算富文本的高度

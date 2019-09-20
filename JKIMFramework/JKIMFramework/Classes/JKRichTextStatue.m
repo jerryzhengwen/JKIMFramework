@@ -131,7 +131,7 @@
         }
     }
     [attributedText addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, attributedText.length)];
-    [attributedText addAttribute:@"specials" value:specials range:NSMakeRange(0, 1)];
+//    [attributedText addAttribute:@"specials" value:specials range:NSMakeRange(0, 1)];
 //    for (JKTextPat * part in parts) {
 //        if (part.isSpecial && !part.isEmotion) { //需要添加链接
 //            [attributedText addAttribute:NSLinkAttributeName value:[NSString stringWithFormat:@"%@://",part.text] range:part.range];
