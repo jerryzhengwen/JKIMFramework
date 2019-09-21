@@ -77,6 +77,7 @@
     NSString * time = [NSDate getTimeStringWithIntervalString:messageFrame.message.time];
     self.labelTime.text = time;
     NSString * name = messageFrame.message.from.length?messageFrame.message.from:@"robot";
+    name = @"小广";
     self.nameLabel.text = name;
     NSURL *baseurl = [NSURL URLWithString:@"file:///"];
     [self.webView loadHTMLString:[self getHtmlString:messageFrame.message.content] baseURL:baseurl];
