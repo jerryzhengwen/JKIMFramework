@@ -12,6 +12,7 @@
 #import "NSDate+Utils.h"
 #import "YYWebImage.h"
 #import "JKImageAvatarBrowser.h"
+#import "JKMessageOpenUrl.h"
 @interface JKWebViewCell()<WKNavigationDelegate,WKUIDelegate>
 @property (nonatomic,strong)UIImageView *backImageView;
 @property (nonatomic, strong)WKWebView *webView;
@@ -66,7 +67,7 @@
     self.webView.backgroundColor = [UIColor redColor];
     self.webView.navigationDelegate = self;
     self.webView.UIDelegate = self;
-    self.webView.scrollView.scrollEnabled = NO;
+    self.webView.scrollView.scrollEnabled = YES;
     self.webView.layer.masksToBounds = YES;
     self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self.contentView addSubview:self.webView];
@@ -176,13 +177,16 @@
         NSString *url = [[str componentsSeparatedByString:@"image-preview:"] componentsJoinedByString:@""];
         imageView.center = self.center;
         [imageView yy_setImageWithURL:[NSURL URLWithString:url] placeholder:nil options:YYWebImageOptionSetImageWithFadeAnimation completion:^(UIImage * _Nullable image, NSURL * _Nonnull url, YYWebImageFromType from, YYWebImageStage stage, NSError * _Nullable error) {
-            if (!error) {
+            if (!error && image) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [JKImageAvatarBrowser showImage:imageView];
                 });
             }
         }];
     }else {
+        if (![str containsString:@"file:///"]) {
+         [[JKMessageOpenUrl sharedOpenUrl] JK_ClickHyperMediaMessageOpenUrl:str];
+        }
         decisionHandler(WKNavigationActionPolicyAllow);  // 必须实现 加载
     }
 }

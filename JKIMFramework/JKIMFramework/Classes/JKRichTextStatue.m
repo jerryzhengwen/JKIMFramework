@@ -90,6 +90,11 @@
     for (JKTextPat *part in parts) {
         // 等会需要拼接的子串
         NSAttributedString *substr = nil;
+        if (part.isSpecial) {
+            if (![part.text containsString:@"http"]) {
+                part.isSpecial = NO;
+            }
+        }
         if (part.isEmotion) { //是表情
             for (int i = 0; i <face.count; i++) {
                 if ([face[i][@"face_name"] isEqualToString:part.text]) {

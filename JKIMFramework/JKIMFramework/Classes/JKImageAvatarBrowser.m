@@ -41,12 +41,12 @@ static UIScrollView *scrollView;
     scrollView.showsHorizontalScrollIndicator = YES;
     scrollView.delegate = self;
     
-    [UIView animateWithDuration:0.3 animations:^{
+//    [UIView animateWithDuration:0.3 animations:^{
         imageView.frame=CGRectMake(0,([UIScreen mainScreen].bounds.size.height-image.size.height*[UIScreen mainScreen].bounds.size.width/image.size.width)/2, [UIScreen mainScreen].bounds.size.width, image.size.height*[UIScreen mainScreen].bounds.size.width/image.size.width);
         scrollView.alpha=1;
-    } completion:^(BOOL finished) {
-        
-    }];
+//    } completion:^(BOOL finished) {
+//
+//    }];
 }
 
 +(void)hideImage:(UITapGestureRecognizer*)tap{
@@ -60,13 +60,13 @@ static UIScrollView *scrollView;
     
     UIView *backgroundView=tap.view;
     UIImageView *imageView=(UIImageView*)[tap.view viewWithTag:1];
-    [UIView animateWithDuration:0.3 animations:^{
+//    [UIView animateWithDuration:0.3 animations:^{
         imageView.frame=[orginImageView convertRect:orginImageView.bounds toView:[UIApplication sharedApplication].keyWindow];
-    } completion:^(BOOL finished) {
+//    } completion:^(BOOL finished) {
         [backgroundView removeFromSuperview];
         orginImageView.alpha = 1;
         backgroundView.alpha=0;
-    }];
+//    }];
 }
 
 + (CGRect)zoomRectForScale:(float)scale withCenter:(CGPoint)center

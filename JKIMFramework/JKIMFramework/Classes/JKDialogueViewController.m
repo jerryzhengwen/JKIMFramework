@@ -72,10 +72,11 @@
 }
 -(void)endDialogeClick {
     __weak JKDialogueViewController *weakSelf = self;
+    NSString *contextId = [[JKConnectCenter sharedJKConnectCenter] JKIM_getContext_id];
     [[JKConnectCenter sharedJKConnectCenter] getEndChatBlock:^(BOOL satisFaction) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (satisFaction) { //跳转满意度界面
-                [weakSelf showSatisfacionViewFromid:[[JKMessage alloc]init]];
+                [weakSelf showSatisfacionViewFromid:[[JKMessage alloc]init] ContextId:contextId];
             }else { //关闭当前界面
                 [weakSelf.navigationController popViewControllerAnimated:YES];
             }
@@ -439,26 +440,30 @@
         if (self.dataFrameArray.count < 1) {
             return;
         }
-        dispatch_queue_t q = dispatch_queue_create("chuan_xing", DISPATCH_QUEUE_SERIAL);
+//        dispatch_queue_t q = dispatch_queue_create("chuan_xing", DISPATCH_QUEUE_SERIAL);
         [self.refreshQ cancelAllOperations];
         [self.refreshQ addOperationWithBlock:^{
-            dispatch_async(q, ^{
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self.tableView reloadData];
+//            dispatch_async(q, ^{
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    [self.tableView reloadData];
+//                });
+//            });
+//            dispatch_async(q, ^{
+//
+//                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.4f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//
+//                    //                 dispatch_async(dispatch_get_main_queue(), ^{
+//
+//                    // 4.自动滚动表格到最后一行
+//                    NSIndexPath *lastPath = [NSIndexPath indexPathForRow:self.dataFrameArray.count - 1 inSection:0];
+//
+//                    [self.tableView scrollToRowAtIndexPath:lastPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+//                });
+//            });
+            dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+            [self performSelector:@selector(delayScrollew) withObject:nil afterDelay:0.3];
                 });
-            });
-            dispatch_async(q, ^{
-                
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.4f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                    
-                    //                 dispatch_async(dispatch_get_main_queue(), ^{
-                    
-                    // 4.自动滚动表格到最后一行
-                    NSIndexPath *lastPath = [NSIndexPath indexPathForRow:self.dataFrameArray.count - 1 inSection:0];
-                    
-                    [self.tableView scrollToRowAtIndexPath:lastPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
-                });
-            });
         }];
         
         
@@ -469,6 +474,11 @@
     @finally {
         
     }
+}
+-(void)delayScrollew {
+        NSIndexPath *lastPath = [NSIndexPath indexPathForRow:self.dataFrameArray.count - 1 inSection:0];
+    
+        [self.tableView scrollToRowAtIndexPath:lastPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
 }
 //刷新数据
 - (void)reloadPath{
@@ -573,11 +583,13 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         JKDialogModel * autoModel = [message mutableCopy];
         JKMessageFrame *frameModel = [[JKMessageFrame alloc]init];
-        if (autoModel.whoSend == JK_SystemMark) { //在这里判断初始化context_id，以及判断是否弹满意度
+        if (autoModel.whoSend == JK_SystemMark) {
+            //在这里判断初始化context_id，以及判断是否弹满意度
+            NSString *contextId = [[JKConnectCenter sharedJKConnectCenter] JKIM_getContext_id];
             [[JKConnectCenter sharedJKConnectCenter] getEndChatBlock:^(BOOL satisFaction) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (satisFaction) { //跳转满意度界面
-                        [weakSelf showSatisfacionViewFromid:autoModel];
+                        [weakSelf showSatisfacionViewFromid:autoModel ContextId:contextId];
                     }
                 });
             }];
@@ -618,7 +630,7 @@
         });
     });
 }
-- (void)showSatisfacionViewFromid:(JKMessage *)model{
+- (void)showSatisfacionViewFromid:(JKMessage *)model ContextId:(NSString *)contextId{
     ///判断如果此时已经有展示框就不弹展示弹框
     UIViewController *vc = [NSObject currentViewController];
     if ([vc isKindOfClass:[JKSatisfactionViewController class]]) {
@@ -627,6 +639,7 @@
     [[JKConnectCenter sharedJKConnectCenter]readMessageFromId:model.from];
     JKSatisfactionViewController * view = [[JKSatisfactionViewController alloc]init];
     view.content = model.content;
+    view.context_id = contextId;
     [self.navigationController pushViewController:view animated:YES];
     
     //    __weak typeof(self) weakSelf = self;

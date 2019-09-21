@@ -18,6 +18,7 @@ typedef void(^ReturnMessageBlock)(NSString *message);
 
 @property (nonatomic,copy)NSString *content;
 
+@property (nonatomic,copy)NSString *context_id;
 @end
 
 NS_ASSUME_NONNULL_END

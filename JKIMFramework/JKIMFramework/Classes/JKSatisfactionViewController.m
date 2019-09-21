@@ -169,7 +169,8 @@
         }
         JKSatisfactionModel * lastModel = self.sectionTwoArr.lastObject;
         NSString *memo = lastModel.content?lastModel.content:@"";
-        NSDictionary *dict = [NSDictionary dictionaryWithObjects:@[satisfactionPk,solutionPk,memo] forKeys:@[@"satisfactionPk",@"solutionPk",@"memo"]];
+        NSString *context_id = self.context_id;
+        NSDictionary *dict = [NSDictionary dictionaryWithObjects:@[satisfactionPk,solutionPk,memo,context_id] forKeys:@[@"satisfactionPk",@"solutionPk",@"memo",@"context_id"]];
         __weak typeof(self) weakSelf = self;
         [[JKConnectCenter sharedJKConnectCenter] submitSatisfactionWithDict:dict Block:^(id  _Nullable result) {
             dispatch_async(dispatch_get_main_queue(), ^{

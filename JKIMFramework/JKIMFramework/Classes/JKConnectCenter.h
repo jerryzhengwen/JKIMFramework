@@ -114,6 +114,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,copy) JKSkipChatBlock skipBlock;
 @property (nonatomic,copy) NSString *chat_id;
 
+@property (nonatomic,assign)BOOL isNeedResend;
 /**
  返回单例本身
 
@@ -227,6 +228,13 @@ NS_ASSUME_NONNULL_BEGIN
  @param customer 用户的基本信息
  */
 -(void)JKIM_statueChangeWithCustomer:(JKCustomer *)customer;
+
+/**
+ 获取context_id
+
+ @return 获取context_id
+ */
+-(NSString *)JKIM_getContext_id;
 
 @end
 
