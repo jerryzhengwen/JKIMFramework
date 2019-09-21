@@ -9,6 +9,7 @@
 #import "JKSatisfactionViewController.h"
 #import "JKSatisfactionModel.h"
 #import "JKStatisfactionCell.h"
+#import "JKLabHUD.h"
 @interface JKSatisfactionViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property (nonatomic,strong)UITableView * satisTableView;
 @property (nonatomic,strong)NSMutableArray *sectionOneArr;
@@ -173,6 +174,13 @@
         NSDictionary *dict = [NSDictionary dictionaryWithObjects:@[satisfactionPk,solutionPk,memo,context_id] forKeys:@[@"satisfactionPk",@"solutionPk",@"memo",@"context_id"]];
         __weak typeof(self) weakSelf = self;
         [[JKConnectCenter sharedJKConnectCenter] submitSatisfactionWithDict:dict Block:^(id  _Nullable result) {
+//            NSLog(@"---%@",[[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding]);
+//            NSDictionary *paraDict = [NSJSONSerialization JSONObjectWithData:result options:kNilOptions error:nil];
+//            NSString *content = @"";
+//            if ([paraDict.allKeys containsObject:@"error_msg"]) {
+//                content = paraDict[@"error_msg"];
+//            }
+//            [[JKLabHUD shareHUD] showWithMsg:content];
             dispatch_async(dispatch_get_main_queue(), ^{
 //                if (weakSelf.returnMessageBlock) { weakSelf.returnMessageBlock(name);
 //                }

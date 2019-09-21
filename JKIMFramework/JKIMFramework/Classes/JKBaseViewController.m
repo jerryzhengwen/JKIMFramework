@@ -50,6 +50,8 @@
     NSString *filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"jk_customer"];
     UIImageView * imageView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:filePatch]];
     CGRect rect = self.navigation.frame;
+    imageView.layer.cornerRadius = 20;
+    imageView.clipsToBounds = YES;
     imageView.frame = CGRectMake(CGRectGetMidX(rect)-20, CGRectGetMaxY(rect) - 20, 40, 40);
     [self.view addSubview:imageView];
 }

@@ -586,13 +586,13 @@
         if (autoModel.whoSend == JK_SystemMark) {
             //在这里判断初始化context_id，以及判断是否弹满意度
             NSString *contextId = [[JKConnectCenter sharedJKConnectCenter] JKIM_getContext_id];
-            [[JKConnectCenter sharedJKConnectCenter] getEndChatBlock:^(BOOL satisFaction) {
+//            [[JKConnectCenter sharedJKConnectCenter] getEndChatBlock:^(BOOL satisFaction) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    if (satisFaction) { //跳转满意度界面
+//                    if (satisFaction) { //跳转满意度界面
                         [weakSelf showSatisfacionViewFromid:autoModel ContextId:contextId];
-                    }
+//                    }
                 });
-            }];
+//            }];
             //初始化一下context_id;
             [[JKConnectCenter sharedJKConnectCenter] initDialogeWIthSatisFaction];
             return;
@@ -602,7 +602,7 @@
             self.customerName = nil;
             self.listMessage.chatState = autoModel.chatState;
             self.listMessage.to = @"";
-            self.titleLabel.text = @"对话";
+//            self.titleLabel.text = @"对话";
         }
         autoModel.whoSend = message.whoSend?message.whoSend:JK_Customer;
         autoModel.time = autoModel.time;
