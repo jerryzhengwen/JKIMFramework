@@ -16,7 +16,7 @@
 
 typedef void (^RobotMessageBlock)(JKMessage * _Nullable message,int count);
 
-typedef void (^JKGetSatisFactionBlock)(id _Nullable result);
+typedef void (^JKGetSatisFactionBlock)(id _Nullable result,BOOL isSuccess);
 
 typedef void(^JKInItDialogueBlock)(NSDictionary * _Nullable blockDict);
 

@@ -61,6 +61,7 @@
     MJRefreshNormalHeader * refresh = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
         [weakSelf loadHistoryData];
     }];
+    [refresh setTitle:@"下拉查看更多历史消息" forState:MJRefreshStatePulling];
     self.tableView.mj_header = refresh;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reneedInit) name:UIApplicationDidBecomeActiveNotification object:nil];
     
@@ -173,7 +174,7 @@
             //                JKMessageFrame *frameModel = [[JKMessageFrame alloc] init];
             //                frameModel.message = autoModel;
             //                frameModel = [weakSelf jisuanMessageFrame:frameModel];
-            //                if (message.messageType == JKMessageFAQImageText || message.messageType == JKMessageFAQImage) {
+            //                if (message.messageType ==  || message.messageType == JKMessageFAQImage) {
             //                    frameModel.cellHeight = 0;
             //                }
             //                [weakSelf.dataFrameArray insertObject:frameModel atIndex:0];

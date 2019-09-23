@@ -32,7 +32,11 @@
     self.sectionOneArr = [NSMutableArray array];
     self.sectionTwoArr = [NSMutableArray array];
     __weak typeof(self) weakSelf = self;
-    [[JKConnectCenter sharedJKConnectCenter] getSatisfactionWithBlock:^(id  _Nullable result) {
+    [[JKConnectCenter sharedJKConnectCenter] getSatisfactionWithBlock:^(id  _Nullable result, BOOL isSuccess) {
+        if (!isSuccess) {
+            [weakSelf.navigationController popViewControllerAnimated:YES];
+            return ;
+        }
         NSArray * array = [NSJSONSerialization JSONObjectWithData:result options:NSJSONReadingMutableContainers error:nil];
         if ([[array superclass] isKindOfClass:[NSMutableDictionary class]]) {
             [weakSelf.navigationController popViewControllerAnimated:YES];
@@ -173,7 +177,7 @@
         NSString *context_id = self.context_id;
         NSDictionary *dict = [NSDictionary dictionaryWithObjects:@[satisfactionPk,solutionPk,memo,context_id] forKeys:@[@"satisfactionPk",@"solutionPk",@"memo",@"context_id"]];
         __weak typeof(self) weakSelf = self;
-        [[JKConnectCenter sharedJKConnectCenter] submitSatisfactionWithDict:dict Block:^(id  _Nullable result) {
+        [[JKConnectCenter sharedJKConnectCenter] submitSatisfactionWithDict:dict Block:^(id  _Nullable result, BOOL isSuccess) {
 //            NSLog(@"---%@",[[NSString alloc] initWithData:result encoding:NSUTF8StringEncoding]);
 //            NSDictionary *paraDict = [NSJSONSerialization JSONObjectWithData:result options:kNilOptions error:nil];
 //            NSString *content = @"";

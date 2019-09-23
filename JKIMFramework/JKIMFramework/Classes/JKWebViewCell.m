@@ -26,6 +26,9 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         [self createSubViews];
+        NSMutableDictionary *header = [YYWebImageManager sharedManager].headers.mutableCopy;
+        header[@"User-Agent"] = @"iPhone"; // for example
+        [YYWebImageManager sharedManager].headers = header;
     }
     return self;
 }
@@ -64,7 +67,7 @@
     WKUserContentController *userContentController = [[WKUserContentController alloc] init];
     confign.userContentController = userContentController;
     self.webView = [[WKWebView alloc] initWithFrame:CGRectMake(0, 0, self.contentView.frame.size.width -170, 0) configuration:confign];
-    self.webView.backgroundColor = [UIColor redColor];
+    self.webView.backgroundColor = UIColorFromRGB(0xF0F0F0);
     self.webView.navigationDelegate = self;
     self.webView.UIDelegate = self;
     self.webView.scrollView.scrollEnabled = YES;
@@ -84,9 +87,10 @@
 }
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation {
     if (self.messageFrame.cellHeight) {
+        NSLog(@"--cellHeight--%lf",self.messageFrame.cellHeight);
         static NSString * const jsGetImages = @"function getImages(){var objs =document.getElementsByTagName(\"img\");var imgScr = '';for(var i=0;i<objs.length;i++){imgScr = imgScr + objs[i].src + '+';};return imgScr;};";
         [self.webView evaluateJavaScript:jsGetImages completionHandler:^(id obj, NSError * _Nullable error) {
-            NSLog(@"---%@",obj);
+            
         }];
         [self.webView evaluateJavaScript:@"getImages()"completionHandler:^(id obj, NSError * _Nullable error) {
             if ([obj isKindOfClass:[NSString class]]) {
@@ -100,18 +104,19 @@
         }];
         static NSString * const jsClickImage = @"function registerImageClickAction(){var imgs=document.getElementsByTagName('img');var length=imgs.length;for(var i=0;i<length;i++){img=imgs[i];img.onclick=function(){window.location.href='image-preview:'+this.src}}}";
         [self.webView evaluateJavaScript:jsClickImage completionHandler:^(id obj, NSError * _Nullable error) {
-            NSLog(@"---%@",obj);
+            
         }];
         [self.webView evaluateJavaScript:@"registerImageClickAction()"completionHandler:^(id obj, NSError * _Nullable error) {
-            NSLog(@"---%@",obj);
+            
         }];
         return;
     }
     __weak typeof(self) selfWeak = self;
-    [webView evaluateJavaScript:@"document.body.offsetHeight;" completionHandler:^(id _Nullable any, NSError * _Nullable error) {
+    [self.webView evaluateJavaScript:@"document.body.offsetHeight;" completionHandler:^(id _Nullable any, NSError * _Nullable error) {
         NSString *s = [NSString stringWithFormat:@"%@",any];
         CGFloat height = [s floatValue];
         selfWeak.webView.frame = CGRectMake(0, 0, self.contentView.frame.size.width - 170, height);
+        NSLog(@"--height--%lf---%@",height,self.messageFrame.message.content);
         selfWeak.messageFrame.cellHeight = height;
         if (selfWeak.webHeightBlock) {
             selfWeak.webHeightBlock(self.reloadRow,self.messageFrame.moveToLast);
@@ -161,7 +166,7 @@
     
     [html appendString:[NSString stringWithFormat:@"<style>%@</style>",style]];
     [html appendString:@"</head>"];
-    [html appendString:@"<body style=\"background:#F0F0F0\">"];
+    [html appendString:@"<body style=\"background:#F3F3F3\">"];
     [html appendString:htmlContent];
     [html appendString:@"</body>"];
     [html appendString:@"</html>"];
