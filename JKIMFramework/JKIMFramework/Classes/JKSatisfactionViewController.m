@@ -109,7 +109,7 @@
 - (void)keyBoardWillHidden:(NSNotification *)noti {
     double duration = [noti.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
     CGFloat safeSeparation = 0.0f;
-    if (kStatusBarAndNavigationBarHeight == 88) {
+    if (kStatusBarAndNavigationBarHeight == 88.f) {
         safeSeparation = 24.0f;
     }
     [UIView animateWithDuration:duration animations:^{

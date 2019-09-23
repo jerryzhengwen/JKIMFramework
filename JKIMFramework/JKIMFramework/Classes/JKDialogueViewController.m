@@ -441,32 +441,35 @@
         if (self.dataFrameArray.count < 1) {
             return;
         }
-//        dispatch_queue_t q = dispatch_queue_create("chuan_xing", DISPATCH_QUEUE_SERIAL);
-        [self.refreshQ cancelAllOperations];
-        [self.refreshQ addOperationWithBlock:^{
-//            dispatch_async(q, ^{
-//                dispatch_async(dispatch_get_main_queue(), ^{
-//                    [self.tableView reloadData];
-//                });
-//            });
-//            dispatch_async(q, ^{
-//
-//                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.4f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//
-//                    //                 dispatch_async(dispatch_get_main_queue(), ^{
-//
-//                    // 4.自动滚动表格到最后一行
-//                    NSIndexPath *lastPath = [NSIndexPath indexPathForRow:self.dataFrameArray.count - 1 inSection:0];
-//
-//                    [self.tableView scrollToRowAtIndexPath:lastPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
-//                });
-//            });
-            dispatch_async(dispatch_get_main_queue(), ^{
-            [self.tableView reloadData];
-            [self performSelector:@selector(delayScrollew) withObject:nil afterDelay:0.3];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            
+            //        dispatch_queue_t q = dispatch_queue_create("chuan_xing", DISPATCH_QUEUE_SERIAL);
+            [self.refreshQ cancelAllOperations];
+            [self.refreshQ addOperationWithBlock:^{
+                //            dispatch_async(q, ^{
+                //                dispatch_async(dispatch_get_main_queue(), ^{
+                //                    [self.tableView reloadData];
+                //                });
+                //            });
+                //            dispatch_async(q, ^{
+                //
+                //                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.4f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                //
+                //                    //                 dispatch_async(dispatch_get_main_queue(), ^{
+                //
+                //                    // 4.自动滚动表格到最后一行
+                //                    NSIndexPath *lastPath = [NSIndexPath indexPathForRow:self.dataFrameArray.count - 1 inSection:0];
+                //
+                //                    [self.tableView scrollToRowAtIndexPath:lastPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+                //                });
+                //            });
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.tableView reloadData];
+                    [self performSelector:@selector(delayScrollew) withObject:nil afterDelay:0.3];
                 });
-        }];
-        
+            }];
+        });
         
     }
     @catch (NSException *exception) {
@@ -477,9 +480,17 @@
     }
 }
 -(void)delayScrollew {
+    @try {
         NSIndexPath *lastPath = [NSIndexPath indexPathForRow:self.dataFrameArray.count - 1 inSection:0];
     
         [self.tableView scrollToRowAtIndexPath:lastPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+    }
+        @catch (NSException *exception) {
+            [self.tableView reloadData];
+        }
+        @finally {
+            
+        }
 }
 //刷新数据
 - (void)reloadPath{

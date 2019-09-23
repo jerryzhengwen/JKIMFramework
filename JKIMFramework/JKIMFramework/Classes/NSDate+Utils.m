@@ -405,43 +405,43 @@
 + (NSString *)dbFormatString {
     return [NSDate timestampFormatString];
 }
-+ (NSString *)changeTheDateString:(NSString *)Str
-{
-    // 格式化时间
-    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
-    formatter.timeZone = [NSTimeZone timeZoneWithName:@"shanghai"];
-    [formatter setDateStyle:NSDateFormatterMediumStyle];
-    [formatter setTimeStyle:NSDateFormatterShortStyle];
-    [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-    
-    // 毫秒值转化为秒
-    NSDate* lastDate = [NSDate dateWithTimeIntervalSince1970:[Str doubleValue]/ 1000.0];
-    
-    NSString *dateStr;  //年月日
-    NSString *period;   //时间段
-    NSString *hour;     //时
-    dateStr = [lastDate stringYearMonthDay];
-    
-    
-    if ([lastDate hour]>=5 && [lastDate hour]<12) {
-        period = @"AM";
-        hour = [NSString stringWithFormat:@"%02d",(int)[lastDate hour]];
-    }else if ([lastDate hour]>=12 && [lastDate hour]<=18){
-        period = @"PM";
-        hour = [NSString stringWithFormat:@"%02d",(int)[lastDate hour]-12];
-    }else if ([lastDate hour]>18 && [lastDate hour]<=23){
-        period = @"Night";
-        hour = [NSString stringWithFormat:@"%02d",(int)[lastDate hour]-12];
-    }else{
-        period = @"Dawn";
-        hour = [NSString stringWithFormat:@"%02d",(int)[lastDate hour]];
-    }
-    NSString *date =    [NSDate stringLoacalDate];
-    if ([date containsString:dateStr]) {
-        dateStr = @"";
-    }
-    return [NSString stringWithFormat:@"%@ %@:%02d",dateStr,hour,(int)[lastDate minute]];
-}
+//+ (NSString *)changeTheDateString:(NSString *)Str
+//{
+//    // 格式化时间
+//    NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+//    formatter.timeZone = [NSTimeZone timeZoneWithName:@"shanghai"];
+//    [formatter setDateStyle:NSDateFormatterMediumStyle];
+//    [formatter setTimeStyle:NSDateFormatterShortStyle];
+//    [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+//
+//    // 毫秒值转化为秒
+//    NSDate* lastDate = [NSDate dateWithTimeIntervalSince1970:[Str doubleValue]/ 1000.0];
+//
+//    NSString *dateStr;  //年月日
+//    NSString *period;   //时间段
+//    NSString *hour;     //时
+//    dateStr = [lastDate stringYearMonthDay];
+//
+//
+//    if ([lastDate hour]>=5 && [lastDate hour]<12) {
+//        period = @"AM";
+//        hour = [NSString stringWithFormat:@"%02d",(int)[lastDate hour]];
+//    }else if ([lastDate hour]>=12 && [lastDate hour]<=18){
+//        period = @"PM";
+//        hour = [NSString stringWithFormat:@"%02d",(int)[lastDate hour]-12];
+//    }else if ([lastDate hour]>18 && [lastDate hour]<=23){
+//        period = @"Night";
+//        hour = [NSString stringWithFormat:@"%02d",(int)[lastDate hour]-12];
+//    }else{
+//        period = @"Dawn";
+//        hour = [NSString stringWithFormat:@"%02d",(int)[lastDate hour]];
+//    }
+//    NSString *date =    [NSDate stringLoacalDate];
+//    if ([date containsString:dateStr]) {
+//        dateStr = @"";
+//    }
+//    return [NSString stringWithFormat:@"%@ %@:%02d",dateStr,hour,(int)[lastDate minute]];
+//}
 +(NSString *)getTimeStringWithIntervalString:(NSString *)tempStr {
     // 把时间戳转化成时间
     NSTimeInterval interval=[tempStr doubleValue] / 1000.0;

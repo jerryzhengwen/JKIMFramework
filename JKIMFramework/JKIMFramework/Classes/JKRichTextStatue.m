@@ -84,7 +84,7 @@
     }else {//在这里替换下
         font  = [UIFont fontWithName:@"PingFangSC-Regular" size:15];
     }
-    NSMutableArray *specials = [NSMutableArray array];
+//    NSMutableArray *specials = [NSMutableArray array];
 //    NSString *bundlePatch =  [[NSBundle bundleForClass:[self class]]pathForResource:@"JKIMImage" ofType:@"bundle"];
     NSString *bundlePatch = [JKBundleTool initBundlePathWithImage];
     for (JKTextPat *part in parts) {
@@ -129,7 +129,8 @@
                                                                                            }];
 //            }
         }else {
-             substr = [[NSAttributedString alloc] initWithString:part.text];
+//             substr = [[NSAttributedString alloc] initWithString:part.text];
+            substr = [self praseHtmlStr:part.text];
         }
         if (substr) {
             [attributedText appendAttributedString:substr];
@@ -143,5 +144,9 @@
 //        }
 //    }
     return attributedText;
+}
+- (NSMutableAttributedString *)praseHtmlStr:(NSString *)htmlStr {
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithData:[htmlStr dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:nil];
+    return attributedString;
 }
 @end

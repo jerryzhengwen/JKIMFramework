@@ -103,9 +103,9 @@
     // 2、设置名称
     if (message.whoSend !=JK_Visitor) {
         self.nameLabel.hidden = NO;
-        NSString * name = message.from.length?message.from:@"小广";
-        name = @"小广";
-        self.nameLabel.text = name;
+//        NSString * name = message.from.length?message.from:@"小广";
+        
+        self.nameLabel.text = @"小广";
         
     }else {
         self.nameLabel.hidden = YES;
@@ -235,7 +235,6 @@
     }
 }
 
-
 #pragma -
 #pragma mark - textView的代理
 -(BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange {
@@ -260,7 +259,14 @@
     NSString *clickText = [textView.text substringWithRange:characterRange];
      NSArray *urlArray =  [clickText componentsMatchedByRegex:JK_URlREGULAR];
     if (urlArray.count) { //链接
-         [[JKMessageOpenUrl sharedOpenUrl] JK_ClickMessageOpenUrl:clickString];
+        @try {
+            [[JKMessageOpenUrl sharedOpenUrl] JK_ClickMessageOpenUrl:clickString];
+        } @catch (NSException *exception) {
+            
+        } @finally {
+            
+        }
+        
     }else { ///<a>标签
         NSString *clickStr = [textView.text substringWithRange:characterRange];
         NSString *regular = [NSString stringWithFormat:@"<a[^>]*>(%@)",clickStr];
@@ -269,11 +275,18 @@
         if (!hrefStr) {
             return NO;
         }
-        NSString *url = [self returnSpanContent:hrefStr AndZhengZe:@"[a-zA-z]+://(.*?)\""];
-        if (url.length > 0) {
-            url = [url substringToIndex:url.length -1];
+        @try {
+            NSString *url = [self returnSpanContent:hrefStr AndZhengZe:@"[a-zA-z]+://(.*?)\""];
+            if (url.length > 0) {
+                url = [url substringToIndex:url.length -1];
+            }
+            [[JKMessageOpenUrl sharedOpenUrl] JK_ClickHyperMediaMessageOpenUrl:url];
+        } @catch (NSException *exception) {
+            
+        } @finally {
+            
         }
-         [[JKMessageOpenUrl sharedOpenUrl] JK_ClickHyperMediaMessageOpenUrl:url];
+        
     }
     return NO;
 }

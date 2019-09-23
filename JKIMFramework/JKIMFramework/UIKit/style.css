@@ -1,4 +1,4 @@
-body {
+html,body {
     margin-top: 0px;
     margin-bottom:0px;
     color: #3E3E3E;
@@ -6,6 +6,8 @@ body {
     margin-left:0px;
     margin-right:0px;
     font-size: 11pt;
+/*    overflow-y:hidden;*/
+/*    overflow-x:auto;*/
 }
 body img {
     max-width: 100%;

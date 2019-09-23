@@ -74,14 +74,42 @@
     self.webView.layer.masksToBounds = YES;
     self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self.contentView addSubview:self.webView];
+    
+    
+    for (UIView *subView in [self.webView subviews])
+    {
+        if ([subView isKindOfClass:[UIScrollView class]])
+        {
+            // 隐藏竖直的滚动条
+            [(UIScrollView *)subView setShowsVerticalScrollIndicator:NO];
+            UIScrollView *scrollView =    (UIScrollView *)subView;
+             scrollView.bounces=NO;
+            //隐藏水平的滚动条
+//            [(UIScrollView *)subView setShowsHorizontalScrollIndicator:NO];
+        }
+                self.webView.scrollView.bounces=NO;
+    }
+//    [self.webView.scrollView addObserver:self forKeyPath:@"contentSize"
+//                           options:NSKeyValueObservingOptionNew context:nil];
 }
+#pragma mark  - KVO回调
+//-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context{
+//
+//    //更具内容的高重置webView视图的高度
+////    NSLog(@"Height is changed! new=%@", [change valueForKey:NSKeyValueChangeNewKey]);
+////    NSLog(@"tianxia :%@",NSStringFromCGSize(self.webView.contentSize));
+//    CGFloat newHeight  = self.webView.scrollView.contentSize.height;
+////    CGFloat newHeight = self.webView.contentSize.height;
+//    NSLog(@"----终极kvoheight----%lf",newHeight);
+//
+//}
 -(void)setMessageFrame:(JKMessageFrame *)messageFrame {
     _messageFrame = messageFrame;
     NSString * time = [NSDate getTimeStringWithIntervalString:messageFrame.message.time];
     self.labelTime.text = time;
-    NSString * name = messageFrame.message.from.length?messageFrame.message.from:@"robot";
-    name = @"小广";
-    self.nameLabel.text = name;
+//    NSString * name = messageFrame.message.from.length?messageFrame.message.from:@"robot";
+//    name = @"小广";
+    self.nameLabel.text = @"小广";
     NSURL *baseurl = [NSURL URLWithString:@"file:///"];
     [self.webView loadHTMLString:[self getHtmlString:messageFrame.message.content] baseURL:baseurl];
 }
@@ -111,6 +139,7 @@
         }];
         return;
     }
+    
     __weak typeof(self) selfWeak = self;
     [self.webView evaluateJavaScript:@"document.body.offsetHeight;" completionHandler:^(id _Nullable any, NSError * _Nullable error) {
         NSString *s = [NSString stringWithFormat:@"%@",any];
@@ -129,6 +158,7 @@
     //        NSLog(@"%@",result);
     //    }];
 }
+
 - (void)layoutSubviews {
     [super layoutSubviews];
     CGFloat screenW = [UIScreen mainScreen].bounds.size.width;
@@ -155,18 +185,19 @@
 }
 #pragma mark - 拼接html 内容
 - (NSString *)getHtmlString:(NSString *)htmlContent {
-    NSString *headerString = @"<header><meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no'></header>";
+    NSString *headerString = @"<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no'>";
     NSMutableString *html = [NSMutableString string];
-    [html appendString:@"<html>"];
-    [html appendString:headerString];
+    [html appendString:@"<html style=\"background:#F3F3F3;overflow-y:hidden;overflow-x:auto;\">"];
+    
     [html appendString:@"<head>"];
+    [html appendString:headerString];
     [html appendString:@"<meta charset=\"utf-8\">"];
     NSString * path = [[NSBundle mainBundle] pathForResource:@"style" ofType:@"css"];
     NSString * style = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
     
     [html appendString:[NSString stringWithFormat:@"<style>%@</style>",style]];
     [html appendString:@"</head>"];
-    [html appendString:@"<body style=\"background:#F3F3F3\">"];
+    [html appendString:@"<body>"];
     [html appendString:htmlContent];
     [html appendString:@"</body>"];
     [html appendString:@"</html>"];
@@ -191,7 +222,14 @@
         }];
     }else {
         if (![str containsString:@"file:///"]) {
-         [[JKMessageOpenUrl sharedOpenUrl] JK_ClickHyperMediaMessageOpenUrl:str];
+            @try {
+            [[JKMessageOpenUrl sharedOpenUrl] JK_ClickHyperMediaMessageOpenUrl:str];
+            } @catch (NSException *exception) {
+                
+            } @finally {
+                
+            }
+         
         }
         decisionHandler(WKNavigationActionPolicyAllow);  // 必须实现 加载
     }
