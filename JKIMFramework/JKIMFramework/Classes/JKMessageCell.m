@@ -260,7 +260,7 @@
      NSArray *urlArray =  [clickText componentsMatchedByRegex:JK_URlREGULAR];
     if (urlArray.count) { //链接
         @try {
-            [[JKMessageOpenUrl sharedOpenUrl] JK_ClickMessageOpenUrl:clickString];
+            [[JKMessageOpenUrl sharedOpenUrl] JK_ClickMessageOpenUrl:clickText];
         } @catch (NSException *exception) {
             
         } @finally {

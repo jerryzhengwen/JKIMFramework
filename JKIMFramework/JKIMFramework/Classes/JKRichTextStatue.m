@@ -130,7 +130,14 @@
 //            }
         }else {
 //             substr = [[NSAttributedString alloc] initWithString:part.text];
-            substr = [self praseHtmlStr:part.text];
+            @try {
+                substr = [self praseHtmlStr:part.text];
+            } @catch (NSException *exception) {
+                substr = [[NSAttributedString alloc] initWithString:part.text];
+            } @finally {
+                
+            }
+            
         }
         if (substr) {
             [attributedText appendAttributedString:substr];
