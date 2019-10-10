@@ -6,7 +6,7 @@
 //  Copyright © 2019 于飞. All rights reserved.
 //
 
-#define JKChatMargin    20       //间隔
+#define JKChatMargin    12       //间隔
 #define JKHeaderImageWH 46       //头像宽高height、width
 #define JKChatContentW  [UIScreen mainScreen].bounds.size.width - 170    //内容宽度
 
@@ -33,6 +33,6 @@
 @property (nonatomic, assign) CGFloat cellHeight;
 @property (nonatomic, retain) JKDialogModel *message;
 @property (nonatomic, assign) JKMessageType type;
-@property (nonatomic, assign) BOOL showTime;
+@property (nonatomic, assign) BOOL hiddenTime;
 @property (nonatomic, assign) BOOL moveToLast;
 @end

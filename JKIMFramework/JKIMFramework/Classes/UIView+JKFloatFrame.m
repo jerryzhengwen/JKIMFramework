@@ -7,7 +7,7 @@
 //
 
 #import "UIView+JKFloatFrame.h"
-
+#import "JKDialogueHeader.h"
 @implementation UIView (JKFloatFrame)
 
 
@@ -198,13 +198,16 @@
 
 +(NSString *)returnImageUrlStringWith:(NSString *)searchText {
     //这个是用来匹配图片的url的   [a-zA-z]+://[^\"]*
+    if (!searchText) {
+        return @"";
+    }
     NSError *error = NULL;
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"((https|http)?://).*(png|jpg|gif|jpeg)+" options:NSRegularExpressionCaseInsensitive error:&error];
     NSTextCheckingResult *result = [regex firstMatchInString:searchText options:0 range:NSMakeRange(0, [searchText length])];
     if (result) {
         return  [searchText substringWithRange:result.range];
     }else {
-        return nil;
+        return @"";
     }
 }
 
@@ -252,6 +255,22 @@
     [resultArray addObject:[NSString stringWithFormat:@"%f",resultWidth]];
     [resultArray addObject:[NSString stringWithFormat:@"%f",resultHeight]];
     return resultArray;
+}
++(UILabel *)createRegularLabelWithTitle:(NSString *)title size:(CGFloat)size {
+    UILabel *label = [[UILabel alloc] init];
+    if ([title class] != [NSNull class]) {
+        if (title.length) {
+            label.text = title;
+        }
+    }
+    label.textColor = UIColorFromRGB(0x3E3E3E);
+    label.textAlignment = NSTextAlignmentLeft;
+    if ([[UIDevice currentDevice].systemVersion doubleValue] < 9.0) {
+        label.font =  [UIFont systemFontOfSize:size];
+    }else {
+        label.font = [UIFont fontWithName:@"PingFangSC-Regular" size:size];
+    }
+    return label;
 }
 
 @end

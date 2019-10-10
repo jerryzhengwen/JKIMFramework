@@ -11,6 +11,19 @@
 #import "JKMessage.h"
 #import "JKENUMObject.h"
 
+typedef NS_ENUM(NSInteger, JKSOLUTEBTN_Click) {
+    SOLUTEBTN_NONE = 0,
+    SOLUTEBTN_SOLVE = 1,
+    SOLUTEBTN_UNSOLVE = 2,
+};
+typedef NS_ENUM(NSInteger, JKSTARTBTN_Click) {
+    STARTBTN_NONE = -1,
+    STARTBTN_ONE = 0,
+    STARTBTN_TWO = 1,
+    STARTBTN_THREE = 2,
+    STARTBTN_FOUR = 3,
+    STARTBTN_FIVE = 4,
+};
 
 NS_ASSUME_NONNULL_BEGIN
 @interface JKDialogModel : JKMessage
@@ -54,6 +67,25 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 @property (nonatomic, assign) BOOL showDateLabel;
+
+@property (nonatomic,assign) BOOL isSubmit;//是否已提交(满意度的)
+
+/**
+ 选择解决未解决
+ */
+@property (nonatomic,assign) JKSOLUTEBTN_Click soluteNumber;
+
+/**
+ 选择了几星
+ */
+@property (nonatomic,assign) JKSTARTBTN_Click startIndex;
+
+
+/**
+ 满意度评价内容
+ */
+@property (nonatomic,copy) NSString * submitContent;
+
 
 
 - (void)minuteOffSetStart:(NSString *)start end:(NSString *)end;

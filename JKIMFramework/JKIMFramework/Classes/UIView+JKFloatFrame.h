@@ -35,6 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 +(NSMutableArray *)returnImageViewWidthAndHeightWith:(NSString *)width AndHeight:(NSString *)height;
 +(UIView *)createBackView;
++(UILabel *)createRegularLabelWithTitle:(NSString *)title size:(CGFloat)size;
 @end
 
 NS_ASSUME_NONNULL_END

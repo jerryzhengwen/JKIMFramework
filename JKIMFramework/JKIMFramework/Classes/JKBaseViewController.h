@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "UIView+JKFloatFrame.h"
+#import "JKAlertView.h"
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JKBaseViewController : UIViewController
@@ -24,6 +25,10 @@ NS_ASSUME_NONNULL_BEGIN
  刷新项的refreshQ
  */
 @property (nonatomic,strong)NSOperationQueue *refreshQ;
+/**
+ 弹出框
+ */
+@property (nonatomic,strong) JKAlertView *alertView;
 
 /** 创建返回按钮 */
 - (void)createBackButton;

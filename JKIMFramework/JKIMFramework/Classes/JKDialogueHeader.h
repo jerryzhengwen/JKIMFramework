@@ -25,7 +25,7 @@
 #define iPhoneX ([UIScreen mainScreen].bounds.size.width == 375 && [UIScreen mainScreen].bounds.size.height == 812)
 #define iPhoneXR ([UIScreen mainScreen].bounds.size.width == 414 && [UIScreen mainScreen].bounds.size.height == 896)
 #define kStatusBarAndNavigationBarHeight (iPhoneX || iPhoneXR ? 88.f : 64.f)
-
+#define JKBGDefaultColor UIColorFromRGB(0xEFEFEF)
 /** 最大的内容宽度*/
 #define MaxContentWidth [UIScreen mainScreen].bounds.size.width - 170
 

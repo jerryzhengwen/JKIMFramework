@@ -24,6 +24,7 @@ typedef NS_ENUM(NSInteger, JKMessageType) {
     JKMessageImageText, //图文
     JKMessageFAQImage,//机器人的图片
     JKMessageFAQImageText,//机器人的图文
+    JKMessageClarify,//澄清问题(类似于热点问题)
 };
 
 /**

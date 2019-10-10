@@ -98,7 +98,14 @@
     return size;
 }
 - (NSMutableAttributedString *)praseHtmlStr:(NSString *)htmlStr {
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithData:[htmlStr dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:nil];
+    NSMutableAttributedString *attributedString;
+    @try {
+        attributedString  = [[NSMutableAttributedString alloc] initWithData:[htmlStr dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:nil];
+    } @catch (NSException *exception) {
+        attributedString = [[NSMutableAttributedString alloc] initWithString:htmlStr];
+    } @finally {
+    }
+    
     return attributedString;
 }
 /**

@@ -13,6 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface JKHotViewCell : UITableViewCell
 @property (nonatomic,copy) NSString *title;
 @property (nonatomic,copy) NSString *keyWord;
+@property (nonatomic,assign) BOOL isLast;
+@property (nonatomic,assign) BOOL isClarify;
 @end
 
 NS_ASSUME_NONNULL_END

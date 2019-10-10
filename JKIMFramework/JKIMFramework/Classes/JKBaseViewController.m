@@ -33,8 +33,8 @@
 }
 - (void)creatNavigation{
     [self.view addSubview:self.navigation];
-    UIColor *navigationBarColor = [UIColor whiteColor];
-    self.navigation.backgroundColor = navigationBarColor;
+//    UIColor *navigationBarColor = [UIColor whiteColor];
+    self.navigation.backgroundColor = JKBGDefaultColor;
     
     [self.navigation addSubview:self.titleLabel];
     
@@ -50,9 +50,9 @@
     NSString *filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"jk_customer"];
     UIImageView * imageView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:filePatch]];
     CGRect rect = self.navigation.frame;
-    imageView.layer.cornerRadius = 20;
+    imageView.layer.cornerRadius = 18;
     imageView.clipsToBounds = YES;
-    imageView.frame = CGRectMake(CGRectGetMidX(rect)-20, CGRectGetMaxY(rect) - 20, 40, 40);
+    imageView.frame = CGRectMake(CGRectGetMidX(rect)-20, CGRectGetMaxY(rect) - 40, 36, 36);
     [self.view addSubview:imageView];
 }
 -(UIButton *)endDialogBtn {
@@ -123,7 +123,7 @@
         _tableView = [[UITableView alloc]initWithFrame:CGRectZero style:UITableViewStylePlain];
         _tableView.delegate = self;
         _tableView.dataSource = self;
-        _tableView.backgroundColor = [UIColor whiteColor];
+        _tableView.backgroundColor = UIColorFromRGB(0xEFEFEF);
         if(@available(iOS 11.0, *)) {
             _tableView.estimatedRowHeight =0;
             _tableView.estimatedSectionHeaderHeight =0;
@@ -193,6 +193,11 @@
 - (void)addToucheEvent:(UITapGestureRecognizer *)tap {
     [self.view endEditing:YES];
 }
-
+-(JKAlertView *)alertView {
+    if (!_alertView) {
+        _alertView = [[JKAlertView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    }
+    return _alertView;
+}
 
 @end

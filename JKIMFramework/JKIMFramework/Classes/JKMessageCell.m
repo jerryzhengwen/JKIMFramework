@@ -99,14 +99,14 @@
     NSString * time = [NSDate getTimeStringWithIntervalString:message.time];
     self.labelTime.text = time;
     self.labelTime.frame = messageFrame.timeF;
-    
+    if (messageFrame.hiddenTime) {
+        self.labelTime.text = @"";
+    }
     // 2、设置名称
     if (message.whoSend !=JK_Visitor) {
         self.nameLabel.hidden = NO;
 //        NSString * name = message.from.length?message.from:@"小广";
-        
-        self.nameLabel.text = @"小广";
-        
+        self.nameLabel.text = @"智能客服-小广";
     }else {
         self.nameLabel.hidden = YES;
     }
@@ -144,6 +144,7 @@
             [contentStr addAttribute:NSLinkAttributeName value:[NSString stringWithFormat:@"%@://",content] range:range];
         self.btnContent.contentTV.attributedText = contentStr;
         self.btnContent.contentTV.font = JKChatContentFont;
+        self.btnContent.contentTV.linkTextAttributes = @{NSForegroundColorAttributeName:UIColorFromRGB(0xEC5642)};
         }
     }else {
         self.btnContent.contentTV.text = messageFrame.message.content;
@@ -152,14 +153,13 @@
         self.btnContent.contentTV.attributedText = richText.attributedText;
     }
     
-    CGFloat margin = 0;
-    if (message.whoSend == JK_Visitor) {
-        margin = 20;
-    }else{
-        margin = 24;
-        
-    }
-    self.btnContent.contentTV.frame = CGRectMake(margin, 0, messageFrame.contentF.size.width - 44, messageFrame.contentF.size.height);
+    CGFloat margin = 12;
+//    if (message.whoSend == JK_Visitor) {
+//        margin = 20;
+//    }else{
+//        margin = 24;
+//    }
+    self.btnContent.contentTV.frame = CGRectMake(margin, 0, messageFrame.contentF.size.width - 24, messageFrame.contentF.size.height);
     switch (message.messageType) {
         case JKMessageWord:
         self.btnContent.backgroundImageView.hidden = NO;
@@ -202,14 +202,17 @@
         NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
         NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"chatto_bg_normal"];
         normal = [UIImage imageWithContentsOfFile:filePatch];
-        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(35, 20, 10, 10) resizingMode:UIImageResizingModeStretch];
+        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(16, 13, 16, 21)];
+//        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(35, 20, 10, 10) resizingMode:UIImageResizingModeStretch];
+        self.btnContent.contentTV.textColor = [UIColor whiteColor];
     }
     else{
-        
+        self.btnContent.contentTV.textColor = UIColorFromRGB(0x3E3E3E);
         NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
         NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"chatfrom_bg_normal"];
         normal = [UIImage imageWithContentsOfFile:filePatch];
-        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(35, 20, 10, 10)];
+//        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(35, 20, 10, 10)];
+        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(16, 13, 16, 21)];
     }
     
     self.btnContent.backgroundImageView.image = normal;
@@ -392,6 +395,9 @@
  @return Yes富文本 NO不是富文本
  */
 -(BOOL)isRichTextWithContent:(NSString *)content {
+    if (!content) {
+        return NO;
+    }
     NSError *error = NULL;
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"<a[^>]*>([^<]+)" options:NSRegularExpressionCaseInsensitive error:&error];
     NSTextCheckingResult *result = [regex firstMatchInString:content options:0 range:NSMakeRange(0, [content length])];
@@ -402,18 +408,28 @@
     }
 }
 - (NSMutableAttributedString *)parseHtmlStr:(NSString *)htmlStr {
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithData:[htmlStr dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:nil];
+    NSMutableAttributedString *attributedString;
+    @try {
+        attributedString  = [[NSMutableAttributedString alloc] initWithData:[htmlStr dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:nil];
+    } @catch (NSException *exception) {
+        attributedString = [[NSMutableAttributedString alloc] initWithString:htmlStr];
+    } @finally {
+    }
+   
     return attributedString;
 }
 //两次提取a标签用来提取<a> 2</a>中的值
 -(NSString *)returnSpanContent:(NSString *)span AndZhengZe:(NSString *)pattern {
+    if (!span) {
+        return @"";
+    }
     NSError *error = NULL;
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:pattern options:NSRegularExpressionCaseInsensitive error:&error];
     NSTextCheckingResult *result = [regex firstMatchInString:span options:0 range:NSMakeRange(0, [span length])];
     if (result) {
         return  [span substringWithRange:result.range];
     }else {
-        return nil;
+        return @"";
     }
 }
 @end

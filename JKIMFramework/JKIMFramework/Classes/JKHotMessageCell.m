@@ -27,6 +27,7 @@
 }
 -(void)setModel:(JKDialogModel *)model {
     _model = model;
+    self.hotView.isClarify = model.messageType == JKMessageClarify?YES:NO;
     self.hotView.hotArray = model.hotArray;
 }
 -(JKHotView *)hotView {
@@ -37,8 +38,9 @@
 }
 -(void)layoutSubviews {
     [super layoutSubviews];
-    self.hotView.frame = CGRectMake(20, 30, self.frame.size.width - 44, self.model.hotArray.count *41);
-    
+    self.hotView.frame = CGRectMake(16, 30, self.frame.size.width - 32, self.model.hotArray.count *46);
+    self.hotView.layer.cornerRadius = 12;
+    self.hotView.clipsToBounds = YES;
 }
 - (void)awakeFromNib {
     [super awakeFromNib];

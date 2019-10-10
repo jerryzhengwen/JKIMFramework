@@ -12,7 +12,7 @@
 #import "JKAssoiateView.h"
 
 
-#define BottomToolHeight 54
+#define BottomToolHeight 56
 
 NS_ASSUME_NONNULL_BEGIN
 

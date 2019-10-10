@@ -21,6 +21,9 @@ typedef void(^GetHotMessageBlock)(NSString *);
 @property (nonatomic,strong)NSArray *hotArray;
 
 @property (nonatomic,copy)GetHotMessageBlock hotMsgBlock;
+
+/** tableview澄清问题不可以点击 */
+@property (nonatomic,assign)BOOL isClarify;
 @end
 
 NS_ASSUME_NONNULL_END

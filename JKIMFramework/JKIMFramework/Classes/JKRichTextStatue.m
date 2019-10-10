@@ -131,7 +131,7 @@
         }else {
 //             substr = [[NSAttributedString alloc] initWithString:part.text];
             @try {
-                substr = [self praseHtmlStr:part.text];
+                substr = [[NSMutableAttributedString alloc] initWithData:[part.text dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:nil];
             } @catch (NSException *exception) {
                 substr = [[NSAttributedString alloc] initWithString:part.text];
             } @finally {
@@ -152,8 +152,8 @@
 //    }
     return attributedText;
 }
-- (NSMutableAttributedString *)praseHtmlStr:(NSString *)htmlStr {
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithData:[htmlStr dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:nil];
-    return attributedString;
-}
+//- (NSMutableAttributedString *)praseHtmlStr:(NSString *)htmlStr {
+//    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithData:[htmlStr dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:nil];
+//    return attributedString;
+//}
 @end

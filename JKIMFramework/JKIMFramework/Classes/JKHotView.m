@@ -8,12 +8,12 @@
 
 #import "JKHotView.h"
 #import "JKHotModel.h"
-#import "JKBundleTool.h"
-
+#import "JKDialogueHeader.h"
 @implementation JKHotView
 -(instancetype)init {
     self = [super init];
     if (self) {
+        self.backgroundColor = [UIColor whiteColor];
         self.userInteractionEnabled = YES;
         [self createTableView];
     }
@@ -24,14 +24,13 @@
     self.tableView.clipsToBounds = YES;
     [self addSubview:self.tableView];
     //设置tableView的背景图
-    
-    UIImageView * imageView = [[UIImageView alloc] init];
-    imageView.frame =self.tableView.bounds;
-    NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
-    NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"chatfrom_bg_normal"];
-    imageView.image  = [UIImage imageWithContentsOfFile:filePatch];
-    imageView.image = [imageView.image resizableImageWithCapInsets:UIEdgeInsetsMake(35, 20, 10, 10)];
-    [self.tableView setBackgroundView:imageView];
+//    UIImageView * imageView = [[UIImageView alloc] init];
+//    imageView.frame =self.tableView.bounds;
+//    NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
+//    NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"chatfrom_bg_normal"];
+//    imageView.image  = [UIImage imageWithContentsOfFile:filePatch];
+//    imageView.image = [imageView.image resizableImageWithCapInsets:UIEdgeInsetsMake(16, 13, 16, 21)];
+//    [self.tableView setBackgroundView:imageView];
 }
 -(UITableView *)tableView {
     if (_tableView == nil) {
@@ -56,6 +55,12 @@
     }
     JKHotModel * hotModel = self.hotArray[indexPath.row];
     cell.title = hotModel.question;
+    if (self.isClarify && indexPath.row == 0) { //改变字体颜色，隐藏箭头
+        cell.isClarify = YES;
+        cell.isLast = YES;
+    }else {
+        cell.isLast = indexPath.row == self.hotArray.count - 1?YES:NO;
+    }
     cell.backgroundColor = [UIColor clearColor];
     cell.userInteractionEnabled = YES;
     return cell;
@@ -64,7 +69,7 @@
     _hotArray = hotArray;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 41;
+    return 46;
 }
 -(void)layoutSubviews {
     [super layoutSubviews];
@@ -72,6 +77,9 @@
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    if (self.isClarify && indexPath.row ==0) {
+        return;
+    }
     JKHotModel * model = self.hotArray[indexPath.row];
     if (self.hotMsgBlock) {
         self.hotMsgBlock(model.question);

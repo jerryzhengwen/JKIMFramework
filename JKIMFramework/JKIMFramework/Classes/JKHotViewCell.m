@@ -52,12 +52,27 @@
     [self setContentLabelColor];
     self.enterImagView.hidden = YES;
 }
+-(void)setIsClarify:(BOOL)isClarify {
+    _isClarify = isClarify;
+}
+-(void)setIsLast:(BOOL)isLast {
+    _isLast = isLast;
+    _titleLabel.textColor = UIColorFromRGB(0xEC5642);
+}
 -(void)layoutSubviews {
     [super layoutSubviews];
-    self.titleLabel.frame = CGRectMake(14, 10, self.frame.size.width - 40, 20);
-    self.enterImagView.frame = CGRectMake(CGRectGetMaxX(self.contentView.frame) - 23, 13, 8, 15);
-    CGFloat minX = self.keyWord?0:4;
-    self.lineView.frame = CGRectMake(minX, CGRectGetMaxY(self.contentView.frame) - 1, self.contentView.frame.size.width, 1);
+    self.lineView.hidden = self.isLast;
+    self.enterImagView.hidden = self.isClarify;
+    if (self.keyWord) {
+        self.enterImagView.hidden = YES;
+    }
+    if (self.isClarify) {
+        self.titleLabel.textColor = UIColorFromRGB(0x3E3E3E);
+    }
+    self.titleLabel.frame = CGRectMake(14, 11.5, self.frame.size.width - 40, 22);
+    self.enterImagView.frame = CGRectMake(CGRectGetMaxX(self.contentView.frame) - 24, 15, 8, 14);
+    CGFloat minX = 16;
+    self.lineView.frame = CGRectMake(minX, CGRectGetMaxY(self.contentView.frame) - 1, self.contentView.frame.size.width - 2 * minX, 1);
 }
 -(UILabel *)titleLabel {
     if (!_titleLabel) {
@@ -81,7 +96,7 @@
     for (int i=0; i<locationArr.count; i++) {
         if (i%2==0) {
             NSNumber *location = locationArr[i];
-            [attstr addAttribute:NSForegroundColorAttributeName value:[UIColor redColor] range:NSMakeRange(location.intValue, self.keyWord.length)];//改变\n前边的10位字符颜色，
+            [attstr addAttribute:NSForegroundColorAttributeName value:UIColorFromRGB(0xEC5642) range:NSMakeRange(location.intValue, self.keyWord.length)];//改变\n前边的10位字符颜色，
         }
     }
     self.titleLabel.attributedText = attstr;

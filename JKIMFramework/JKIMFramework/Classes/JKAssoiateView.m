@@ -13,7 +13,7 @@
     [self addSubview:self.tableView];
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 33;
+    return 46;
 }
 //-(void)setAssociateArr:(NSArray *)associateArr {
 //    _associateArr = associateArr;

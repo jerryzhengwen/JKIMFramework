@@ -13,6 +13,7 @@
 #import "YYWebImage.h"
 #import "JKImageAvatarBrowser.h"
 #import "JKMessageOpenUrl.h"
+#import "MMImageBrower.h"
 @interface JKWebViewCell()<WKNavigationDelegate,WKUIDelegate>
 @property (nonatomic,strong)UIImageView *backImageView;
 @property (nonatomic, strong)WKWebView *webView;
@@ -24,6 +25,7 @@
 
 -(instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    self.backgroundColor = JKBGDefaultColor;
     if (self) {
         [self createSubViews];
         NSMutableDictionary *header = [YYWebImageManager sharedManager].headers.mutableCopy;
@@ -38,7 +40,8 @@
         NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
         NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"chatfrom_bg_normal"];
         UIImage *normal = [UIImage imageWithContentsOfFile:filePatch];
-        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(35, 20, 10, 10)];
+        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(16, 13, 16, 21)];
+//        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(35, 20, 10, 10)];
         _backImageView.image = normal;
     }
     return _backImageView;
@@ -109,7 +112,10 @@
     self.labelTime.text = time;
 //    NSString * name = messageFrame.message.from.length?messageFrame.message.from:@"robot";
 //    name = @"小广";
-    self.nameLabel.text = @"小广";
+    if (messageFrame.hiddenTime) {
+        self.labelTime.text = @"";
+    }
+    self.nameLabel.text = @"智能客服-小广";
     NSURL *baseurl = [NSURL URLWithString:@"file:///"];
     [self.webView loadHTMLString:[self getHtmlString:messageFrame.message.content] baseURL:baseurl];
 }
@@ -124,9 +130,9 @@
             if ([obj isKindOfClass:[NSString class]]) {
                 NSString *url = (NSString *)obj;
                 if ([url containsString:@"+"]) {
-                    NSString *imgUrl = [url substringToIndex:url.length -1];
-                    UIImageView * img = [[UIImageView alloc] init];
-                    img.yy_imageURL = [NSURL URLWithString:imgUrl];
+//                    NSString *imgUrl = [url substringToIndex:url.length -1];
+//                    UIImageView * img = [[UIImageView alloc] init];
+//                    img.yy_imageURL = [NSURL URLWithString:imgUrl];
                 }
             }
         }];
@@ -167,11 +173,11 @@
     CGFloat timeY = JKChatMargin;
     self.labelTime.frame = CGRectMake(0, timeY, screenW, 17);
     CGFloat contentY = CGRectGetMaxY(self.labelTime.frame);
-    self.nameLabel.frame= CGRectMake(24, contentY + 30, screenW - 100, 20);
+    self.nameLabel.frame= CGRectMake(16, contentY + timeY, screenW - 100, 20);
     
     
-    self.webView.frame = CGRectMake(44, CGRectGetMaxY(self.nameLabel.frame) + 13, self.contentView.frame.size.width - 170,self.messageFrame.cellHeight);
-    self.backImageView.frame = CGRectMake(20, CGRectGetMinY(self.webView.frame) -9, CGRectGetWidth(self.webView.frame) + 44, CGRectGetHeight(self.webView.frame) +17);
+    self.webView.frame = CGRectMake(16 + 12, CGRectGetMaxY(self.nameLabel.frame) + 16, self.contentView.frame.size.width - 170,self.messageFrame.cellHeight);
+    self.backImageView.frame = CGRectMake(16, CGRectGetMinY(self.webView.frame) -12, CGRectGetWidth(self.webView.frame) + 22, CGRectGetHeight(self.webView.frame) +24);
 }
 - (void)awakeFromNib {
     [super awakeFromNib];
@@ -212,11 +218,21 @@
         //查看大图
         decisionHandler(WKNavigationActionPolicyCancel); // 必须实现 不加载
         NSString *url = [[str componentsSeparatedByString:@"image-preview:"] componentsJoinedByString:@""];
-        imageView.center = self.center;
+        imageView.hidden = YES;
+//        imageView.center = self.center;
+        [self addSubview:imageView];
         [imageView yy_setImageWithURL:[NSURL URLWithString:url] placeholder:nil options:YYWebImageOptionSetImageWithFadeAnimation completion:^(UIImage * _Nullable image, NSURL * _Nonnull url, YYWebImageFromType from, YYWebImageStage stage, NSError * _Nullable error) {
+//            if (!error && image) {
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    [JKImageAvatarBrowser showImage:imageView];
+//                });
+//            }
             if (!error && image) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [JKImageAvatarBrowser showImage:imageView];
+                    //            [JKImageAvatarBrowser showImage:imageView];
+                    MMImageBrower *img  =  [[MMImageBrower alloc] init];
+                    img.images = @[image];
+                    [img show];
                 });
             }
         }];

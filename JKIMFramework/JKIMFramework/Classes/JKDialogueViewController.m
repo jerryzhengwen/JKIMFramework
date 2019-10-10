@@ -7,6 +7,7 @@
 //
 
 #import "JKDialogueViewController.h"
+#import "JKSatisfactionViewCell.h"
 #import "JKSatisfactionViewController.h"
 #import "JKDialogueHeader.h"
 #import "JKMessageFrame.h"
@@ -37,16 +38,17 @@
 
 @property (nonatomic,copy) NSString *customerName;
 
+@property (nonatomic,copy) NSString *placeHolerStr;
+
 //收到新的消息时的Message
 @property(nonatomic, strong)JKMessage *listMessage;
-///点赞按钮
-//@property(nonatomic, strong)UIButton *satisfieButton;
 @property(nonatomic,assign) BOOL isLoadHistory;
 @end
 
 @implementation JKDialogueViewController
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.placeHolerStr = @"请描述您遇到的问题……";
     [[JKConnectCenter sharedJKConnectCenter] checkoutInitCompleteBlock:^(BOOL isComplete) {
     }];
     [self creatUI];
@@ -83,6 +85,23 @@
             }
         });
     }];
+    /*
+    __weak JKDialogueViewController *weakSelf = self;
+    self.alertView.clickBlock = ^(BOOL leftBtn) {
+        if (!leftBtn) {
+            NSString *contextId = [[JKConnectCenter sharedJKConnectCenter] JKIM_getContext_id];
+            [[JKConnectCenter sharedJKConnectCenter] getEndChatBlock:^(BOOL satisFaction) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (satisFaction) { //跳转满意度界面
+                        [weakSelf showSatisfacionViewFromid:[[JKMessage alloc]init] ContextId:contextId];
+                    }else { //关闭当前界面
+                        [weakSelf.navigationController popViewControllerAnimated:YES];
+                    }
+                });
+            }];
+        }
+    };
+    [[UIApplication sharedApplication].keyWindow addSubview:self.alertView]; */
 }
 -(JYFaceView *)faceView {
     if (_faceView == nil) {
@@ -101,16 +120,18 @@
 - (void)creatUI{
     
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    self.view.backgroundColor = [UIColor colorWithRed:242/255.0 green:242/255.0 blue:242/255.0 alpha:1];
+    self.view.backgroundColor = JKBGDefaultColor;
     self.dataArray = [NSMutableArray array];
     [self.view addSubview:self.tableView];
-    //    [self.view addSubview:self.satisfieButton]; 暂时先隐藏
     [self.view addSubview:self.bottomView];
     [self bottomViewInitialLayout];
     [self.bottomView addSubview:self.textView];
     self.textView.returnKeyType = UIReturnKeySend;
     self.textView.delegate = self;
-    self.textView.frame = CGRectMake(10, 11, [UIScreen mainScreen].bounds.size.width - 84, 32);
+    self.textView.frame = CGRectMake(16, 8, [UIScreen mainScreen].bounds.size.width - 32, 40);
+    self.textView.text = self.placeHolerStr;
+    self.textView.textColor = UIColorFromRGB(0x9B9B9B);
+    
     //    [self.bottomView addSubview:self.moreBtn];
     //    [self.bottomView addSubview:self.faceButton];
     self.moreBtn.frame = CGRectMake(self.view.right - 32 , 0, 22, 22);
@@ -169,57 +190,9 @@
                 }
                 [weakSelf.dataFrameArray insertObject:frameModel atIndex:0];
             }
-            //            for (JKMessage * message in array) {
-            //                JKDialogModel * autoModel = [message mutableCopy];
-            //                JKMessageFrame *frameModel = [[JKMessageFrame alloc] init];
-            //                frameModel.message = autoModel;
-            //                frameModel = [weakSelf jisuanMessageFrame:frameModel];
-            //                if (message.messageType ==  || message.messageType == JKMessageFAQImage) {
-            //                    frameModel.cellHeight = 0;
-            //                }
-            //                [weakSelf.dataFrameArray insertObject:frameModel atIndex:0];
-            //            }
             [weakSelf reloadPath];
         });
     }];
-    //    NSLog(@"---%@",[JKConnectCenter sharedJKConnectCenter].chat_id);
-    //    if (self.isLoadHistory == NO) {
-    //        self.isLoadHistory = YES;
-    //    }else {
-    //        return;
-    //    }
-    //    NSMutableArray *historyArr = [[JKConnectCenter sharedJKConnectCenter]selectEntity:[NSArray array] ascending:NO filterString:nil];
-    //    [self.tableView.mj_header endRefreshing];
-    //    [historyArr enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-    //        JKMessage *historyModel = historyArr[idx];
-    //        for (JKMessageFrame *frameModel in self.dataArray) {
-    //            JKMessage * model =frameModel.message;
-    //            if ([historyModel.messageId isEqualToString:model.messageId]) {
-    //                [historyArr removeObject:historyModel];
-    //            }
-    //        }
-    //    }];
-    //    for (int i = 0; i < historyArr.count; i++) {
-    //        JKMessage *model = historyArr[i];
-    //        JKMessageFrame *framModel = [[JKMessageFrame alloc]init];
-    //        JKDialogModel *dialog = [JKDialogModel changeMsgTypeWithJKModel:model];
-    //        dialog.time = model.time;
-    //        framModel.message = dialog;
-    //        if (model.whoSend != JK_SystemMark) {
-    //            framModel = [self jisuanMessageFrame:framModel];
-    //            if (model.messageType == JKMessageFAQImageText || model.messageType == JKMessageFAQImage) {
-    //                framModel.cellHeight = 0;
-    //            }
-    //            [self.dataFrameArray insertObject:framModel atIndex:0];
-    //        }
-    //    }
-    //
-    ////    if (index >= 0) {
-    ////        //评价的信号文字不用显示
-    ////        [self.dataArray removeObjectAtIndex:index];
-    ////        [self.dataFrameArray removeObjectAtIndex:index];
-    ////    }
-    //    [self tableViewMoveToLastPathNeedAnimated:NO];
     
     
 }
@@ -237,18 +210,9 @@
         [self.dataFrameArray addObject:messageFrame];
         [self tableViewMoveToLastPathNeedAnimated:YES];
     }];
-    
-    
-    //    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-    //        //在此判断是发给机器人还是房间
-    //        if ((!self.listMessage.to.length) && [self.textView.text isEqualToString:@"转人工"]) {
-    //            [self sendZhuanRenGong];
-    //        }else if ((!self.listMessage.to.length) && ([JKConnectCenter sharedJKConnectCenter].socketState == JK_SocketConnectOnline)){
-    //            [self sendAutoReplayWithString:@"JK_DialogueView_defaultAnswer".JK_localString];
-    //        }
-    //    });
     self.textView.text = @"";
     self.assoiateView.hidden = YES;
+    
 }
 
 -(void)sendAutoReplayWithString:(NSString *)message {
@@ -282,11 +246,40 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     __weak JKDialogueViewController * weakSelf = self;
     JKMessageFrame * messageFrame = self.dataFrameArray[indexPath.row];
+//    if (messageFrame.message.messageType == JKMessageHotMsg) {
+//        static NSString * JKSatisID = @"JKSatisfactionViewCell";
+//        JKSatisfactionViewCell * cell = [tableView dequeueReusableCellWithIdentifier:JKSatisID];
+//        if (!cell) {
+//            cell = [[JKSatisfactionViewCell alloc]initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:JKSatisID];
+//        }
+//        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+//        cell.userInteractionEnabled = YES;
+//        cell.model = messageFrame.message;
+//        cell.submitBlock = ^{
+//            [weakSelf reloadPath];
+//        };
+//        return cell;
+//    }
     if (messageFrame.message.messageType == JKMessageFAQImageText ||messageFrame.message.messageType == JKMessageFAQImage) {
         static NSString *cellIdentifer = @"JKWebViewCell";
         JKWebViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifer];
         if (!cell) {
             cell = [[JKWebViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellIdentifer];
+        }
+        if (indexPath.row > 0) {
+            @try {
+                JKMessageFrame * beforeMessage = self.dataFrameArray[indexPath.row - 1];
+                //在这里判断下时间戳
+                long beforeTime = [beforeMessage.message.time longLongValue]/1000;
+                long nowTime = [messageFrame.message.time longLongValue]/1000;
+                if (nowTime - beforeTime <= 120) { //隐藏时间
+                    messageFrame.hiddenTime = YES;
+                }
+            } @catch (NSException *exception) {
+                
+            } @finally {
+                
+            }
         }
         cell.messageFrame = messageFrame;
         cell.userInteractionEnabled = YES;
@@ -303,15 +296,25 @@
         //        };
         return cell;
     }
-    if (messageFrame.message.messageType == JKMessageHotMsg) {
+    if (messageFrame.message.messageType == JKMessageHotMsg ||messageFrame.message.messageType == JKMessageClarify) {
+        static NSString *clarifyCell = @"clarifyCell";
         static NSString *hotMsgCell = @"hotMsgCell";
-        JKHotMessageCell *cell = [tableView dequeueReusableCellWithIdentifier:hotMsgCell];
-        if (!cell) {
-            cell = [[JKHotMessageCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:hotMsgCell];
+        JKHotMessageCell *cell;
+        if (messageFrame.message.messageType == JKMessageHotMsg) {
+           cell  = [tableView dequeueReusableCellWithIdentifier:hotMsgCell];
+            if (!cell) {
+                cell = [[JKHotMessageCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:hotMsgCell];
+            }
+        }else {
+            cell = [tableView dequeueReusableCellWithIdentifier:clarifyCell];
+            if (!cell) {
+                cell = [[JKHotMessageCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:clarifyCell];
+            }
         }
         cell.hotView.hotMsgBlock = ^(NSString * _Nonnull question) {
             [weakSelf showHotMsgQuestion:question];
         };
+        cell.backgroundColor = JKBGDefaultColor;
         cell.model = messageFrame.message;
         cell.userInteractionEnabled = YES;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -324,7 +327,24 @@
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.delegate = self;
-    [cell setMessageFrame:self.dataFrameArray[indexPath.row]];
+    JKMessageFrame * cellMessageFrame = self.dataFrameArray[indexPath.row];
+    if (indexPath.row > 0) {
+        @try {
+            JKMessageFrame * beforeMessage = self.dataFrameArray[indexPath.row - 1];
+            //在这里判断下时间戳
+            long beforeTime = [beforeMessage.message.time longLongValue]/1000;
+            long nowTime = [cellMessageFrame.message.time longLongValue]/1000;
+            if (nowTime - beforeTime <= 120) { //隐藏时间
+                cellMessageFrame.hiddenTime = YES;
+            }
+        } @catch (NSException *exception) {
+            
+        } @finally {
+            
+        }
+    }
+    [cell setMessageFrame:cellMessageFrame];
+    
     cell.clickCustomer = ^(NSString * customeName) {
         if (weakSelf.customerName.length) {
             // 接入的动作，以及提示
@@ -411,12 +431,42 @@
     
     JKMessageFrame * messge = self.dataFrameArray[indexPath.row];
     JKDialogModel * message = messge.message;
+//    if (message.messageType == JKMessageHotMsg) {//需要删除的
+//        if (message.isSubmit) {
+//            return 336;
+//        }else{
+//            if (message.soluteNumber != SOLUTEBTN_NONE || message.startIndex != STARTBTN_NONE || message.submitContent.length >0) {
+//                return 369;
+//            }else {
+//                return 336;
+//            }
+//        }
+//
+//    }
+    if (message.messageType == JKMessageHotMsg ||message.messageType == JKMessageClarify) {
+        return message.hotArray.count * 46 + 40; //热点问题在最上面，不加10
+    }
     if (message.messageType == JKMessageFAQImage || message.messageType == JKMessageFAQImageText) { //所有的高度都在加10
-        return 120 + messge.cellHeight + 10;
+        return 89 + messge.cellHeight + 10;
     }
-    if (message.messageType == JKMessageHotMsg) {
-        return message.hotArray.count * 41 + 40; //热点问题在最上面，不加10
-    }
+    
+//    @try {
+//        if (indexPath.row > 1) {
+//            JKMessageFrame * beforeMessage = self.dataFrameArray[indexPath.row - 1];
+//            //在这里判断下时间戳
+//           long beforeTime = [beforeMessage.message.time longLongValue]/1000;
+//           long nowTime = [message.time longLongValue]/1000;
+//            if (nowTime - beforeTime <= 120) { //隐藏时间
+//                //去掉时间
+//
+//            }
+//        }
+//    } @catch (NSException *exception) {
+//        NSLog(@"")
+//    } @finally {
+//
+//    }
+    //判断下上一个的message的时间
     CGFloat height = messge.cellHeight;
     return  height + 10;
 }
@@ -427,11 +477,12 @@
         [self tableViewMoveToLastPathNeedAnimated:YES];
         return;
     }
-    NSIndexPath *indexPath=[NSIndexPath indexPathForRow:row inSection:0];
+//    NSIndexPath *indexPath=[NSIndexPath indexPathForRow:row inSection:0];
     [self.refreshQ cancelAllOperations];
     [self.refreshQ addOperationWithBlock:^{
         dispatch_async(dispatch_get_main_queue(), ^{
-            [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath,nil] withRowAnimation:UITableViewRowAnimationNone];
+            [self.tableView reloadData];
+//            [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath,nil] withRowAnimation:UITableViewRowAnimationNone];
         });
     }];
 }
@@ -627,14 +678,14 @@
 }
 -(void)receiveHotJKMessage:(JKMessage *)message {
     for (JKMessageFrame *model in self.dataFrameArray) {
-        if (model.message.hotArray.count) {
+        if (model.message.hotArray.count && message.messageType == JKMessageHotMsg) {
             return;
         }
     }
     dispatch_async(dispatch_get_main_queue(), ^{
         JKMessageFrame *framModel = [[JKMessageFrame alloc]init];
         JKDialogModel * model = [JKDialogModel changeMsgTypeWithJKModel:message];
-        framModel.cellHeight = framModel.message.hotArray.count *41;
+        framModel.cellHeight = framModel.message.hotArray.count *46;
         framModel.message = model;
         [self.dataFrameArray addObject:framModel];
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -812,7 +863,7 @@
 - (UIView *)bottomView{
     if (_bottomView == nil) {
         _bottomView = [[UIView alloc]init];
-        _bottomView.backgroundColor = UIColorFromRGB(0xFBFBFB);
+        _bottomView.backgroundColor = UIColorFromRGB(0xE8E8E8);
         _bottomView.layer.borderWidth = 0.5;
         _bottomView.layer.borderColor = [[UIColor colorWithRed:196/255.0 green:196/255.0 blue:196/255.0 alpha:1.0] CGColor];
     }
@@ -824,24 +875,20 @@
         _textView = [[UITextView alloc]init];
         _textView.backgroundColor = [UIColor whiteColor];
         _textView.returnKeyType = UIReturnKeyDefault;
+        if ([[UIDevice currentDevice].systemVersion doubleValue] < 9.0) {
+            _textView.font =  [UIFont systemFontOfSize:15];
+        }else {
+            _textView.font = [UIFont fontWithName:@"PingFangSC-Regular" size:15];
+        }
         _textView.keyboardType = UIKeyboardTypeDefault;
         _textView.textColor = [UIColor blackColor];
         _textView.delegate = self;
         _textView.layer.borderWidth = 0.5;
         _textView.layer.borderColor = [[UIColor colorWithRed:196/255.0 green:196/255.0 blue:196/255.0 alpha:1.0] CGColor];
-        _textView.layer.cornerRadius = 7.5;
+        _textView.layer.cornerRadius = 19;
     }
     return _textView;
 }
-
-//- (UIButton *)satisfieButton{
-//    if (_satisfieButton == nil) {
-//        _satisfieButton = [[UIButton alloc]init];
-//        NSString *filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"satisfied"];
-//        [_satisfieButton setImage:[UIImage imageWithContentsOfFile:filePatch] forState:UIControlStateNormal];
-//    }
-//    return _satisfieButton;
-//}
 
 
 -(UIButton *)faceButton {
@@ -997,6 +1044,20 @@
 - (void)viewDidDisappear:(BOOL)animated{
     [super viewDidDisappear:animated];
 }
+-(BOOL)textViewShouldBeginEditing:(UITextView *)textView {
+    if ([self.textView.text isEqualToString:self.placeHolerStr]) {
+        self.textView.text = @"";
+        self.textView.textColor = UIColorFromRGB(0x3E3E3E);
+    }
+    return YES;
+}
+-(BOOL)textViewShouldEndEditing:(UITextView *)textView {
+    if (self.textView.text.length <= 0) {
+        self.textView.text = self.placeHolerStr;
+        self.textView.textColor = UIColorFromRGB(0x9B9B9B);
+    }
+    return YES;
+}
 //send键发送
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
     if ([text isEqualToString:@"\n"]) {
@@ -1074,7 +1135,7 @@
             self.assoiateView.hidden = NO;
             self.assoiateView.associateArr = [[NSMutableArray alloc] initWithArray:array];
             self.assoiateView.keyWord = self.textView.text;
-            CGFloat height = 33 * array.count;
+            CGFloat height = 46 * array.count;
             self.assoiateView.frame = CGRectMake(0, self.bottomView.top - height, self.view.width, height);
             [self.assoiateView.tableView reloadData];
         }else {
@@ -1114,11 +1175,11 @@
     CGFloat contentY = CGRectGetMaxY(message.timeF);
     CGFloat contentX = 0;
     if (message.message.whoSend !=JK_Visitor) {
-        message.nameF = CGRectMake(24, CGRectGetMaxY(message.timeF) + 30, screenW - 100, 20);
+        message.nameF = CGRectMake(16, CGRectGetMaxY(message.timeF) + JKChatMargin, screenW - 100, 17);
         contentY = CGRectGetMaxY(message.nameF) + 4;
-        contentX =  20;
+        contentX =  16;
     }else {
-        contentY = contentY + 21;
+        contentY = contentY + JKChatMargin;
     }
     //根据种类分
     CGSize contentSize;
@@ -1141,14 +1202,14 @@
             break;
     }
     if (message.message.whoSend == JK_Visitor) {
-        contentX = screenW -20-contentSize.width - 44;
+        contentX = screenW -16-contentSize.width - 24;
     }
     
     if (message.message.whoSend == JK_SystemMarkShow) {
         message.contentF = CGRectMake(0, 0, contentSize.width + 44, contentSize.height);
         message.cellHeight = CGRectGetMaxY(message.contentF);
     }else{
-        message.contentF = CGRectMake(contentX, contentY, contentSize.width + 44, contentSize.height);
+        message.contentF = CGRectMake(contentX, contentY, contentSize.width + 24, contentSize.height);
         message.cellHeight = MAX(CGRectGetMaxY(message.contentF), CGRectGetMaxY(message.nameF))  ;
     }
     
@@ -1181,7 +1242,13 @@
     return size;
 }
 - (NSMutableAttributedString *)praseHtmlStr:(NSString *)htmlStr {
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithData:[htmlStr dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:nil];
+    NSMutableAttributedString *attributedString;
+    @try {
+        attributedString  = [[NSMutableAttributedString alloc] initWithData:[htmlStr dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:nil];
+    } @catch (NSException *exception) {
+        attributedString = [[NSMutableAttributedString alloc] initWithString:htmlStr];
+    } @finally {
+    }
     return attributedString;
 }
 /**
