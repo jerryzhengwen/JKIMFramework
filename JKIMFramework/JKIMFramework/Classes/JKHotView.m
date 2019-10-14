@@ -67,6 +67,7 @@
 }
 -(void)setHotArray:(NSArray *)hotArray {
     _hotArray = hotArray;
+    [self.tableView reloadData];
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 46;

@@ -66,6 +66,10 @@
     [refresh setTitle:@"下拉查看更多历史消息" forState:MJRefreshStatePulling];
     self.tableView.mj_header = refresh;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reneedInit) name:UIApplicationDidBecomeActiveNotification object:nil];
+//    UIView *redView = [[UIView alloc] init];
+//    redView.backgroundColor = [UIColor redColor];
+//    redView.frame = CGRectMake(0, 0, self.view.width, 20);
+//    self.tableView.tableFooterView = redView;
     
 }
 -(void)reneedInit {
@@ -74,6 +78,25 @@
     //    }];
 }
 -(void)endDialogeClick {
+    [self.view endEditing:YES];
+    __weak JKDialogueViewController *weakSelf = self;
+    self.alertView.clickBlock = ^(BOOL leftBtn) {
+        if (!leftBtn) { //需要关闭对话
+            NSString *contextId = [[JKConnectCenter sharedJKConnectCenter] JKIM_getContext_id];
+            [[JKConnectCenter sharedJKConnectCenter] getEndChatBlock:^(BOOL satisFaction) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (satisFaction) { //跳转满意度界面
+                        [weakSelf showSatisfacionViewFromid:[[JKMessage alloc]init] ContextId:contextId];
+                    }else { //关闭当前界面
+                        [weakSelf.navigationController popViewControllerAnimated:YES];
+                    }
+                });
+            }];/*结束对话*/
+            [[JKConnectCenter sharedJKConnectCenter] getReallyEndChat];
+        }
+    };
+    [[UIApplication sharedApplication].keyWindow addSubview:self.alertView];
+    /*
     __weak JKDialogueViewController *weakSelf = self;
     NSString *contextId = [[JKConnectCenter sharedJKConnectCenter] JKIM_getContext_id];
     [[JKConnectCenter sharedJKConnectCenter] getEndChatBlock:^(BOOL satisFaction) {
@@ -84,7 +107,7 @@
                 [weakSelf.navigationController popViewControllerAnimated:YES];
             }
         });
-    }];
+    }];*/
     /*
     __weak JKDialogueViewController *weakSelf = self;
     self.alertView.clickBlock = ^(BOOL leftBtn) {
@@ -179,7 +202,6 @@
         [weakSelf.tableView.mj_header endRefreshing];
         dispatch_async(dispatch_get_main_queue(), ^{
             for (int i = (int)array.count - 1; i>=0; i--) {
-                //            for (int i = 0; i < array.count; i++) {
                 JKMessage *message = array[i];
                 JKDialogModel * autoModel = [message mutableCopy];
                 JKMessageFrame *frameModel = [[JKMessageFrame alloc] init];
@@ -190,7 +212,7 @@
                 }
                 [weakSelf.dataFrameArray insertObject:frameModel atIndex:0];
             }
-            [weakSelf reloadPath];
+            [weakSelf reloadPath]; //滚动到特定位置
         });
     }];
     
@@ -232,9 +254,16 @@
 -(void)showHotMsgQuestion:(NSString *)question {
     self.textView.text = question;
     [self sendMessage];
+    self.textView.text = self.placeHolerStr;
 }
 #pragma -
 #pragma mark - delegate
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    return 28;
+}
+-(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
+    return [[UIView alloc] init];
+}
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
 }
@@ -447,7 +476,7 @@
         return message.hotArray.count * 46 + 40; //热点问题在最上面，不加10
     }
     if (message.messageType == JKMessageFAQImage || message.messageType == JKMessageFAQImageText) { //所有的高度都在加10
-        return 89 + messge.cellHeight + 10;
+        return 89 + messge.cellHeight;
     }
     
 //    @try {
@@ -468,7 +497,7 @@
 //    }
     //判断下上一个的message的时间
     CGFloat height = messge.cellHeight;
-    return  height + 10;
+    return  height;
 }
 
 
@@ -677,6 +706,7 @@
     });
 }
 -(void)receiveHotJKMessage:(JKMessage *)message {
+    
     for (JKMessageFrame *model in self.dataFrameArray) {
         if (model.message.hotArray.count && message.messageType == JKMessageHotMsg) {
             return;
@@ -822,8 +852,13 @@
             weakSelf.bottomView.frame = CGRectMake(0, weakSelf.tableView.bottom, [UIScreen mainScreen].bounds.size.width, BottomToolHeight);
         }];
     }
+    //需求，键盘下去的时候隐藏联想问题
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.assoiateView.hidden = YES;
+    });
+    /*
     CGFloat assoiateHeight = CGRectGetHeight(weakSelf.assoiateView.frame);
-    weakSelf.assoiateView.frame = CGRectMake(0, self.bottomView.top- assoiateHeight, self.view.width, assoiateHeight);
+    weakSelf.assoiateView.frame = CGRectMake(0, self.bottomView.top- assoiateHeight, self.view.width, assoiateHeight);*/
 }
 
 /**

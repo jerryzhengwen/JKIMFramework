@@ -177,10 +177,14 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)initDialogeWIthSatisFaction;
 
 /**
- 结束对话的Block
+ 结束对话的Block（以前假结束）
  @param block 结束对话
  */
 -(void)getEndChatBlock:(JKGetEndChatBlock)block;
+/**
+ 真的结束对话
+ */
+-(void)getReallyEndChat;
 /**
  接收到对话的message
 
