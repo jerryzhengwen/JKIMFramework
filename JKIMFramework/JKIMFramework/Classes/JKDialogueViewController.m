@@ -254,7 +254,6 @@
 -(void)showHotMsgQuestion:(NSString *)question {
     self.textView.text = question;
     [self sendMessage];
-    self.textView.text = self.placeHolerStr;
 }
 #pragma -
 #pragma mark - delegate
@@ -342,6 +341,7 @@
         }
         cell.hotView.hotMsgBlock = ^(NSString * _Nonnull question) {
             [weakSelf showHotMsgQuestion:question];
+            weakSelf.textView.text = self.placeHolerStr;
         };
         cell.backgroundColor = JKBGDefaultColor;
         cell.model = messageFrame.message;

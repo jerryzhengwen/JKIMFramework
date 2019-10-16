@@ -174,6 +174,7 @@
         }
         JKSatisfactionModel * lastModel = self.sectionTwoArr.lastObject;
         NSString *memo = lastModel.content?lastModel.content:@"";
+        memo = [memo  stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
         NSString *context_id = self.context_id;
         NSDictionary *dict = [NSDictionary dictionaryWithObjects:@[satisfactionPk,solutionPk,memo,context_id] forKeys:@[@"satisfactionPk",@"solutionPk",@"memo",@"context_id"]];
         __weak typeof(self) weakSelf = self;
