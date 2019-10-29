@@ -9,6 +9,7 @@
 #import "JKSatisfactionViewCell.h"
 #import "JKDialogueHeader.h"
 #import "UIView+JKFloatFrame.h"
+#import "JKSatisfactionModel.h"
 @interface JKSatisfactionViewCell()<UITextViewDelegate>
 @property (nonatomic,strong)UIImageView *bgImageView;
 @property (nonatomic,strong)UILabel *firstLabel;
@@ -17,7 +18,7 @@
 @property (nonatomic,strong)UILabel *secondLabel;
 @property (nonatomic,strong)UILabel *satisLabel;
 @property (nonatomic,strong)UILabel *thirdLabel;
-@property (nonatomic,strong)UITextView *textView;
+@property (nonatomic,strong)UITextView *adviseTV;
 @property (nonatomic,copy) NSString *placeHolder;
 @property (nonatomic,strong)UIButton *submitBtn;
 @end
@@ -27,23 +28,26 @@
 -(instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     self.backgroundColor = JKBGDefaultColor;
-    self.firstBtnArr = [NSMutableArray array];
-    self.secondBtnArr = [NSMutableArray array];
+    self.userInteractionEnabled = YES;
     self.placeHolder = @"您的建议对我们非常重要哟～";
     if (self) {
         [self createSubViews];
     }
     return self;
 }
--(void)createSubViews {
-    [self.contentView addSubview:self.bgImageView];
-    self.firstLabel = [UIView createRegularLabelWithTitle:@"您的问题是否已解决？" size:15];
-    self.bgImageView.userInteractionEnabled = YES;
-    [self.bgImageView addSubview:self.firstLabel];
-    NSArray * titleArr = @[@"是",@"否"];
-    for (int i = 0;i < 2;i++) {
+-(void)setModel:(JKMessageFrame *)model {
+    _model = model;
+    self.firstBtnArr = [NSMutableArray array];
+    self.secondBtnArr = [NSMutableArray array];
+    if (model.isSubmit) {
+        self.bgImageView.userInteractionEnabled = NO;
+    }else {
+        self.bgImageView.userInteractionEnabled = YES;
+    }
+    for (int i = 0;i < model.soluteArr.count;i++) {
+        JKSatisfactionModel * soluteModel = model.soluteArr[i];
         UIButton * button = [UIButton buttonWithType:UIButtonTypeCustom];
-        [button setTitle:titleArr[i] forState:UIControlStateNormal];
+        [button setTitle:soluteModel.name forState:UIControlStateNormal];
         [button setTitleColor:UIColorFromRGB(0x3E3E3E) forState:UIControlStateNormal];
         if ([[UIDevice currentDevice].systemVersion doubleValue] < 9.0) {
             button.titleLabel.font =  [UIFont systemFontOfSize:14];
@@ -51,19 +55,24 @@
             button.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:14];
         }
         NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
-        NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"jk_unselect"];
+        NSString *imgStr = soluteModel.showSelect?@"jk_select":@"jk_unselect";
+        NSString *filePatch  = [bundlePatch stringByAppendingPathComponent:imgStr];
         UIImage *image = [UIImage imageWithContentsOfFile:filePatch];
         [button addTarget:self action:@selector(soluteChoose:) forControlEvents:UIControlEventTouchUpInside];
         [button setImage:image forState:UIControlStateNormal];
         button.imageEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 18);
-//        button.titleEdgeInsets = UIEdgeInsetsMake(0, 8, 0, 0);
         [self.firstBtnArr addObject:button];
         [self.bgImageView addSubview:button];
     }
-    self.secondLabel = [UIView createRegularLabelWithTitle:@"您对这次服务满意吗？" size:15];
-    [self.bgImageView addSubview:self.secondLabel];
     
-    for (int i = 0; i < 5; i++) {
+    int selectNum = -1;
+    self.satisLabel.text = @"";
+    for (int i = 0; i < model.satisArr.count; i++) { //判断一下是否选中？
+        JKSatisfactionModel * satisModel = model.satisArr[i];
+        if (satisModel.showSelect) {
+            selectNum = i;
+            self.satisLabel.text = satisModel.name;
+        }
         UIButton * button = [UIButton buttonWithType:UIButtonTypeCustom];
         NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
         NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"jk_star"];
@@ -73,6 +82,55 @@
         [self.secondBtnArr addObject:button];
         [self.bgImageView addSubview:button];
     }
+    if (selectNum >= 0) {
+        for (int i = 0; i <= selectNum; i++) {
+            UIButton * button = self.secondBtnArr[i];
+            NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
+            NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"jk_redstar"];
+            UIImage *image = [UIImage imageWithContentsOfFile:filePatch];
+            [button setImage:image forState:UIControlStateNormal];
+        }
+    }
+    [self.bgImageView addSubview:self.submitBtn];
+    if (model.content.length) {
+        self.adviseTV.text = model.content;
+    }else {
+        self.adviseTV.text = self.placeHolder;
+        self.adviseTV.textColor = UIColorFromRGB(0xD5D5D5);
+    }
+    if (model.isSubmit) {
+        self.submitBtn.hidden = YES;
+    }else {
+        BOOL isShow = model.content.length?YES:NO;
+        for (JKSatisfactionModel * satisModel  in model.satisArr) {
+            if (satisModel.showSelect || isShow) {
+                isShow = YES;
+                break;
+            }
+        }
+        for (JKSatisfactionModel * soluteModel  in model.soluteArr) {
+            if (soluteModel.showSelect || isShow) {
+                isShow = YES;
+                break;
+            }
+        }
+        self.submitBtn.hidden = !isShow;
+    }
+    self.firstLabel.hidden = model.soluteArr.count == 0 ?YES:NO;
+    self.secondLabel.hidden = model.satisArr.count == 0 ?YES:NO;
+    if (model.isFirstResign) {
+         [self.adviseTV becomeFirstResponder];
+    }
+}
+-(void)createSubViews {
+    [self.contentView addSubview:self.bgImageView];
+    self.firstLabel = [UIView createRegularLabelWithTitle:@"您的问题是否已解决？" size:15];
+    self.bgImageView.userInteractionEnabled = YES;
+    [self.bgImageView addSubview:self.firstLabel];
+    
+    self.secondLabel = [UIView createRegularLabelWithTitle:@"您对这次服务满意吗？" size:15];
+    [self.bgImageView addSubview:self.secondLabel];
+    
     self.satisLabel = [UIView createRegularLabelWithTitle:@"" size:15];
     self.satisLabel.textColor = UIColorFromRGB(0xEC5642);
     [self.bgImageView addSubview:self.satisLabel];
@@ -80,20 +138,36 @@
     self.thirdLabel = [UIView createRegularLabelWithTitle:@"意见反馈（非必填）" size:15];
     [self.bgImageView addSubview:self.thirdLabel];
     
-    [self.bgImageView addSubview:self.textView];
-    self.textView.text = self.placeHolder;
-    self.textView.textColor = UIColorFromRGB(0xD5D5D5);
+    [self.bgImageView addSubview:self.adviseTV];
+    self.adviseTV.text = self.placeHolder;
+    self.adviseTV.textColor = UIColorFromRGB(0xD5D5D5);
     
     self.submitBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.submitBtn.layer.cornerRadius = 14;
+    self.submitBtn.clipsToBounds = YES;
     [self.submitBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.submitBtn setTitle:@"提交" forState:UIControlStateNormal];
+    [self.submitBtn addTarget:self action:@selector(submitClick) forControlEvents:UIControlEventTouchUpInside];
+    
+    CAGradientLayer *gradientLayer =  [CAGradientLayer layer];
+    gradientLayer.frame = CGRectMake(0, 0, 68, 25);
+    gradientLayer.startPoint = CGPointMake(0, 0);
+    gradientLayer.endPoint = CGPointMake(1, 0);
+    gradientLayer.locations = @[@(0.5),@(1.0)];//渐变点
+    [gradientLayer setColors:@[(id)UIColorFromRGB(0xFF8E48).CGColor,(id)UIColorFromRGB(0xFF6262).CGColor]];//渐变数组
+    [self.submitBtn.layer addSublayer:gradientLayer];
+    
     if ([[UIDevice currentDevice].systemVersion doubleValue] < 9.0) {
         self.submitBtn.titleLabel.font = [UIFont systemFontOfSize:12];
     }else {
         self.submitBtn.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:12];
     }
     self.submitBtn.hidden = YES;
-    [self.bgImageView addSubview:self.submitBtn];
+}
+-(void)submitClick {
+    if (self.submitClicked) {
+        self.submitClicked(self.model);
+    }
 }
 -(void)soluteChoose:(UIButton *)button {
     [self WhetherSHowSubMitBtn];
@@ -111,141 +185,177 @@
     [button setImage:image forState:UIControlStateNormal];
     for (int i = 0; i < self.firstBtnArr.count;i ++) {
         UIButton * btn = self.firstBtnArr[i];
+        JKSatisfactionModel * model = self.model.soluteArr[i];
         if ([button isEqual:btn]) {
-            if (i == 0) {
-                self.model.soluteNumber = SOLUTEBTN_SOLVE;
-            }else{
-                self.model.soluteNumber = SOLUTEBTN_UNSOLVE;
-            }
+            model.showSelect = YES;
             continue;
         }else {
             NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"jk_unselect"];
             UIImage *image = [UIImage imageWithContentsOfFile:filePatch];
             [btn setImage:image forState:UIControlStateNormal];
             btn.selected = NO;
+            model.showSelect = NO;
         }
     }
 }
 -(void)chooseStar:(UIButton *)button {
     [self WhetherSHowSubMitBtn];
-    NSInteger index = [self.secondBtnArr indexOfObject:button];
-    self.model.startIndex = index;
     NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
     NSString *jkStart = [bundlePatch stringByAppendingPathComponent:@"jk_star"];
     NSString *jkRedStart = [bundlePatch stringByAppendingPathComponent:@"jk_redstar"];
+    int selectIndex = (int)[self.secondBtnArr indexOfObject:button];
     for (int i = 0; i < self.secondBtnArr.count; i ++) {
+        JKSatisfactionModel * satisModel = self.model.satisArr[i];
+        if (i == selectIndex) {
+            satisModel.showSelect = YES;
+            self.satisLabel.text = satisModel.name;
+        }else {
+            satisModel.showSelect = NO;
+        }
         UIButton * button = self.secondBtnArr[i];
-        NSString * imgStr = i <=index?jkRedStart:jkStart;
+        NSString * imgStr = i <= selectIndex?jkRedStart:jkStart;
         [button setImage:[UIImage imageNamed:imgStr] forState:UIControlStateNormal];
     }
-    NSArray * titleArr = @[@"非常不满意",@"不满意",@"一般",@"满意",@"非常满意"];
-    self.satisLabel.text = titleArr[index];
 }
 -(UIImageView *)bgImageView {
     if (_bgImageView == nil) {
         _bgImageView = [[UIImageView alloc] init];
-        NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
-        NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"chatfrom_bg_normal"];
-        UIImage *normal = [UIImage imageWithContentsOfFile:filePatch];
-        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(16, 13, 16, 21)];
-        _bgImageView.image = normal;
+//        NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
+//        NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"chatfrom_bg_normal"];
+//        UIImage *normal = [UIImage imageWithContentsOfFile:filePatch];
+//        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(16, 13, 16, 21)];
+//        _bgImageView.image = normal;
     }
     return _bgImageView;
 }
--(UITextView *)textView {
-    if (!_textView) {
-        _textView = [[UITextView alloc] init];
-        _textView.backgroundColor = UIColorFromRGB(0xF6F6F6);
-        _textView.delegate = self;
+-(UITextView *)adviseTV {
+    if (!_adviseTV) {
+        _adviseTV = [[UITextView alloc] init];
+        _adviseTV.backgroundColor = UIColorFromRGB(0xF6F6F6);
+        _adviseTV.delegate = self;
         if ([[UIDevice currentDevice].systemVersion doubleValue] < 9.0) {
-            _textView.font =  [UIFont systemFontOfSize:14];
+            _adviseTV.font =  [UIFont systemFontOfSize:11];
         }else {
-            _textView.font = [UIFont fontWithName:@"PingFangSC-Regular" size:14];
+            _adviseTV.font = [UIFont fontWithName:@"PingFangSC-Regular" size:11];
         }
     }
-    return _textView;
+    return _adviseTV;
+}
+CGSize countStringWordWidth(NSString *aString,UIFont * font, CGSize labelSize) {
+    
+    CGSize size =[aString
+                  boundingRectWithSize:labelSize
+                  options:NSStringDrawingUsesLineFragmentOrigin
+                  attributes:@{NSFontAttributeName:font}
+                  context:nil].size;
+    return size;
 }
 -(void)layoutSubviews {
     [super layoutSubviews];
-    CGFloat minWidth =  [UIScreen mainScreen].bounds.size.width - 170 + 24;
+    CGFloat minWidth =  [UIScreen mainScreen].bounds.size.width - 103 + 24;
     minWidth = minWidth < 272?272:minWidth;
-    CGFloat maxHeight = self.submitBtn.hidden ? 320:353;
-    self.bgImageView.frame = CGRectMake(16, 16, minWidth, maxHeight);
-    self.firstLabel.frame = CGRectMake(12, 12, 160, 22);
-    for (int i = 0; i < self.firstBtnArr.count; i ++) {
-        UIButton * button = self.firstBtnArr[i];
-        button.frame = CGRectMake(i * (38+30) + 14 , 48, 38, 20);
+    CGFloat minHight = 12;
+    if (self.firstBtnArr.count > 0) {
+        self.firstLabel.frame = CGRectMake(minHight, minHight, 160, 22);
+        minHight = minHight + 22 + 14;
+        UIFont  *font ;
+        if ([[UIDevice currentDevice].systemVersion doubleValue] < 9.0) {
+            font =  [UIFont systemFontOfSize:15];
+        }else {
+            font = [UIFont fontWithName:@"PingFangSC-Regular" size:15];
+        }
+        for (int i = 0; i < self.model.soluteArr.count; i ++) {
+            JKSatisfactionModel * soluteModel = self.model.soluteArr[i];
+            UIButton * button = self.firstBtnArr[i];
+            CGSize size = countStringWordWidth(soluteModel.name, font, CGSizeMake(272, 20));
+            CGFloat btnWth = ceil(size.width) + 24;
+            button.frame = CGRectMake(i * (38+30) + 14 , minHight, btnWth, 20);
+        }
+        minHight = minHight + 20 + 26;
     }
-    self.secondLabel.frame = CGRectMake(14, 94, 160, 22);
-    for (int i = 0; i < self.secondBtnArr.count; i ++) {
-        UIButton * button = self.secondBtnArr[i];
-        button.frame = CGRectMake(i * (26+8) + 13, 132, 26, 24);
-    }
-    self.satisLabel.frame = CGRectMake(190, 133, CGRectGetWidth(self.bgImageView.frame)-190, 22);
-    self.thirdLabel.frame = CGRectMake(14, 184, 135, 22);
-    self.textView.frame = CGRectMake(14, 222, CGRectGetWidth(self.bgImageView.frame)-26, 86);
-    if (!self.submitBtn.hidden) {
-        self.submitBtn.frame = CGRectMake(self.bgImageView.width -80, self.bgImageView.height - 37, 68, 25);
-    }
-}
--(BOOL)textViewShouldBeginEditing:(UITextView *)textView {
-    if ([self.textView.text isEqualToString:self.placeHolder]) {
-        self.textView.text = @"";
-        self.textView.textColor = UIColorFromRGB(0x3E3E3E);
-    }
-    return YES;
-}
--(void)setModel:(JKDialogModel *)model {
-    if (model.isSubmit) {
-        self.bgImageView.userInteractionEnabled = NO;
-    }else {
-        self.bgImageView.userInteractionEnabled = YES;
-    }
-    JKSOLUTEBTN_Click soluteState = model.soluteNumber;
-    if (soluteState != SOLUTEBTN_NONE) {
-        UIButton * button = soluteState == SOLUTEBTN_SOLVE?self.firstBtnArr.firstObject:self.firstBtnArr.lastObject;
-        [button setImage:[UIImage imageNamed:@"jk_select"] forState:UIControlStateNormal];
-        button.selected = YES;
-        self.submitBtn.hidden = NO;
-    }
-    JKSTARTBTN_Click startState = model.startIndex;
-    if (startState != STARTBTN_NONE) { //有星星
-        self.submitBtn.hidden = NO;
-        NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
-        NSString *jkStart = [bundlePatch stringByAppendingPathComponent:@"jk_star"];
-        NSString *jkRedStart = [bundlePatch stringByAppendingPathComponent:@"jk_redstar"];
+    if (self.secondBtnArr.count > 0) {
+        self.secondLabel.frame = CGRectMake(14, minHight, 160, 22);
+        minHight = minHight + 22 + 16;
+        
         for (int i = 0; i < self.secondBtnArr.count; i ++) {
             UIButton * button = self.secondBtnArr[i];
-            NSString * imgStr = i <=startState?jkRedStart:jkStart;
-            [button setImage:[UIImage imageNamed:imgStr] forState:UIControlStateNormal];
+            button.frame = CGRectMake(i * (26+8) + 13, minHight, 26, 24);
         }
-        NSArray * titleArr = @[@"非常不满意",@"不满意",@"一般",@"满意",@"非常满意"];
-        self.satisLabel.text = titleArr[startState];
+        self.satisLabel.frame = CGRectMake(190, minHight, minWidth -190, 22);
+        minHight = minHight + 24 + 28;
     }
-    if (model.submitContent.length) {
-        self.textView.text = model.submitContent;
-        self.submitBtn.hidden = NO;
+    self.thirdLabel.frame = CGRectMake(14, minHight, 135, 22);
+    minHight = minHight + 22 + 16;
+    self.adviseTV.frame = CGRectMake(14, minHight, minWidth -26, 86);
+    minHight = minHight + 86;
+    if (!self.submitBtn.hidden) {
+        minHight = minHight + 8;
+        self.submitBtn.frame = CGRectMake(minWidth -80, minHight, 68, 25);
+        minHight = minHight + 25;
     }
-    if (self.model.isSubmit) {
-        self.submitBtn.hidden = YES;
+    minHight = minHight + 12;
+    self.bgImageView.frame = CGRectMake(16, 16, minWidth, minHight);
+    
+    self.bgImageView.backgroundColor = UIColorFromRGB(0xFFFFFF);
+    UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:self.bgImageView.bounds byRoundingCorners:UIRectCornerTopRight|UIRectCornerBottomLeft|UIRectCornerBottomRight cornerRadii:CGSizeMake(10, 10)];
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+    maskLayer.frame = self.bgImageView.bounds;
+    maskLayer.path = maskPath.CGPath;
+    self.bgImageView.layer.mask = maskLayer;
+}
+-(BOOL)textViewShouldBeginEditing:(UITextView *)textView {
+    if ([self.adviseTV.text isEqualToString:self.placeHolder]) {
+        self.adviseTV.text = @"";
+        self.adviseTV.textColor = UIColorFromRGB(0x3E3E3E);
     }
+    self.model.isFirstResign = YES;
+    return YES;
+}
+-(void)textViewDidEndEditing:(UITextView *)textView {
+    if (![self.placeHolder isEqualToString:textView.text]) {
+     self.model.content = textView.text;
+    }else {
+        self.model.content = @"";
+    }
+    if (self.adviseTV.text.length <= 0) {
+        self.adviseTV.text = self.placeHolder;
+        self.adviseTV.textColor = UIColorFromRGB(0xD5D5D5);
+    }
+    self.model.isFirstResign = NO;
+    [self WhetherSHowSubMitBtn];
 }
 -(BOOL)textViewShouldEndEditing:(UITextView *)textView {
-    if (self.textView.text.length <= 0) {
-        self.textView.text = self.placeHolder;
-        self.textView.textColor = UIColorFromRGB(0xD5D5D5);
+    if (self.adviseTV.text.length <= 0) {
+        self.adviseTV.text = self.placeHolder;
+        self.adviseTV.textColor = UIColorFromRGB(0xD5D5D5);
     }
-    self.model.submitContent = textView.text;
+    self.model.content = textView.text;
     return YES;
 }
 -(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
-    [self WhetherSHowSubMitBtn];
-    if (textView.text.length >=100) {
+    if (textView.text.length >=100 && text.length) {
         return NO;
     }
-    self.model.submitContent = [NSString stringWithFormat:@"%@%@",textView.text,text];
+//    self.model.content = [NSString stringWithFormat:@"%@%@",textView.text,text];
     return YES;
 }
+//-(void)textViewDidChange:(UITextView *)textView {
+//    //    textview 改变字体的行间距
+//
+//    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+//
+//    paragraphStyle.lineSpacing = 14;// 字体的行间距
+//
+//    NSDictionary *attributes = @{
+//
+//                                 NSFontAttributeName:[UIFont systemFontOfSize:15],
+//
+//                                 NSParagraphStyleAttributeName:paragraphStyle
+//
+//                                 };
+//
+//    self.adviseTV.attributedText = [[NSAttributedString alloc] initWithString:textView.text attributes:attributes];
+//}
 - (void)awakeFromNib {
     [super awakeFromNib];
 }
@@ -259,5 +369,6 @@
     if (self.submitBlock) {
         self.submitBlock();
     }
+
 }
 @end

@@ -38,7 +38,7 @@
 }
 -(void)layoutSubviews {
     [super layoutSubviews];
-    self.hotView.frame = CGRectMake(16, 30, self.frame.size.width - 32, self.model.hotArray.count *46);
+    self.hotView.frame = CGRectMake(16, 4, self.frame.size.width - 32, self.model.hotArray.count *46);
     self.hotView.layer.cornerRadius = 12;
     self.hotView.clipsToBounds = YES;
 }

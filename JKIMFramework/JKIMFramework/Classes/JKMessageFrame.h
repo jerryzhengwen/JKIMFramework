@@ -6,9 +6,9 @@
 //  Copyright © 2019 于飞. All rights reserved.
 //
 
-#define JKChatMargin    12       //间隔
+#define JKChatMargin    16       //间隔
 #define JKHeaderImageWH 46       //头像宽高height、width
-#define JKChatContentW  [UIScreen mainScreen].bounds.size.width - 170    //内容宽度
+#define JKChatContentW  [UIScreen mainScreen].bounds.size.width - 103    //内容宽度
 
 #define JKChatTimeMarginW 15  //时间文本与边框间隔宽度方向
 #define JKChatTimeMarginH 10  //时间文本与边框间隔高度方向
@@ -33,6 +33,19 @@
 @property (nonatomic, assign) CGFloat cellHeight;
 @property (nonatomic, retain) JKDialogModel *message;
 @property (nonatomic, assign) JKMessageType type;
-@property (nonatomic, assign) BOOL hiddenTime;
 @property (nonatomic, assign) BOOL moveToLast;
+@property (nonatomic, assign) BOOL hiddenTimeLabel;
+/**
+ 满意度的context_id;
+ */
+@property (nonatomic, copy) NSString * context_id;
+/**
+ 满意度的content
+ */
+@property (nonatomic, copy) NSString * content;
+@property (nonatomic, strong) NSMutableArray  * soluteArr;
+@property (nonatomic, strong) NSMutableArray  * satisArr;
+/** 是否已经提交 */
+@property (nonatomic, assign) BOOL isSubmit;
+@property (nonatomic, assign) BOOL isFirstResign;
 @end

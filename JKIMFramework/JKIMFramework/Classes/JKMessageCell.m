@@ -19,7 +19,7 @@
 #import "JKDialogueHeader.h"
 #import "RegexKitLite.h"
 #import "JKMessageOpenUrl.h"
-@interface JKMessageCell ()<UITextViewDelegate>
+@interface JKMessageCell ()
 {
     AVAudioPlayer *player;
     NSString *voiceURL;
@@ -59,6 +59,7 @@
         // 4、创建内容
         self.btnContent = [[JKMessageContent alloc]init];
         self.btnContent.contentTV.font = JKChatContentFont;
+        self.btnContent.contentTV.delegate = self;
         [self.contentView addSubview:self.btnContent];
     }
     return self;
@@ -99,8 +100,10 @@
     NSString * time = [NSDate getTimeStringWithIntervalString:message.time];
     self.labelTime.text = time;
     self.labelTime.frame = messageFrame.timeF;
-    if (messageFrame.hiddenTime) {
-        self.labelTime.text = @"";
+    if (messageFrame.hiddenTimeLabel) {
+        self.labelTime.hidden = YES;
+    }else {
+        self.labelTime.hidden = NO;
     }
     // 2、设置名称
     if (message.whoSend !=JK_Visitor) {
@@ -118,7 +121,10 @@
     self.btnContent.backImageView.hidden = YES;
 
     self.btnContent.frame = messageFrame.contentF;
-    self.btnContent.contentTV.delegate = self;
+    
+    [self.btnContent.contentTV setSelectable:YES];
+    [self.btnContent.contentTV setEditable:NO];
+    self.btnContent.contentTV.dataDetectorTypes = UIDataDetectorTypeLink;
     
     BOOL isRichText = [self isRichTextWithContent:message.content];
     if (isRichText) {
@@ -137,11 +143,11 @@
         }else {
             NSMutableAttributedString *contentStr = [self parseHtmlStr:message.content];
             //正则富文本的点击项
-            NSString *bigString = [self returnSpanContent:message.content AndZhengZe:@"<a[^>]*>([^<]+)"];
-            NSString *smallString = [self returnSpanContent:message.content AndZhengZe:@"<a[^>]*>"];
-            NSString *content = [bigString stringByReplacingOccurrencesOfString:smallString withString:@""];
-            NSRange range = [contentStr.string rangeOfString:content];
-            [contentStr addAttribute:NSLinkAttributeName value:[NSString stringWithFormat:@"%@://",content] range:range];
+//            NSString *bigString = [self returnSpanContent:message.content AndZhengZe:@"<a[^>]*>([^<]+)"];
+//            NSString *smallString = [self returnSpanContent:message.content AndZhengZe:@"<a[^>]*>"];
+//            NSString *content = [bigString stringByReplacingOccurrencesOfString:smallString withString:@""];
+//            NSRange range = [contentStr.string rangeOfString:content];
+//            [contentStr addAttribute:NSLinkAttributeName value:[NSString stringWithFormat:@"%@://",content] range:range];
         self.btnContent.contentTV.attributedText = contentStr;
         self.btnContent.contentTV.font = JKChatContentFont;
         self.btnContent.contentTV.linkTextAttributes = @{NSForegroundColorAttributeName:UIColorFromRGB(0xEC5642)};
@@ -154,11 +160,6 @@
     }
     
     CGFloat margin = 12;
-//    if (message.whoSend == JK_Visitor) {
-//        margin = 20;
-//    }else{
-//        margin = 24;
-//    }
     self.btnContent.contentTV.frame = CGRectMake(margin, 0, messageFrame.contentF.size.width - 24, messageFrame.contentF.size.height);
     switch (message.messageType) {
         case JKMessageWord:
@@ -196,26 +197,39 @@
     }
     
     //背景气泡图
-    UIImage *normal;
+//    UIImage *normal;
     if (message.whoSend == JK_Visitor) {
-        
-        NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
-        NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"chatto_bg_normal"];
-        normal = [UIImage imageWithContentsOfFile:filePatch];
-        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(16, 13, 16, 21)];
-//        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(35, 20, 10, 10) resizingMode:UIImageResizingModeStretch];
         self.btnContent.contentTV.textColor = [UIColor whiteColor];
+        self.btnContent.backgroundColor = UIColorFromRGB(0xEC5642);
+        UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:self.btnContent.bounds byRoundingCorners:UIRectCornerTopLeft|UIRectCornerBottomLeft|UIRectCornerBottomRight cornerRadii:CGSizeMake(10, 10)];
+        CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+        maskLayer.frame = self.btnContent.bounds;
+        maskLayer.path = maskPath.CGPath;
+        self.btnContent.layer.mask = maskLayer;
+//        NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
+//        NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"chatto_bg_normal"];
+//        normal = [UIImage imageWithContentsOfFile:filePatch];
+//        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(16, 13, 16, 21)];
+////        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(35, 20, 10, 10) resizingMode:UIImageResizingModeStretch];
+//        self.btnContent.contentTV.textColor = [UIColor whiteColor];
     }
     else{
         self.btnContent.contentTV.textColor = UIColorFromRGB(0x3E3E3E);
-        NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
-        NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"chatfrom_bg_normal"];
-        normal = [UIImage imageWithContentsOfFile:filePatch];
-//        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(35, 20, 10, 10)];
-        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(16, 13, 16, 21)];
+        self.btnContent.backgroundColor = UIColorFromRGB(0xFFFFFF);
+        UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:self.btnContent.bounds byRoundingCorners:UIRectCornerTopRight|UIRectCornerBottomLeft|UIRectCornerBottomRight cornerRadii:CGSizeMake(10, 10)];
+        CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+        maskLayer.frame = self.btnContent.bounds;
+        maskLayer.path = maskPath.CGPath;
+        self.btnContent.layer.mask = maskLayer;
+//        self.btnContent.contentTV.textColor = UIColorFromRGB(0x3E3E3E);
+//        NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
+//        NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"chatfrom_bg_normal"];
+//        normal = [UIImage imageWithContentsOfFile:filePatch];
+////        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(35, 20, 10, 10)];
+//        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(16, 13, 16, 21)];
     }
     
-    self.btnContent.backgroundImageView.image = normal;
+//    self.btnContent.backgroundImageView.image = normal;
     
     //先设置系统提示的Label，如果是，之后的f也就可以不用走了
     if (message.whoSend == JK_SystemMarkShow) {
@@ -230,19 +244,20 @@
         center.y = messageFrame.contentF.size.height / 2;
         center.x = [UIScreen mainScreen].bounds.size.width / 2;
         self.btnContent.systemMarkLabel.center = center;
-        self.labelTime.hidden = YES;
         return;
     }else{
         self.btnContent.systemMarkLabel.hidden = YES;
-        self.labelTime.hidden = NO;
     }
 }
 
 #pragma -
 #pragma mark - textView的代理
 -(BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange {
-    NSString *clickString = self.messageFrame.message.content;
-   
+//    NSString *clickString = self.messageFrame.message.content;
+    NSString * urlStr = URL.absoluteString;
+    if (urlStr.length) {
+         [[JKMessageOpenUrl sharedOpenUrl] JK_ClickHyperMediaMessageOpenUrl:urlStr];
+    }
     
 //    if (self.messageFrame.message.isRichText) {
 //        if (self.richText) {
@@ -259,6 +274,8 @@
 //            self.skipBlock(clickText);
 //        }
 //    }
+    
+    /*
     NSString *clickText = [textView.text substringWithRange:characterRange];
      NSArray *urlArray =  [clickText componentsMatchedByRegex:JK_URlREGULAR];
     if (urlArray.count) { //链接
@@ -290,7 +307,7 @@
             
         }
         
-    }
+    }*/
     return NO;
 }
 //-(BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction {
@@ -341,10 +358,43 @@
     
 }
 
--(BOOL)canPerformAction:(SEL)action withSender:(id)sender {
-    self.btnContent.contentTV.userInteractionEnabled = NO ;
-    return NO;
-}
+//-(BOOL)canPerformAction:(SEL)action withSender:(id)sender {
+//    if(action ==@selector(copy:) ||
+//
+//       action ==@selector(selectAll:)||
+//
+//       action ==@selector(cut:)||
+//
+//       action ==@selector(select:)||
+//
+//       action ==@selector(paste:)) {
+//
+//        return YES;
+//
+//    }
+//
+//
+//
+//    return NO;
+//}
+//-(BOOL)textView:(UITextView *)textView shouldInteractWithTextAttachment:(NSTextAttachment *)textAttachment inRange:(NSRange)characterRange interaction:(UITextItemInteraction)interaction{
+//         return NO;
+//}
+//- (void)select:(id)sender{
+//    [super select:sender];
+//}
+//- (void)copy:(id)sender{
+////    NSRange range = self.selectedRange;
+////    NSString *content = [self getStrContentInRange:range];
+////    if(content.length>0){
+////        UIPasteboard *defaultPasteboard = [UIPasteboard generalPasteboard];
+////        [defaultPasteboard setString:content];
+////        return;
+////    }
+//    [super copy:sender];
+//}
+
+
 //- (NSString *)changeTheDateString:(NSString *)Str
 //{
 //    NSString * time = [NSDate getTimeStringWithIntervalString:Str];
@@ -398,8 +448,8 @@
     if (!content) {
         return NO;
     }
-    NSError *error = NULL;
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"<a[^>]*>([^<]+)" options:NSRegularExpressionCaseInsensitive error:&error];
+    NSError *error = NULL; //<a[^>]*>([^<]+)
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"<a[^>]*>" options:NSRegularExpressionCaseInsensitive error:&error];
     NSTextCheckingResult *result = [regex firstMatchInString:content options:0 range:NSMakeRange(0, [content length])];
     if (result) {
         return YES;

@@ -7,16 +7,19 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "JKDialogModel.h"
+#import "JKMessageFrame.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 typedef void(^ShowSubmitBtnBlock)(void);
-
+typedef void(^JKSubmitBtnBlock)(JKMessageFrame * model);
 @interface JKSatisfactionViewCell : UITableViewCell
 
-@property (nonatomic,strong)JKDialogModel *model;
+@property (nonatomic,strong)JKMessageFrame *model;
 
 @property (nonatomic,copy) ShowSubmitBtnBlock submitBlock;
+
+@property (nonatomic,copy) JKSubmitBtnBlock submitClicked;
 @end
 
 NS_ASSUME_NONNULL_END

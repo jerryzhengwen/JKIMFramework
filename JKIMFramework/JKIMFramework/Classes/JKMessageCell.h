@@ -22,7 +22,7 @@ typedef void(^ClickCustomer)(NSString *);
 @end
 
 
-@interface JKMessageCell : UITableViewCell
+@interface JKMessageCell : UITableViewCell <UITextViewDelegate>
 
 /** 时间的Label */
 @property (nonatomic, retain)UILabel *labelTime;

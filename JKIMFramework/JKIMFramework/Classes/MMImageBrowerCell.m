@@ -131,6 +131,7 @@
             scale = min/max;
             W = self.scroll.frame.size.width;
             H = imgH * scale;
+            H = (imgH *W)/imgW;
         }else {
             CGFloat min = MIN(imgH, self.scroll.frame.size.height);
             CGFloat max = MAX(imgH, self.scroll.frame.size.height);

@@ -10,7 +10,7 @@
 #import "JKBaseViewController.h"
 #import "JKHotMessageCell.h"
 #import "JKAssoiateView.h"
-
+#import "JKSatisfactionModel.h"
 
 #define BottomToolHeight 56
 

@@ -37,12 +37,12 @@
 -(UIImageView *)backImageView {
     if (_backImageView == nil) {
         _backImageView = [[UIImageView alloc] init];
-        NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
-        NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"chatfrom_bg_normal"];
-        UIImage *normal = [UIImage imageWithContentsOfFile:filePatch];
-        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(16, 13, 16, 21)];
-//        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(35, 20, 10, 10)];
-        _backImageView.image = normal;
+//        NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
+//        NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"chatfrom_bg_normal"];
+//        UIImage *normal = [UIImage imageWithContentsOfFile:filePatch];
+//        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(16, 13, 16, 21)];
+////        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(35, 20, 10, 10)];
+//        _backImageView.image = normal;
     }
     return _backImageView;
 }
@@ -69,7 +69,7 @@
     WKWebViewConfiguration *confign = [[WKWebViewConfiguration alloc] init];
     WKUserContentController *userContentController = [[WKUserContentController alloc] init];
     confign.userContentController = userContentController;
-    self.webView = [[WKWebView alloc] initWithFrame:CGRectMake(0, 0, self.contentView.frame.size.width -170, 0) configuration:confign];
+    self.webView = [[WKWebView alloc] initWithFrame:CGRectMake(0, 0, self.contentView.frame.size.width -103, 0) configuration:confign];
     self.webView.backgroundColor = UIColorFromRGB(0xF0F0F0);
     self.webView.navigationDelegate = self;
     self.webView.UIDelegate = self;
@@ -112,9 +112,6 @@
     self.labelTime.text = time;
 //    NSString * name = messageFrame.message.from.length?messageFrame.message.from:@"robot";
 //    name = @"小广";
-    if (messageFrame.hiddenTime) {
-        self.labelTime.text = @"";
-    }
     self.nameLabel.text = @"智能客服-小广";
     NSURL *baseurl = [NSURL URLWithString:@"file:///"];
     [self.webView loadHTMLString:[self getHtmlString:messageFrame.message.content] baseURL:baseurl];
@@ -150,7 +147,7 @@
     [self.webView evaluateJavaScript:@"document.body.offsetHeight;" completionHandler:^(id _Nullable any, NSError * _Nullable error) {
         NSString *s = [NSString stringWithFormat:@"%@",any];
         CGFloat height = [s floatValue];
-        selfWeak.webView.frame = CGRectMake(0, 0, self.contentView.frame.size.width - 170, height);
+        selfWeak.webView.frame = CGRectMake(0, 0, self.contentView.frame.size.width - 103, height);
         NSLog(@"--height--%lf---%@",height,self.messageFrame.message.content);
         selfWeak.messageFrame.cellHeight = height;
         if (selfWeak.webHeightBlock) {
@@ -171,13 +168,26 @@
     
     // 1、计算时间的位置
     CGFloat timeY = JKChatMargin;
-    self.labelTime.frame = CGRectMake(0, timeY, screenW, 17);
+    if (self.messageFrame.hiddenTimeLabel) {
+        self.labelTime.hidden = YES;
+        self.labelTime.frame = CGRectZero;
+    }else {
+        self.labelTime.hidden = NO;
+        self.labelTime.frame = CGRectMake(0, timeY, screenW, 17);
+    }
     CGFloat contentY = CGRectGetMaxY(self.labelTime.frame);
     self.nameLabel.frame= CGRectMake(16, contentY + timeY, screenW - 100, 20);
     
     
-    self.webView.frame = CGRectMake(16 + 12, CGRectGetMaxY(self.nameLabel.frame) + 16, self.contentView.frame.size.width - 170,self.messageFrame.cellHeight);
+    self.webView.frame = CGRectMake(16 + 12, CGRectGetMaxY(self.nameLabel.frame) + 16, self.contentView.frame.size.width - 103,self.messageFrame.cellHeight);
     self.backImageView.frame = CGRectMake(16, CGRectGetMinY(self.webView.frame) -12, CGRectGetWidth(self.webView.frame) + 22, CGRectGetHeight(self.webView.frame) +24);
+    
+    self.backImageView.backgroundColor = UIColorFromRGB(0xFFFFFF);
+    UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:self.backImageView.bounds byRoundingCorners:UIRectCornerTopRight|UIRectCornerBottomLeft|UIRectCornerBottomRight cornerRadii:CGSizeMake(10, 10)];
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+    maskLayer.frame = self.backImageView.bounds;
+    maskLayer.path = maskPath.CGPath;
+    self.backImageView.layer.mask = maskLayer;
 }
 - (void)awakeFromNib {
     [super awakeFromNib];

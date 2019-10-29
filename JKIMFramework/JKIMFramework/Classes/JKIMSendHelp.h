@@ -26,7 +26,12 @@ typedef void(^CompleteBlock)(JKMessageFrame *messageFrame);
 + (void)sendTextMessageWithMessageModel:(JKMessage *)messageModel completeBlock:(CompleteBlock)completeBlock;
 
 + (void)sendImageMessageWithImageData:(NSData *)imageData image:(UIImage *)image MessageModel:(JKMessage *)messageModel completeBlock:(CompleteBlock)completeBlock;
-
+/**
+ 获取时间戳
+ 
+ @return 当前的时间戳
+ */
++ (NSString *)jk_getTimestamp;
 @end
 
 NS_ASSUME_NONNULL_END

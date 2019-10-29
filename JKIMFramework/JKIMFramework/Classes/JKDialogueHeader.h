@@ -27,7 +27,7 @@
 #define kStatusBarAndNavigationBarHeight (iPhoneX || iPhoneXR ? 88.f : 64.f)
 #define JKBGDefaultColor UIColorFromRGB(0xEFEFEF)
 /** 最大的内容宽度*/
-#define MaxContentWidth [UIScreen mainScreen].bounds.size.width - 170
+#define MaxContentWidth [UIScreen mainScreen].bounds.size.width - 103
 
 /** 16进制颜色*/
 #define UIColorFromRGB(rgbValue) [UIColor \

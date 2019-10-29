@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "JKTextView.h"
 #import "JKSystemMarkLabel.h"
 
 @interface JKMessageContent : UIView
@@ -18,7 +18,7 @@
 @property (nonatomic, retain) UIImageView *backgroundImageView;
 
 ///显示内容的Label
-@property (nonatomic,strong) UITextView   *contentTV;
+@property (nonatomic,strong) JKTextView   *contentTV;
 
 //@property (nonatomic,strong) UILabel *contentLabel;
 
@@ -34,10 +34,10 @@
 @property (nonatomic, assign) BOOL isMyMessage;
 
 
-- (void)benginLoadVoice;
-
-- (void)didLoadVoice;
-
--(void)stopPlay;
+//- (void)benginLoadVoice;
+//
+//- (void)didLoadVoice;
+//
+//-(void)stopPlay;
 
 @end

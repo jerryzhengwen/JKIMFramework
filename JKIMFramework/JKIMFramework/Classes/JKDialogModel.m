@@ -14,7 +14,7 @@
 
 
 /** 最大的内容宽度*/
-#define MaxContentWidth [UIScreen mainScreen].bounds.size.width - 170
+#define MaxContentWidth [UIScreen mainScreen].bounds.size.width - 103
 
 @implementation JKDialogModel
 
@@ -166,15 +166,7 @@
 //    }
 //}
 
-CGSize countStringWordWidth(NSString *aString,UIFont * font, CGSize labelSize) {
-    
-    CGSize size =[aString
-                  boundingRectWithSize:labelSize
-                  options:NSStringDrawingUsesLineFragmentOrigin
-                  attributes:@{NSFontAttributeName:font}
-                  context:nil].size;
-    return size;
-}
+
 //-(NSString *)time {
 //    if (_time == nil) {
 //        

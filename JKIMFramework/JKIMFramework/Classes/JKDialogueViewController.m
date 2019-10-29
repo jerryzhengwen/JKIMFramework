@@ -42,12 +42,12 @@
 
 //收到新的消息时的Message
 @property(nonatomic, strong)JKMessage *listMessage;
-@property(nonatomic,assign) BOOL isLoadHistory;
 @end
 
 @implementation JKDialogueViewController
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     self.placeHolerStr = @"请描述您遇到的问题……";
     [[JKConnectCenter sharedJKConnectCenter] checkoutInitCompleteBlock:^(BOOL isComplete) {
     }];
@@ -66,11 +66,6 @@
     [refresh setTitle:@"下拉查看更多历史消息" forState:MJRefreshStatePulling];
     self.tableView.mj_header = refresh;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reneedInit) name:UIApplicationDidBecomeActiveNotification object:nil];
-//    UIView *redView = [[UIView alloc] init];
-//    redView.backgroundColor = [UIColor redColor];
-//    redView.frame = CGRectMake(0, 0, self.view.width, 20);
-//    self.tableView.tableFooterView = redView;
-    
 }
 -(void)reneedInit {
     [[JKConnectCenter sharedJKConnectCenter] initDialogeWIthSatisFaction]; //人工消息的时候需要判断下
@@ -81,36 +76,6 @@
     [self.view endEditing:YES];
     __weak JKDialogueViewController *weakSelf = self;
     self.alertView.clickBlock = ^(BOOL leftBtn) {
-        if (!leftBtn) { //需要关闭对话
-            NSString *contextId = [[JKConnectCenter sharedJKConnectCenter] JKIM_getContext_id];
-            [[JKConnectCenter sharedJKConnectCenter] getEndChatBlock:^(BOOL satisFaction) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    if (satisFaction) { //跳转满意度界面
-                        [weakSelf showSatisfacionViewFromid:[[JKMessage alloc]init] ContextId:contextId];
-                    }else { //关闭当前界面
-                        [weakSelf.navigationController popViewControllerAnimated:YES];
-                    }
-                });
-            }];/*结束对话*/
-            [[JKConnectCenter sharedJKConnectCenter] getReallyEndChat];
-        }
-    };
-    [[UIApplication sharedApplication].keyWindow addSubview:self.alertView];
-    /*
-    __weak JKDialogueViewController *weakSelf = self;
-    NSString *contextId = [[JKConnectCenter sharedJKConnectCenter] JKIM_getContext_id];
-    [[JKConnectCenter sharedJKConnectCenter] getEndChatBlock:^(BOOL satisFaction) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (satisFaction) { //跳转满意度界面
-                [weakSelf showSatisfacionViewFromid:[[JKMessage alloc]init] ContextId:contextId];
-            }else { //关闭当前界面
-                [weakSelf.navigationController popViewControllerAnimated:YES];
-            }
-        });
-    }];*/
-    /*
-    __weak JKDialogueViewController *weakSelf = self;
-    self.alertView.clickBlock = ^(BOOL leftBtn) {
         if (!leftBtn) {
             NSString *contextId = [[JKConnectCenter sharedJKConnectCenter] JKIM_getContext_id];
             [[JKConnectCenter sharedJKConnectCenter] getEndChatBlock:^(BOOL satisFaction) {
@@ -119,12 +84,13 @@
                         [weakSelf showSatisfacionViewFromid:[[JKMessage alloc]init] ContextId:contextId];
                     }else { //关闭当前界面
                         [weakSelf.navigationController popViewControllerAnimated:YES];
-                    }
+                    } //结束对话
+                    [[JKConnectCenter sharedJKConnectCenter] getReallyEndChat];
                 });
             }];
         }
     };
-    [[UIApplication sharedApplication].keyWindow addSubview:self.alertView]; */
+    [[UIApplication sharedApplication].keyWindow addSubview:self.alertView]; 
 }
 -(JYFaceView *)faceView {
     if (_faceView == nil) {
@@ -195,7 +161,6 @@
         }
     };
 }
-
 - (void)loadHistoryData{
     __weak JKDialogueViewController * weakSelf = self;
     [[JKConnectCenter sharedJKConnectCenter] JK_LoadHistoryWithBlock:^(NSArray<JKMessage *> *array) {
@@ -206,17 +171,70 @@
                 JKDialogModel * autoModel = [message mutableCopy];
                 JKMessageFrame *frameModel = [[JKMessageFrame alloc] init];
                 frameModel.message = autoModel;
+                @try {
+                    if (i > 0) {
+                        JKMessage *beforeModel = array[i - 1];
+                        long beforeTime = (long)[beforeModel.time longLongValue]/1000;
+                        long nowTime = (long)[message.time longLongValue]/1000;
+                        if (nowTime - beforeTime <= 120) { //隐藏时间
+                            frameModel.hiddenTimeLabel = YES;
+                        }
+                    }
+                } @catch (NSException *exception) {
+                    
+                } @finally {
+                    
+                }
                 frameModel = [weakSelf jisuanMessageFrame:frameModel];
                 if (message.messageType == JKMessageFAQImageText || message.messageType == JKMessageFAQImage) {
                     frameModel.cellHeight = 0;
                 }
                 [weakSelf.dataFrameArray insertObject:frameModel atIndex:0];
+            } //进行下时间排序
+            //[weakSelf reloadPath]; //滚动到特定位置
+            @try {
+//                for (int j = (int)array.count - 1; j >= 0; j -- ) {
+//                    JKMessageFrame * messageFrame = weakSelf.dataFrameArray[j];
+//                    if (j == 0) {
+//                        break;
+//                    }else {
+//                        JKMessageFrame *beforeFrame = weakSelf.dataFrameArray[j - 1];
+//                        long beforeTime = [beforeFrame.message.time longLongValue]/1000;
+//                        long nowTime = [messageFrame.message.time longLongValue]/1000;
+//                        if (nowTime - beforeTime <= 120) { //隐藏时间
+//                            messageFrame.hiddenTimeLabel = YES;
+//                        }
+//                    }
+//                }
+////                for (int z = 0; array.count; z ++) {
+////                    JKMessageFrame * message = weakSelf.dataFrameArray[z];
+////                    NSLog(@"---当前d是第%d____%d",z,message.hiddenTimeLabel);
+////                }
+                
+                dispatch_queue_t q = dispatch_queue_create("chuan_xing", DISPATCH_QUEUE_SERIAL);
+                [weakSelf.refreshQ cancelAllOperations];
+                [weakSelf.refreshQ addOperationWithBlock:^{
+                    dispatch_async(q, ^{
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            [weakSelf.tableView reloadData];
+                        });
+                    });
+                    dispatch_async(q, ^{
+                        // 4.自动滚动表格到最后一行
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            NSIndexPath *lastPath = [NSIndexPath indexPathForRow:array.count inSection:0];
+                            
+                            [weakSelf.tableView scrollToRowAtIndexPath:lastPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
+                        });
+                    });
+                }];
+            } @catch (NSException *exception) {
+                
+            } @finally {
+                
             }
-            [weakSelf reloadPath]; //滚动到特定位置
         });
     }];
-    
-    
 }
 - (void)sendMessage{
     if (self.textView.text.length < 1) {
@@ -228,6 +246,7 @@
     self.listMessage.content = self.textView.text;
     
     [JKIMSendHelp sendTextMessageWithMessageModel:self.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
+        messageFrame.hiddenTimeLabel = [self showTimeLabelWithModel:messageFrame];
         messageFrame =  [self jisuanMessageFrame:messageFrame];
         [self.dataFrameArray addObject:messageFrame];
         [self tableViewMoveToLastPathNeedAnimated:YES];
@@ -236,7 +255,23 @@
     self.assoiateView.hidden = YES;
     
 }
-
+-(BOOL)showTimeLabelWithModel:(JKMessageFrame *)messageModel {
+    @try {
+        if (self.dataFrameArray.count >0) {
+            JKMessageFrame *beforeMessage = self.dataFrameArray.lastObject;
+            long beforeTime = (long)[beforeMessage.message.time longLongValue]/1000;
+            long nowTime = (long)[messageModel.message.time longLongValue]/1000;
+            if (nowTime - beforeTime <= 120) { //隐藏时间
+                return YES;
+            }
+        }
+    } @catch (NSException *exception) {
+        
+    } @finally {
+        
+    }
+    return NO;
+}
 -(void)sendAutoReplayWithString:(NSString *)message {
     
     self.listMessage.messageType = JKMessageWord;
@@ -255,10 +290,62 @@
     self.textView.text = question;
     [self sendMessage];
 }
+-(void)clickSubMitSatisBtn:(JKMessageFrame *)frameModel { //提交满意度
+    [self.view endEditing:YES];
+    __weak JKDialogueViewController *weakSelf = self;
+    NSString * satisfactionPk = @"";
+    NSString * solutionPk = @"";
+    NSString * satisName = @"";
+    NSString * soluteName = @"";
+    for (JKSatisfactionModel * model in frameModel.satisArr ) {
+        if (model.showSelect) { // 在这里调用接口
+            satisfactionPk = model.pk;
+            satisName = model.name;
+        }
+    }
+    for (JKSatisfactionModel * model in frameModel.soluteArr) {
+        if (model.showSelect) {
+            solutionPk = model.pk;
+            soluteName = model.name;
+        }
+    }
+    NSString *memo = frameModel.content?frameModel.content:@"";
+    NSString *content = @"";
+    if ([memo isEqualToString:@""]) {
+        content = @"无";
+    }
+    memo = [memo  stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+    NSString *context_id = frameModel.context_id ? frameModel.context_id:@"";
+    NSDictionary *dict = [NSDictionary dictionaryWithObjects:@[satisfactionPk,solutionPk,memo,context_id] forKeys:@[@"satisfactionPk",@"solutionPk",@"memo",@"context_id"]];
+    [[JKConnectCenter sharedJKConnectCenter] submitSatisfactionWithDict:dict Block:^(id  _Nullable result, BOOL isSuccess) {
+        if (isSuccess) { //
+            dispatch_async(dispatch_get_main_queue(), ^{
+            JKMessageFrame *messageFrame = [[JKMessageFrame alloc] init];
+            JKDialogModel *dialog = [[JKDialogModel alloc] init];
+            dialog.messageType = JKMessageWord;
+            dialog.time = [JKIMSendHelp jk_getTimestamp];
+            dialog.whoSend = JK_Roboter;
+//                NSString * first = @"您已成功完成满意度评价，评价结果为：\n";
+//                NSString * second = [NSString stringWithFormat:@"问题是否解决：%@\n",soluteName];
+//                NSString * third = [NSString stringWithFormat:@"服务是否满意：%@\n",satisName];
+//                NSString *four = [NSString stringWithFormat:@"意见反馈：%@\n",content];
+//                dialog.content = [NSString stringWithFormat:@"%@%@%@%@",first,second,third,four];
+            dialog.content = [NSString stringWithFormat:@"您已成功完成满意度评价，评价结果为：<br>问题是否解决：%@ <br>服务是否满意：%@ <br>意见反馈：%@",soluteName,satisName,content];
+            messageFrame.message = dialog;
+            messageFrame.hiddenTimeLabel = [weakSelf showTimeLabelWithModel:messageFrame];
+            messageFrame =  [weakSelf jisuanMessageFrame:messageFrame];
+            [weakSelf.dataFrameArray addObject:messageFrame];
+            [weakSelf tableViewMoveToLastPathNeedAnimated:YES];
+            });
+        }
+    }];
+    frameModel.isSubmit = YES;
+    [self reloadPath];
+}
 #pragma -
 #pragma mark - delegate
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
-    return 28;
+    return 16;
 }
 -(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
     return [[UIView alloc] init];
@@ -274,40 +361,37 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     __weak JKDialogueViewController * weakSelf = self;
     JKMessageFrame * messageFrame = self.dataFrameArray[indexPath.row];
-//    if (messageFrame.message.messageType == JKMessageHotMsg) {
-//        static NSString * JKSatisID = @"JKSatisfactionViewCell";
-//        JKSatisfactionViewCell * cell = [tableView dequeueReusableCellWithIdentifier:JKSatisID];
-//        if (!cell) {
-//            cell = [[JKSatisfactionViewCell alloc]initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:JKSatisID];
-//        }
-//        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-//        cell.userInteractionEnabled = YES;
-//        cell.model = messageFrame.message;
-//        cell.submitBlock = ^{
-//            [weakSelf reloadPath];
-//        };
-//        return cell;
-//    }
+    if (messageFrame.message.messageType == JKMessageSatisfaction) {
+        static NSString * JKSatisID = @"JKSatisfactionViewCell";
+        JKSatisfactionViewCell * cell = [tableView dequeueReusableCellWithIdentifier:JKSatisID];
+        if (!cell) {
+            cell = [[JKSatisfactionViewCell alloc]initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:JKSatisID];
+        }
+        for (UIView * view in cell.contentView.subviews) {
+            if ([view isKindOfClass:[UIImageView class]]) {
+                for (UIView * subView in view.subviews) {
+                    if ([subView isKindOfClass:[UIButton class]]) {
+                        [subView removeFromSuperview];
+                    }
+                }
+            }
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.userInteractionEnabled = YES;
+        cell.model = messageFrame;
+        cell.submitBlock = ^{
+            [weakSelf reloadPath];
+        };
+        cell.submitClicked = ^(JKMessageFrame * _Nonnull model) {
+            [weakSelf clickSubMitSatisBtn:model];
+        };
+        return cell;
+    }
     if (messageFrame.message.messageType == JKMessageFAQImageText ||messageFrame.message.messageType == JKMessageFAQImage) {
         static NSString *cellIdentifer = @"JKWebViewCell";
         JKWebViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifer];
         if (!cell) {
             cell = [[JKWebViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellIdentifer];
-        }
-        if (indexPath.row > 0) {
-            @try {
-                JKMessageFrame * beforeMessage = self.dataFrameArray[indexPath.row - 1];
-                //在这里判断下时间戳
-                long beforeTime = [beforeMessage.message.time longLongValue]/1000;
-                long nowTime = [messageFrame.message.time longLongValue]/1000;
-                if (nowTime - beforeTime <= 120) { //隐藏时间
-                    messageFrame.hiddenTime = YES;
-                }
-            } @catch (NSException *exception) {
-                
-            } @finally {
-                
-            }
         }
         cell.messageFrame = messageFrame;
         cell.userInteractionEnabled = YES;
@@ -341,7 +425,7 @@
         }
         cell.hotView.hotMsgBlock = ^(NSString * _Nonnull question) {
             [weakSelf showHotMsgQuestion:question];
-            weakSelf.textView.text = self.placeHolerStr;
+            weakSelf.textView.text = weakSelf.placeHolerStr;
         };
         cell.backgroundColor = JKBGDefaultColor;
         cell.model = messageFrame.message;
@@ -357,21 +441,21 @@
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.delegate = self;
     JKMessageFrame * cellMessageFrame = self.dataFrameArray[indexPath.row];
-    if (indexPath.row > 0) {
-        @try {
-            JKMessageFrame * beforeMessage = self.dataFrameArray[indexPath.row - 1];
-            //在这里判断下时间戳
-            long beforeTime = [beforeMessage.message.time longLongValue]/1000;
-            long nowTime = [cellMessageFrame.message.time longLongValue]/1000;
-            if (nowTime - beforeTime <= 120) { //隐藏时间
-                cellMessageFrame.hiddenTime = YES;
-            }
-        } @catch (NSException *exception) {
-            
-        } @finally {
-            
-        }
-    }
+//    if (indexPath.row > 0) {
+//        @try {
+//            JKMessageFrame * beforeMessage = self.dataFrameArray[indexPath.row - 1];
+//            //在这里判断下时间戳
+//            long beforeTime = [beforeMessage.message.time longLongValue]/1000;
+//            long nowTime = [cellMessageFrame.message.time longLongValue]/1000;
+//            if (nowTime - beforeTime <= 120) { //隐藏时间
+//                cellMessageFrame.hiddenTime = YES;
+//            }
+//        } @catch (NSException *exception) {
+//
+//        } @finally {
+//
+//        }
+//    }
     [cell setMessageFrame:cellMessageFrame];
     
     cell.clickCustomer = ^(NSString * customeName) {
@@ -460,41 +544,59 @@
     
     JKMessageFrame * messge = self.dataFrameArray[indexPath.row];
     JKDialogModel * message = messge.message;
-//    if (message.messageType == JKMessageHotMsg) {//需要删除的
-//        if (message.isSubmit) {
-//            return 336;
-//        }else{
-//            if (message.soluteNumber != SOLUTEBTN_NONE || message.startIndex != STARTBTN_NONE || message.submitContent.length >0) {
-//                return 369;
-//            }else {
-//                return 336;
-//            }
-//        }
-//
-//    }
+    if (message.messageType == JKMessageSatisfaction) { //先判断有没有提交按钮
+        if (message.isSubmit) { //已经提交，不再显示提交按钮
+            if (messge.soluteArr.count == 0) { //只显示解决未解决
+                return  348 - 82;
+            }else if (messge.satisArr.count == 0) { //只显示满意度
+                return 348 - 88;
+            }else {//两者都显示
+                return 348;
+            }
+        }else { //还要判断下是否显示
+            BOOL isShow = messge.content.length?YES:NO;
+            for (JKSatisfactionModel * model  in messge.soluteArr) {
+                if (model.showSelect || isShow) {
+                    isShow = YES;
+                    break;
+                }
+            }
+            for (JKSatisfactionModel * model  in messge.satisArr) {
+                if (model.showSelect || isShow) {
+                    isShow = YES;
+                    break;
+                }
+            }
+            if (isShow) {
+                if (messge.soluteArr.count == 0) { //只显示解决未解决
+                    return  382 - 82;
+                }else if (messge.satisArr.count == 0) { //只显示满意度
+                    return 382 - 88;
+                }else {//两者都显示
+                    return 382;
+                }
+            }else {
+                if (messge.soluteArr.count == 0) { //只显示解决未解决
+                    return  348 - 82;
+                }else if (messge.satisArr.count == 0) { //只显示满意度
+                    return 348 - 88;
+                }else {//两者都显示
+                    return 348;
+                }
+            }
+        }
+        return  382;
+    }
     if (message.messageType == JKMessageHotMsg ||message.messageType == JKMessageClarify) {
-        return message.hotArray.count * 46 + 40; //热点问题在最上面，不加10
+        return message.hotArray.count * 46 + 16; //热点问题在最上面，不加10
     }
-    if (message.messageType == JKMessageFAQImage || message.messageType == JKMessageFAQImageText) { //所有的高度都在加10
-        return 89 + messge.cellHeight;
+    if (message.messageType == JKMessageFAQImage || message.messageType == JKMessageFAQImageText) { //所有的高度都在加12
+        CGFloat height =  106;
+        if (messge.hiddenTimeLabel) { //隐藏
+            height =  73;
+        }
+        return  messge.cellHeight + height;
     }
-    
-//    @try {
-//        if (indexPath.row > 1) {
-//            JKMessageFrame * beforeMessage = self.dataFrameArray[indexPath.row - 1];
-//            //在这里判断下时间戳
-//           long beforeTime = [beforeMessage.message.time longLongValue]/1000;
-//           long nowTime = [message.time longLongValue]/1000;
-//            if (nowTime - beforeTime <= 120) { //隐藏时间
-//                //去掉时间
-//
-//            }
-//        }
-//    } @catch (NSException *exception) {
-//        NSLog(@"")
-//    } @finally {
-//
-//    }
     //判断下上一个的message的时间
     CGFloat height = messge.cellHeight;
     return  height;
@@ -588,9 +690,6 @@
 }
 
 - (void)cameraAction{
-    
-    //    self.isPushToController = @"YES";
-    
     [self presentChoseCameraWithCompletionHandler:^(NSData * _Nonnull imageData, UIImage * _Nonnull image) {
         
         [self sendImageWithImageData:imageData image:image];
@@ -623,7 +722,6 @@
             [cell updateConstraints];
         }
         @catch (NSException *exception) {
-            NSLog(@"-----%@",exception);
         }
         @finally {
             
@@ -639,6 +737,7 @@
         JKDialogModel *dialog = [JKDialogModel changeMsgTypeWithJKModel:message];
         JKMessageType type = dialog.messageType;
         framModel.message = dialog;
+        framModel.hiddenTimeLabel = [self showTimeLabelWithModel:framModel];
         framModel = [self jisuanMessageFrame:framModel];
         if (type == JKMessageFAQImageText || type == JKMessageFAQImage) {
             framModel.cellHeight = 0;
@@ -654,6 +753,7 @@
             JKDialogModel * autoModel = [message mutableCopy];
             JKMessageFrame *frameModel = [[JKMessageFrame alloc] init];
             frameModel.message = autoModel;
+            frameModel.hiddenTimeLabel = [self showTimeLabelWithModel:frameModel];
             frameModel = [self jisuanMessageFrame:frameModel];
             if (message.messageType == JKMessageFAQImageText || message.messageType == JKMessageFAQImage) {
                 frameModel.cellHeight = 0;
@@ -678,35 +778,32 @@
         if (autoModel.whoSend == JK_SystemMark) {
             //在这里判断初始化context_id，以及判断是否弹满意度
             NSString *contextId = [[JKConnectCenter sharedJKConnectCenter] JKIM_getContext_id];
-//            [[JKConnectCenter sharedJKConnectCenter] getEndChatBlock:^(BOOL satisFaction) {
+            [[JKConnectCenter sharedJKConnectCenter] getEndChatBlock:^(BOOL satisFaction) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (satisFaction) { //跳转满意度界面
+                    if (satisFaction) { //跳转满意度界面
                         [weakSelf showSatisfacionViewFromid:autoModel ContextId:contextId];
-//                    }
+                    }
                 });
-//            }];
+            }];
             //初始化一下context_id;
             [[JKConnectCenter sharedJKConnectCenter] initDialogeWIthSatisFaction];
-            return;
         }
         
         if (!autoModel.chatState) {
             self.customerName = nil;
             self.listMessage.chatState = autoModel.chatState;
             self.listMessage.to = @"";
-//            self.titleLabel.text = @"对话";
         }
         autoModel.whoSend = message.whoSend?message.whoSend:JK_Customer;
         autoModel.time = autoModel.time;
-        NSLog(@"-autoModel---%@",autoModel.content);
         frameModel.message = autoModel;
+        frameModel.hiddenTimeLabel = [self showTimeLabelWithModel:frameModel];
         frameModel =  [self jisuanMessageFrame:frameModel];
         [self.dataFrameArray addObject:frameModel];
         [self tableViewMoveToLastPathNeedAnimated:YES];
     });
 }
 -(void)receiveHotJKMessage:(JKMessage *)message {
-    
     for (JKMessageFrame *model in self.dataFrameArray) {
         if (model.message.hotArray.count && message.messageType == JKMessageHotMsg) {
             return;
@@ -724,40 +821,44 @@
     });
 }
 - (void)showSatisfacionViewFromid:(JKMessage *)model ContextId:(NSString *)contextId{
-    ///判断如果此时已经有展示框就不弹展示弹框
-    UIViewController *vc = [NSObject currentViewController];
-    if ([vc isKindOfClass:[JKSatisfactionViewController class]]) {
-        return;
-    }
-    [[JKConnectCenter sharedJKConnectCenter]readMessageFromId:model.from];
-    JKSatisfactionViewController * view = [[JKSatisfactionViewController alloc]init];
-    view.content = model.content;
-    view.context_id = contextId;
-    [self.navigationController pushViewController:view animated:YES];
-    
-    //    __weak typeof(self) weakSelf = self;
-    //    view.returnMessageBlock = ^(NSString * _Nonnull message) {
-    //        NSString *value = @"";
-    //        NSArray * array = [model.from componentsSeparatedByString:@"/"];
-    //        if (array.count > 1) {
-    //            NSString *username = [array[1] componentsSeparatedByString:@"@openfire-test"].firstObject;
-    //            value = [username componentsSeparatedByString:@"-"].lastObject;
-    //        }
-    //        message = [NSString stringWithFormat:@"%@%@%@%@",@"您给客服",value,@"的评价",message];
-    //
-    //        weakSelf.listMessage.messageType = JKMessageWord;
-    //        weakSelf.listMessage.msgSendType = JK_SocketMSG;
-    //        weakSelf.listMessage.whoSend = JK_SystemMarkShow;
-    //        weakSelf.listMessage.content = message;
-    //        weakSelf.listMessage.isRichText = NO;
-    //
-    //        [JKIMSendHelp sendTextMessageWithMessageModel:weakSelf.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
-    //            messageFrame = [self jisuanMessageFrame:messageFrame];
-    //            [weakSelf.dataFrameArray addObject:messageFrame];
-    //            [weakSelf tableViewMoveToLastPathNeedAnimated:YES];
-    //        }];
-    //
-    //    };
+    __weak JKDialogueViewController * weakSelf = self;
+    JKMessageFrame *framModel = [[JKMessageFrame alloc] init];
+    framModel.context_id = contextId;
+    JKDialogModel * dialog = [[JKDialogModel alloc] init];
+    dialog.messageType = JKMessageSatisfaction;
+    framModel.message = dialog;
+    [[JKConnectCenter sharedJKConnectCenter] getSatisfactionWithBlock:^(id  _Nullable result, BOOL isSuccess) {
+        if (!isSuccess) return;
+        NSArray * array = [NSJSONSerialization JSONObjectWithData:result options:NSJSONReadingMutableContainers error:nil];
+        if ([[array superclass] isKindOfClass:[NSMutableDictionary class]]) return ;
+        if (array.count) { //双层数组
+            NSMutableArray *satisArray = [NSMutableArray array];
+            NSMutableArray *soluteArray = [NSMutableArray array];
+            for (int i = 0;i <array.count;i ++) {
+                NSArray *satisArr = array[i];
+                for (int j  = 0; j < satisArr.count; j++) {
+                    if ([satisArr[j] valueForKey:@"name"] && [satisArr[j] valueForKey:@"pk"]) {
+                        JKSatisfactionModel * model = [[JKSatisfactionModel alloc] init];
+                        model.name = satisArr[j][@"name"];
+                        model.pk = satisArr[j][@"pk"];
+                        if (i == 0) {
+                            [satisArray insertObject:model atIndex:0];
+                        }else{
+                            [soluteArray addObject:model];
+                        }
+                    }
+                }
+            }
+            //加到数组里
+            if (satisArray.count == 0 && soluteArray.count == 0) return;
+            framModel.satisArr = satisArray;
+            framModel.soluteArr = soluteArray;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [weakSelf.dataFrameArray addObject:framModel];
+                [weakSelf tableViewMoveToLastPathNeedAnimated:YES];
+            });
+        }
+    }];
 }
 
 - (void)showRobotMessage:(JKMessage *)message count:(int)count{
@@ -767,7 +868,7 @@
     autoModel.isRichText = YES;
     autoModel.content = message.content;
     autoModel.whoSend = JK_Roboter;
-    autoModel.imageWidth = [UIScreen mainScreen].bounds.size.width - 170;
+    autoModel.imageWidth = [UIScreen mainScreen].bounds.size.width - 103;
     autoModel.time = autoModel.time;
     autoModel.customerNumber = count;
     frameModel.message = autoModel;
@@ -825,8 +926,11 @@
         CGFloat assoiateHeight = CGRectGetHeight(weakSelf.assoiateView.frame);
         weakSelf.assoiateView.frame = CGRectMake(rect1.origin.x, rect1.origin.y - assoiateHeight, rect1.size.width, assoiateHeight);
     }];
-    
-    [self tableViewMoveToLastPathNeedAnimated:NO];
+    if (self.textView.isFirstResponder) {
+        [self tableViewMoveToLastPathNeedAnimated:NO];
+    }else {
+        [self delayScrollew];
+    }
 }
 
 
@@ -899,8 +1003,6 @@
     if (_bottomView == nil) {
         _bottomView = [[UIView alloc]init];
         _bottomView.backgroundColor = UIColorFromRGB(0xE8E8E8);
-        _bottomView.layer.borderWidth = 0.5;
-        _bottomView.layer.borderColor = [[UIColor colorWithRed:196/255.0 green:196/255.0 blue:196/255.0 alpha:1.0] CGColor];
     }
     return _bottomView;
 }
@@ -1052,6 +1154,7 @@
         self.listMessage.content = reText;
         
         [JKIMSendHelp sendTextMessageWithMessageModel:self.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
+            messageFrame.hiddenTimeLabel = [self showTimeLabelWithModel:messageFrame];
             messageFrame =  [self jisuanMessageFrame:messageFrame];
             [self.dataFrameArray addObject:messageFrame];
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -1205,8 +1308,12 @@
     CGFloat screenW = [UIScreen mainScreen].bounds.size.width;
     
     // 1、计算时间的位置
-    CGFloat timeY = JKChatMargin;
-    message.timeF = CGRectMake(0, timeY, screenW, 17);
+    CGFloat timeY = JKChatMargin; // 判断下time是否被隐藏
+    if (message.hiddenTimeLabel) { //隐藏 咱不做处理
+        
+    }else { //显示
+        message.timeF = CGRectMake(0, timeY, screenW, 17);
+    }
     CGFloat contentY = CGRectGetMaxY(message.timeF);
     CGFloat contentX = 0;
     if (message.message.whoSend !=JK_Visitor) {
@@ -1245,7 +1352,7 @@
         message.cellHeight = CGRectGetMaxY(message.contentF);
     }else{
         message.contentF = CGRectMake(contentX, contentY, contentSize.width + 24, contentSize.height);
-        message.cellHeight = MAX(CGRectGetMaxY(message.contentF), CGRectGetMaxY(message.nameF))  ;
+        message.cellHeight = MAX(CGRectGetMaxY(message.contentF), CGRectGetMaxY(message.nameF))  + 12;
     }
     
     return message;
