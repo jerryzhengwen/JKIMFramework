@@ -191,26 +191,7 @@
                 }
                 [weakSelf.dataFrameArray insertObject:frameModel atIndex:0];
             } //进行下时间排序
-            //[weakSelf reloadPath]; //滚动到特定位置
             @try {
-//                for (int j = (int)array.count - 1; j >= 0; j -- ) {
-//                    JKMessageFrame * messageFrame = weakSelf.dataFrameArray[j];
-//                    if (j == 0) {
-//                        break;
-//                    }else {
-//                        JKMessageFrame *beforeFrame = weakSelf.dataFrameArray[j - 1];
-//                        long beforeTime = [beforeFrame.message.time longLongValue]/1000;
-//                        long nowTime = [messageFrame.message.time longLongValue]/1000;
-//                        if (nowTime - beforeTime <= 120) { //隐藏时间
-//                            messageFrame.hiddenTimeLabel = YES;
-//                        }
-//                    }
-//                }
-////                for (int z = 0; array.count; z ++) {
-////                    JKMessageFrame * message = weakSelf.dataFrameArray[z];
-////                    NSLog(@"---当前d是第%d____%d",z,message.hiddenTimeLabel);
-////                }
-                
                 dispatch_queue_t q = dispatch_queue_create("chuan_xing", DISPATCH_QUEUE_SERIAL);
                 [weakSelf.refreshQ cancelAllOperations];
                 [weakSelf.refreshQ addOperationWithBlock:^{
@@ -222,9 +203,11 @@
                     dispatch_async(q, ^{
                         // 4.自动滚动表格到最后一行
                         dispatch_async(dispatch_get_main_queue(), ^{
-                            NSIndexPath *lastPath = [NSIndexPath indexPathForRow:array.count inSection:0];
-                            
-                            [weakSelf.tableView scrollToRowAtIndexPath:lastPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
+                            if (array.count) {
+                                NSIndexPath *lastPath = [NSIndexPath indexPathForRow:array.count inSection:0];
+                                
+                                [weakSelf.tableView scrollToRowAtIndexPath:lastPath atScrollPosition:UITableViewScrollPositionTop animated:NO];
+                            }
                         });
                     });
                 }];
@@ -310,7 +293,7 @@
         }
     }
     NSString *memo = frameModel.content?frameModel.content:@"";
-    NSString *content = @"";
+    NSString *content = memo;
     if ([memo isEqualToString:@""]) {
         content = @"无";
     }
@@ -664,15 +647,16 @@
 -(void)delayScrollew {
     @try {
         NSIndexPath *lastPath = [NSIndexPath indexPathForRow:self.dataFrameArray.count - 1 inSection:0];
-    
-        [self.tableView scrollToRowAtIndexPath:lastPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+        if (lastPath.row) {
+            [self.tableView scrollToRowAtIndexPath:lastPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+        }
     }
-        @catch (NSException *exception) {
-            [self.tableView reloadData];
-        }
-        @finally {
-            
-        }
+    @catch (NSException *exception) {
+        [self.tableView reloadData];
+    }
+    @finally {
+        
+    }
 }
 //刷新数据
 - (void)reloadPath{
