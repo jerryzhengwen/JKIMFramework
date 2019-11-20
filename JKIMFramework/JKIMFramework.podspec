@@ -45,5 +45,5 @@ s.requires_arc = false
 s.requires_arc = ['JKIMFramework/**/Classes/*.{h,m}']
 s.dependency 'YYWebImage'
 s.dependency 'MBProgessHUD'
-s.dependency 'MJRefresh' , '~> 1.1.0'
+s.dependency 'MJRefresh' 
 end

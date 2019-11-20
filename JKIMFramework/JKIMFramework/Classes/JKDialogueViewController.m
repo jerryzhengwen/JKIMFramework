@@ -19,6 +19,7 @@
 #import "JKConnectCenter.h"
 #import "RegexKitLite.h"
 #import "MJRefresh.h"
+#import "MBProgressHUD.h"
 @interface JKDialogueViewController ()<UITableViewDelegate,UITableViewDataSource,UITextViewDelegate,ConnectCenterDelegate,JKMessageCellDelegate,JKMessageImageCellDelegate>
 
 /** 获取图片资源路径 */
