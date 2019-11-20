@@ -68,6 +68,8 @@ typedef void(^JKInitCompleteBlock)(BOOL);
  取消排队成功
  */
 - (void)receiveCancelLineUpMessage;
+
+- (void)whetherHistoryRoomNeedUpdate;
 @end
 
 
@@ -242,6 +244,8 @@ NS_ASSUME_NONNULL_BEGIN
  @return 获取context_id
  */
 -(NSString *)JKIM_getContext_id;
+
+-(void)reInitHistoryRoomWhetherUpdate;
 
 @end
 
