@@ -70,22 +70,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic,assign) BOOL isSubmit;//是否已提交(满意度的)
 
-/**
- 选择解决未解决
- */
-//@property (nonatomic,assign) JKSOLUTEBTN_Click soluteNumber;
-
-/**
- 选择了几星
- */
-//@property (nonatomic,assign) JKSTARTBTN_Click startIndex;
-
-
-/**
- 满意度评价内容
- */
-//@property (nonatomic,copy) NSString * submitContent;
-
 
 
 - (void)minuteOffSetStart:(NSString *)start end:(NSString *)end;

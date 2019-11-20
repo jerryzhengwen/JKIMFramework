@@ -113,14 +113,7 @@ static MMImageBrower *manager = nil;
     }
     if (self.currentIndex != 0) {
         NSIndexPath *indexPath  = [NSIndexPath indexPathForRow:self.currentIndex inSection:0];
-        @try {
-            [self.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
-        } @catch (NSException *exception) {
-            
-        } @finally {
-            
-        }
-        
+        [self.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
     }
     self.pageControl.numberOfPages = _images.count;
     self.pageControl.currentPage = _currentIndex;
@@ -250,14 +243,7 @@ static MMImageBrower *manager = nil;
 //    NSLog(@"%ld",pageControl.currentPage);
     self.currentIndex = pageControl.currentPage;
     NSIndexPath *indexPath = [NSIndexPath indexPathForItem:pageControl.currentPage inSection:0];
-    @try {
-         [self.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionNone animated:YES];
-    } @catch (NSException *exception) {
-        
-    } @finally {
-        
-    }
-   
+    [self.collectionView scrollToItemAtIndexPath:indexPath atScrollPosition:UICollectionViewScrollPositionNone animated:YES];
 }
 
 - (UIViewController *)viewController {

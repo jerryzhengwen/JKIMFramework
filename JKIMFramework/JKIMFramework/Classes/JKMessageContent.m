@@ -31,7 +31,7 @@
         self.backImageView.userInteractionEnabled = YES;
         self.backImageView.layer.cornerRadius = 5;
         self.backImageView.layer.masksToBounds  = YES;
-        self.backImageView.backgroundColor = [UIColor clearColor];
+//        self.backImageView.backgroundColor = [UIColor clearColor];
         [self addSubview:self.backImageView];
         
         //内容
@@ -40,8 +40,6 @@
         self.contentTV.textColor = UIColorFromRGB(0x3E3E3E);
         self.contentTV.delegate = self;
         self.contentTV.layoutManager.allowsNonContiguousLayout = YES;
-        //        self.contentTV.textContainerInset = UIEdgeInsetsMake(5, 5, 5, 5 );
-        self.contentTV.backgroundColor = [UIColor clearColor];
         [self addSubview:self.contentTV];
         
         

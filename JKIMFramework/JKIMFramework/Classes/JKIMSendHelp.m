@@ -48,8 +48,10 @@
     if (completeBlock) {
         completeBlock(frameModel);
     }
-    //在这里判断下model 中是否包含表情
-    [[JKConnectCenter sharedJKConnectCenter]sendMessage:messageModel];
+    //在这里判断下model 中是否包含表情  获取业务类型的时候不需要调用
+    if (messageModel.to.length) {
+        [[JKConnectCenter sharedJKConnectCenter]sendMessage:messageModel];
+    }
 }
 
 + (void)sendImageMessageWithImageData:(NSData *)imageData image:(UIImage *)image MessageModel:(JKMessage *)messageModel completeBlock:(CompleteBlock)completeBlock{

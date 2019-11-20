@@ -60,7 +60,7 @@
         UIImage *image = [UIImage imageWithContentsOfFile:filePatch];
         [button addTarget:self action:@selector(soluteChoose:) forControlEvents:UIControlEventTouchUpInside];
         [button setImage:image forState:UIControlStateNormal];
-        button.imageEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 18);
+        button.imageEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 4);
         [self.firstBtnArr addObject:button];
         [self.bgImageView addSubview:button];
     }
@@ -264,12 +264,14 @@ CGSize countStringWordWidth(NSString *aString,UIFont * font, CGSize labelSize) {
         }else {
             font = [UIFont fontWithName:@"PingFangSC-Regular" size:15];
         }
+        CGFloat minWidth = 14;
         for (int i = 0; i < self.model.soluteArr.count; i ++) {
             JKSatisfactionModel * soluteModel = self.model.soluteArr[i];
             UIButton * button = self.firstBtnArr[i];
             CGSize size = countStringWordWidth(soluteModel.name, font, CGSizeMake(272, 20));
             CGFloat btnWth = ceil(size.width) + 24;
-            button.frame = CGRectMake(i * (38+30) + 14 , minHight, btnWth, 20);
+            button.frame = CGRectMake(minWidth , minHight, btnWth, 20);
+            minWidth = minWidth + btnWth + 14;
         }
         minHight = minHight + 20 + 26;
     }
@@ -363,9 +365,9 @@ CGSize countStringWordWidth(NSString *aString,UIFont * font, CGSize labelSize) {
     [super setSelected:selected animated:animated];
 }
 -(void)WhetherSHowSubMitBtn {
-    if (!self.submitBtn.hidden) {
-        return;
-    }
+//    if (!self.submitBtn.hidden) {
+//        return;
+//    }
     if (self.submitBlock) {
         self.submitBlock();
     }

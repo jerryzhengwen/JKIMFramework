@@ -10,6 +10,11 @@
 #import "JKENUMObject.h"
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSInteger, JKChatStatue) {
+    JKStatueRobot = 0,
+    JKStatueBussiness = 1, // 业务类型
+};
+
 @interface JKMessage : NSObject <NSCopying,NSMutableCopying>
 
 @property(nonatomic,assign) JKMsgSource whoSend;
@@ -41,6 +46,8 @@ NS_ASSUME_NONNULL_BEGIN
  消息类型
  */
 @property(nonatomic,assign) JKMessageType messageType;
+
+@property(nonatomic,assign) JKChatStatue chatStatue;
 /**
  语音地址
  */
@@ -86,6 +93,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,copy) NSString *chatterName;
 
 @property (nonatomic,strong)NSArray *hotArray;
+
+/**
+ 排队的位数
+ */
+@property (nonatomic,copy)NSString  *index;
+@property (nonatomic,copy)NSString  *timeoutqueue;
 ///** 热点问题ID */
 //@property (nonatomic,copy) NSString * hotId;
 ///** 标准答案ID  */

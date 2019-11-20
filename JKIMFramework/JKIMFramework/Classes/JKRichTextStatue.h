@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface JKRichTextStatue : NSObject
 @property(nonatomic,copy) NSString *text;
 @property(nonatomic,copy) NSAttributedString *attributedText;
+
++(BOOL)returnContainEmojiStr:(NSString *)message;
 @end
 
 NS_ASSUME_NONNULL_END

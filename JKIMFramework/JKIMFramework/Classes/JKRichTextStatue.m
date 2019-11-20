@@ -152,6 +152,19 @@
 //    }
     return attributedText;
 }
++(BOOL)returnContainEmojiStr:(NSString *)message {
+    BOOL isContain = NO;
+    NSString *filePath = [JKBundleTool initBundlePathWithResouceName:@"JKFace" type:@"plist"];
+    NSArray  *face = [NSArray arrayWithContentsOfFile:filePath];
+    for (int i =0; i <face.count; i ++) {
+        NSString *faceStr = face[i][@"face_name"];
+        if ([message containsString:faceStr]) {
+            isContain = YES;
+            break;
+        }
+    }
+    return isContain;
+}
 //- (NSMutableAttributedString *)praseHtmlStr:(NSString *)htmlStr {
 //    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithData:[htmlStr dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:nil];
 //    return attributedString;

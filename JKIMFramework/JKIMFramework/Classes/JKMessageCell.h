@@ -14,6 +14,7 @@
 typedef void(^ClickRichText)(void);
 typedef void(^ClickSkipBlock)(NSString *);
 typedef void(^ClickCustomer)(NSString *);
+typedef void(^ClickLineUpBlock)(void);
 
 @protocol JKMessageCellDelegate <NSObject>
 @optional
@@ -50,6 +51,6 @@ typedef void(^ClickCustomer)(NSString *);
  */
 @property (nonatomic,copy) ClickCustomer clickCustomer;
 @property (nonatomic,copy) ClickSkipBlock skipBlock;
-
+@property (nonatomic,copy) ClickLineUpBlock lineUpBlock;
 @end
 

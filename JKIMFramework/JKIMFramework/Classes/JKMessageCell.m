@@ -35,8 +35,7 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        
-        self.backgroundColor = [UIColor clearColor];
+        self.backgroundColor =JKBGDefaultColor;
         
         // 1、创建时间
         self.labelTime = [[UILabel alloc] init];
@@ -108,7 +107,6 @@
     // 2、设置名称
     if (message.whoSend !=JK_Visitor) {
         self.nameLabel.hidden = NO;
-//        NSString * name = message.from.length?message.from:@"小广";
         self.nameLabel.text = @"智能客服-小广";
     }else {
         self.nameLabel.hidden = YES;
@@ -125,38 +123,35 @@
     [self.btnContent.contentTV setSelectable:YES];
     [self.btnContent.contentTV setEditable:NO];
     self.btnContent.contentTV.dataDetectorTypes = UIDataDetectorTypeLink;
-    
     BOOL isRichText = [self isRichTextWithContent:message.content];
     if (isRichText) {
-        NSMutableAttributedString *contentStr = [[NSMutableAttributedString alloc] initWithString:messageFrame.message.content];
-        if (messageFrame.message.customerNumber) {
-            NSArray *customer = [messageFrame.message.content componentsSeparatedByString:@"\n"];
-            NSMutableArray * removeArray = [NSMutableArray arrayWithArray:customer];
-            [removeArray removeObject:@""];
-            for (int i = 0; i < removeArray.count; i ++) {
-                NSString *clickString = removeArray[i];
-                NSRange range = [messageFrame.message.content rangeOfString:clickString];
-                [contentStr addAttribute:NSForegroundColorAttributeName value:[UIColor blueColor] range:range];
-                [contentStr addAttribute:NSLinkAttributeName value:[NSString stringWithFormat:@"%@://",clickString] range:range];
-            }
-        self.btnContent.contentTV.attributedText = contentStr;
-        }else {
-            NSMutableAttributedString *contentStr = [self parseHtmlStr:message.content];
-            //正则富文本的点击项
-//            NSString *bigString = [self returnSpanContent:message.content AndZhengZe:@"<a[^>]*>([^<]+)"];
-//            NSString *smallString = [self returnSpanContent:message.content AndZhengZe:@"<a[^>]*>"];
-//            NSString *content = [bigString stringByReplacingOccurrencesOfString:smallString withString:@""];
-//            NSRange range = [contentStr.string rangeOfString:content];
-//            [contentStr addAttribute:NSLinkAttributeName value:[NSString stringWithFormat:@"%@://",content] range:range];
+        NSMutableAttributedString *contentStr = [self parseHtmlStr:message.content];
         self.btnContent.contentTV.attributedText = contentStr;
         self.btnContent.contentTV.font = JKChatContentFont;
         self.btnContent.contentTV.linkTextAttributes = @{NSForegroundColorAttributeName:UIColorFromRGB(0xEC5642)};
-        }
     }else {
-        self.btnContent.contentTV.text = messageFrame.message.content;
         JKRichTextStatue * richText = [[JKRichTextStatue alloc] init];
         richText.text = messageFrame.message.content;
-        self.btnContent.contentTV.attributedText = richText.attributedText;
+        if (messageFrame.message.customerNumber == 10000) {
+            NSString *content = messageFrame.message.content;
+            NSArray *customer = [content componentsSeparatedByString:@"<br>"];
+            NSMutableArray * removeArray = [NSMutableArray arrayWithArray:customer];
+            [removeArray removeObject:@""];
+            NSMutableAttributedString * attri = [[NSMutableAttributedString alloc] initWithAttributedString:richText.attributedText];
+            
+            for (int i = 0; i < removeArray.count; i ++) {
+                NSString *clickString = removeArray[i];
+                NSRange range = [attri.string rangeOfString:clickString];
+                
+                [attri addAttribute:NSForegroundColorAttributeName value:UIColorFromRGB(0xEC5642) range:range];
+                [attri addAttribute:NSLinkAttributeName value:[NSString stringWithFormat:@"%@://",clickString] range:range];
+            }
+            self.btnContent.contentTV.attributedText = attri;
+            self.btnContent.contentTV.linkTextAttributes = @{NSForegroundColorAttributeName:UIColorFromRGB(0xEC5642)};
+        }else {
+//            self.btnContent.contentTV.text = messageFrame.message.content;
+            self.btnContent.contentTV.attributedText = richText.attributedText;
+        }
     }
     
     CGFloat margin = 12;
@@ -200,21 +195,17 @@
 //    UIImage *normal;
     if (message.whoSend == JK_Visitor) {
         self.btnContent.contentTV.textColor = [UIColor whiteColor];
+        self.btnContent.contentTV.backgroundColor = UIColorFromRGB(0xEC5642);
         self.btnContent.backgroundColor = UIColorFromRGB(0xEC5642);
         UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:self.btnContent.bounds byRoundingCorners:UIRectCornerTopLeft|UIRectCornerBottomLeft|UIRectCornerBottomRight cornerRadii:CGSizeMake(10, 10)];
         CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
         maskLayer.frame = self.btnContent.bounds;
         maskLayer.path = maskPath.CGPath;
         self.btnContent.layer.mask = maskLayer;
-//        NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
-//        NSString *filePatch = [bundlePatch stringByAppendingPathComponent:@"chatto_bg_normal"];
-//        normal = [UIImage imageWithContentsOfFile:filePatch];
-//        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(16, 13, 16, 21)];
-////        normal = [normal resizableImageWithCapInsets:UIEdgeInsetsMake(35, 20, 10, 10) resizingMode:UIImageResizingModeStretch];
-//        self.btnContent.contentTV.textColor = [UIColor whiteColor];
     }
     else{
         self.btnContent.contentTV.textColor = UIColorFromRGB(0x3E3E3E);
+        self.btnContent.contentTV.backgroundColor = UIColorFromRGB(0xFFFFFF);
         self.btnContent.backgroundColor = UIColorFromRGB(0xFFFFFF);
         UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:self.btnContent.bounds byRoundingCorners:UIRectCornerTopRight|UIRectCornerBottomLeft|UIRectCornerBottomRight cornerRadii:CGSizeMake(10, 10)];
         CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
@@ -253,10 +244,24 @@
 #pragma -
 #pragma mark - textView的代理
 -(BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange {
-//    NSString *clickString = self.messageFrame.message.content;
     NSString * urlStr = URL.absoluteString;
+    if ([urlStr isEqualToString:JKGetBussiness]){
+        if (self.clickCustomer) {
+            NSString *clickText = [textView.text substringWithRange:characterRange];
+            self.clickCustomer(clickText);
+        }
+        return NO;
+    }
+    if ([urlStr isEqualToString:JKContinueLineUp]) { //继续排队
+        if (self.lineUpBlock) {
+            self.lineUpBlock();
+        }
+        return NO;
+    }
     if (urlStr.length) {
          [[JKMessageOpenUrl sharedOpenUrl] JK_ClickHyperMediaMessageOpenUrl:urlStr];
+    }else { //获取下一级业务类型
+        
     }
     
 //    if (self.messageFrame.message.isRichText) {
@@ -335,7 +340,6 @@
  */
 - (void)downloadImageWithModelFrame:(JKMessageFrame *)modelFrame button:(JKMessageContent *)button{
     
-//    __block UIImageView *sView = [[UIImageView alloc]init];
     [button.backImageView yy_setImageWithURL:[NSURL URLWithString:modelFrame.message.content] placeholder:nil options:YYWebImageOptionProgressiveBlur | YYWebImageOptionSetImageWithFadeAnimation completion:^(UIImage * _Nullable image, NSURL * _Nonnull url, YYWebImageFromType from, YYWebImageStage stage, NSError * _Nullable error) {
         if (!error)  {
             NSMutableArray *sizeArr = [UIView returnImageViewWidthAndHeightWith:[NSString stringWithFormat:@"%lf",image.size.width] AndHeight:[NSString stringWithFormat:@"%lf",image.size.height]];
@@ -461,6 +465,8 @@
     NSMutableAttributedString *attributedString;
     @try {
         attributedString  = [[NSMutableAttributedString alloc] initWithData:[htmlStr dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:nil];
+//        [attributedString setAttributes:@{NSUnderlineStyleAttributeName : @(NSUnderlineStyleNone)}
+//                         range:NSMakeRange(0, attributedString.string.length)];
     } @catch (NSException *exception) {
         attributedString = [[NSMutableAttributedString alloc] initWithString:htmlStr];
     } @finally {

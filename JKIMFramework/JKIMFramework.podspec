@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'JKIMFramework'
-  s.version          = '1.3.1'
+  s.version          = '1.3.2'
   s.summary          = '这是一个关于久科IMSDK的初级版'
 
 # This description is used to generate tags and improve search results.
@@ -45,4 +45,5 @@ s.requires_arc = false
 s.requires_arc = ['JKIMFramework/**/Classes/*.{h,m}']
 s.dependency 'YYWebImage'
 s.dependency 'MJRefresh'
+s.dependency 'MBProgessHUD'
 end

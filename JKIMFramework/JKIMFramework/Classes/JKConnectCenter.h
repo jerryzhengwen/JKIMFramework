@@ -63,8 +63,11 @@ typedef void(^JKInitCompleteBlock)(BOOL);
  */
 @required
 - (void)receiveNewListChat:(JKMessage *_Nullable)message;
-
-
+@required
+/**
+ 取消排队成功
+ */
+- (void)receiveCancelLineUpMessage;
 @end
 
 

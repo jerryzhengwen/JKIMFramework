@@ -11,7 +11,6 @@
 #import "JKDialogueHeader.h"
 #import "NSDate+Utils.h"
 #import "YYWebImage.h"
-#import "JKImageAvatarBrowser.h"
 #import "JKMessageOpenUrl.h"
 #import "MMImageBrower.h"
 @interface JKWebViewCell()<WKNavigationDelegate,WKUIDelegate>
@@ -232,11 +231,6 @@
 //        imageView.center = self.center;
         [self addSubview:imageView];
         [imageView yy_setImageWithURL:[NSURL URLWithString:url] placeholder:nil options:YYWebImageOptionSetImageWithFadeAnimation completion:^(UIImage * _Nullable image, NSURL * _Nonnull url, YYWebImageFromType from, YYWebImageStage stage, NSError * _Nullable error) {
-//            if (!error && image) {
-//                dispatch_async(dispatch_get_main_queue(), ^{
-//                    [JKImageAvatarBrowser showImage:imageView];
-//                });
-//            }
             if (!error && image) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     //            [JKImageAvatarBrowser showImage:imageView];

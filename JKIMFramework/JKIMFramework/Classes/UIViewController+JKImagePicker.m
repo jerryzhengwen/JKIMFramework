@@ -218,11 +218,11 @@ static void *isCut =  @"isCut"; //截取
                                      
                                  }];
     }else{
-        while (imageData.length/1000 > 1024) {
-            NSLog(@"图片超过1M 压缩");
-            imageData = UIImageJPEGRepresentation(image, 0.6);
+//        while (imageData.length/1000 > 1024) {
+//            NSLog(@"图片超过1M 压缩");
+            imageData = UIImageJPEGRepresentation(image, 0.1);
             image = [UIImage imageWithData:imageData];
-        }
+//        }
     }
     
     self.completionHandler(imageData, image);

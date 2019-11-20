@@ -34,6 +34,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)createBackButton;
 /** 创建RightButton */
 - (void)createRightButton;
+/** 返回的事件 */
+- (void)backAction;
 /**
  导航栏中间的坐席头像
  */

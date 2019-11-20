@@ -8,7 +8,7 @@
 
 #define JKChatMargin    16       //间隔
 #define JKHeaderImageWH 46       //头像宽高height、width
-#define JKChatContentW  [UIScreen mainScreen].bounds.size.width - 103    //内容宽度
+
 
 #define JKChatTimeMarginW 15  //时间文本与边框间隔宽度方向
 #define JKChatTimeMarginH 10  //时间文本与边框间隔高度方向
@@ -22,6 +22,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "JKDialogModel.h"
+
 
 @interface JKMessageFrame : NSObject
 
@@ -48,4 +49,6 @@
 /** 是否已经提交 */
 @property (nonatomic, assign) BOOL isSubmit;
 @property (nonatomic, assign) BOOL isFirstResign;
+/** 点击了转人工按钮，这个按钮就不让再点 */
+@property (nonatomic, assign) BOOL isClickLineUpBtn;
 @end

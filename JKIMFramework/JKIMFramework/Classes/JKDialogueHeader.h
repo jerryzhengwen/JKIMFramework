@@ -20,8 +20,11 @@
 #import "JKRichTextStatue.h"
 #import "JKBundleTool.h"
 #import "UIViewController+JKImagePicker.h"
-
-
+#import "UIView+JKCommonView.h"
+#import "NSDate+Utils.h"
+#import "JKLineUpCell.h"
+#import "JKLineUpView.h"
+#define JKChatContentW  [UIScreen mainScreen].bounds.size.width - 103    //内容宽度
 #define iPhoneX ([UIScreen mainScreen].bounds.size.width == 375 && [UIScreen mainScreen].bounds.size.height == 812)
 #define iPhoneXR ([UIScreen mainScreen].bounds.size.width == 414 && [UIScreen mainScreen].bounds.size.height == 896)
 #define kStatusBarAndNavigationBarHeight (iPhoneX || iPhoneXR ? 88.f : 64.f)
@@ -44,5 +47,6 @@ blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 #define JKChatTimeFont [[UIDevice currentDevice].systemVersion doubleValue] <9.0?    [UIFont systemFontOfSize:12]:[UIFont fontWithName:@"PingFangSC-Regular" size:12]
 //内容字体
 #define JKChatContentFont [[UIDevice currentDevice].systemVersion doubleValue] <9.0?    [UIFont systemFontOfSize:15]: [UIFont fontWithName:@"PingFangSC-Regular" size:15]
-
+#define JKContinueLineUp @"http://gzbk.9client.com/continueLineUp"
+#define JKGetBussiness @"http://gzbk.9client.com/getBusiness"
 #endif /* JKDialogueHeader_h */

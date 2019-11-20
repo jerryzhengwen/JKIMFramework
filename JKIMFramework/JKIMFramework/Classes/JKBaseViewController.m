@@ -110,6 +110,7 @@
 }
 -(void)initGestureWithTableView {
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(addToucheEvent:)];
+    tap.numberOfTapsRequired = 1;  
     [self.tableView addGestureRecognizer:tap];
     tap.cancelsTouchesInView = NO;
 }
@@ -191,7 +192,7 @@
 }
 
 - (void)addToucheEvent:(UITapGestureRecognizer *)tap {
-    [self.view endEditing:YES];
+//    [self.view endEditing:YES];
 }
 -(JKAlertView *)alertView {
     if (!_alertView) {
