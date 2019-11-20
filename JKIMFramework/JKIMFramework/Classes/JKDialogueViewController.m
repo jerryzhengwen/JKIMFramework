@@ -19,7 +19,7 @@
 #import "JKConnectCenter.h"
 #import "RegexKitLite.h"
 #import "MJRefresh.h"
-#import "MBProgressHUD.h"
+#import "JKBProgressHUD.h"
 @interface JKDialogueViewController ()<UITableViewDelegate,UITableViewDataSource,UITextViewDelegate,ConnectCenterDelegate,JKMessageCellDelegate,JKMessageImageCellDelegate>
 
 /** 获取图片资源路径 */
@@ -44,13 +44,13 @@
 
 //收到新的消息时的Message
 @property(nonatomic, strong)JKMessage *listMessage;
-@property(nonatomic, strong)MBProgressHUD *hud;
+@property(nonatomic, strong)JKBProgressHUD *hud;
 @end
 
 @implementation JKDialogueViewController
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.hud = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
+    self.hud = [JKBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
     
     
     self.hud.label.text = @"加载中";
