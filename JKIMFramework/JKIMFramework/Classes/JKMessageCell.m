@@ -107,7 +107,7 @@
     // 2、设置名称
     if (message.whoSend !=JK_Visitor) {
         self.nameLabel.hidden = NO;
-        self.nameLabel.text = @"智能客服-小广";
+        self.nameLabel.text = message.from.length?message.from:@"智能客服-小广";
     }else {
         self.nameLabel.hidden = YES;
     }

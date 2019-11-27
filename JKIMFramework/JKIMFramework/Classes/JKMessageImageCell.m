@@ -44,15 +44,15 @@
 }
 
 - (void)btnContentClick{ //image的图片
-//    if (self.messageFrame.message.imageUrl) {
-//        
-//    }else {
-//        
-//    }
     if (self.btnContent.backImageView.image) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (self.delegate && [self.delegate respondsToSelector:@selector(resignKeyBoard)]) {
+                [self.delegate resignKeyBoard];
+            }
         MMImageBrower *img  =  [[MMImageBrower alloc] init];
         img.images = @[self.btnContent.backImageView.image];
         [img show];
+        });
     }
 }
 
@@ -77,7 +77,7 @@
     // 2、设置名称
     if (message.whoSend !=JK_Visitor) {
         self.nameLabel.hidden = NO;
-        self.nameLabel.text = @"智能客服-小广";
+        self.nameLabel.text = message.from.length?message.from:@"智能客服-小广";
     }else {
         self.nameLabel.hidden = YES;
     }

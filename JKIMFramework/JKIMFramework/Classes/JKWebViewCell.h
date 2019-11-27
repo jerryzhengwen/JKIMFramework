@@ -13,14 +13,14 @@ NS_ASSUME_NONNULL_BEGIN
 //@class JKMessageFrame;
 
 typedef void(^JKGetWebHeightBlock)(int row,BOOL moveToLast);
-typedef void(^JKShowBigImageBlock)(UIImageView *);
+typedef void(^JKResignKeyBoardBlock)(void);
 
 
 @interface JKWebViewCell : UITableViewCell
 @property (nonatomic, strong)JKMessageFrame *messageFrame;
 @property (nonatomic,assign) int reloadRow;
 @property (nonatomic,copy)JKGetWebHeightBlock webHeightBlock;
-@property (nonatomic,copy)JKShowBigImageBlock showImgBlock;
+@property (nonatomic,copy)JKResignKeyBoardBlock resignKeyBoard;
 
 @end
 

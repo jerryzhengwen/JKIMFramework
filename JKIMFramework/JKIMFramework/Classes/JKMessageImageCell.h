@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 -(void)cellCompleteLoadImgeUrl:(NSString *)imgUrl;
 
+-(void)resignKeyBoard;
 @end
 
 

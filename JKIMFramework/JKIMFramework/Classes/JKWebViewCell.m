@@ -111,7 +111,7 @@
     self.labelTime.text = time;
 //    NSString * name = messageFrame.message.from.length?messageFrame.message.from:@"robot";
 //    name = @"小广";
-    self.nameLabel.text = @"智能客服-小广";
+    self.nameLabel.text = messageFrame.message.from.length?messageFrame.message.from:@"智能客服-小广";
     NSURL *baseurl = [NSURL URLWithString:@"file:///"];
     [self.webView loadHTMLString:[self getHtmlString:messageFrame.message.content] baseURL:baseurl];
 }
@@ -233,7 +233,9 @@
         [imageView yy_setImageWithURL:[NSURL URLWithString:url] placeholder:nil options:YYWebImageOptionSetImageWithFadeAnimation completion:^(UIImage * _Nullable image, NSURL * _Nonnull url, YYWebImageFromType from, YYWebImageStage stage, NSError * _Nullable error) {
             if (!error && image) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    //            [JKImageAvatarBrowser showImage:imageView];
+                    if (self.resignKeyBoard) {
+                        self.resignKeyBoard();
+                    }
                     MMImageBrower *img  =  [[MMImageBrower alloc] init];
                     img.images = @[image];
                     [img show];
