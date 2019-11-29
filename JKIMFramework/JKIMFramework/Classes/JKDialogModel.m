@@ -34,14 +34,19 @@
     
     free(properties);
     
-    for (int i = 0; i < count ; i++)
-    {
-        NSString *name=[propertyArray objectAtIndex:i];
-        id value=[model valueForKey:name];
-        [objModel setValue:value forKey:name];
+    @try {
+        for (int i = 0; i < count ; i++)
+        {
+            NSString *name=[propertyArray objectAtIndex:i];
+            id value=[model valueForKey:name];
+            [objModel setValue:value forKey:name];
+            
+        }
+    } @catch (NSException *exception) {
+        
+    } @finally {
         
     }
-    
     return objModel;
 }
 
