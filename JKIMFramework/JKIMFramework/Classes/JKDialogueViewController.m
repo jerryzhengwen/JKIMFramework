@@ -661,9 +661,9 @@
         
     }else{
         self.tableView.frame = CGRectMake(0, kStatusBarAndNavigationBarHeight, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height - BottomToolHeight - kStatusBarAndNavigationBarHeight);
-        
     }
     self.bottomView.frame = CGRectMake(0, self.tableView.bottom, [UIScreen mainScreen].bounds.size.width, BottomToolHeight);
+    [self.view endEditing:YES];
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     
@@ -944,9 +944,9 @@
             for (JKMessage * message in messageArr) {
                 JKDialogModel * autoModel = [message mutableCopy];
                 JKMessageFrame *frameModel = [[JKMessageFrame alloc] init];
-                if (message.from.length) {
-                    self.customerName = message.from;
-                }
+//                if (message.from.length) {
+//                    self.customerName = message.from;
+//                }
                 frameModel.message = autoModel;
                 frameModel.hiddenTimeLabel = [self showTimeLabelWithModel:frameModel];
                 frameModel = [self jisuanMessageFrame:frameModel];

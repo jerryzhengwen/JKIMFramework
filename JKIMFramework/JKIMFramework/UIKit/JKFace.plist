@@ -60,7 +60,7 @@
 	</dict>
 	<dict>
 		<key>face_send</key>
-		<string>/::hx</string>
+		<string>/::&gt;</string>
 		<key>face_name</key>
 		<string>[憨笑]</string>
 		<key>face_image_name</key>
