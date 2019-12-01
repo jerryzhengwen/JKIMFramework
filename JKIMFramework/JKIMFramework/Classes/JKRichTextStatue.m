@@ -89,7 +89,7 @@
     NSString *bundlePatch = [JKBundleTool initBundlePathWithImage];
     for (JKTextPat *part in parts) {
         // 等会需要拼接的子串
-        NSAttributedString *substr = nil;
+        NSAttributedString *substr = [[NSAttributedString alloc] init];
         if (part.isSpecial) {
             if (![part.text containsString:@"http"]) {
                 part.isSpecial = NO;
@@ -131,7 +131,11 @@
         }else {
 //             substr = [[NSAttributedString alloc] initWithString:part.text];
             @try {
-                substr = [[NSMutableAttributedString alloc] initWithData:[part.text dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:nil];
+                NSError *error = nil;
+                substr = [[NSMutableAttributedString alloc] initWithData:[part.text dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:&error];
+                if (error) {
+                    NSLog(@"");
+                }
             } @catch (NSException *exception) {
                 substr = [[NSAttributedString alloc] initWithString:part.text];
             } @finally {

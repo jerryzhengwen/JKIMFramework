@@ -58,7 +58,7 @@ static void *isCut =  @"isCut"; //截取
 
 - (void)setUpPhotoPickControllerIsEdit:(BOOL)isEdit {
     self.photoLibraryPicker = [[UIImagePickerController alloc] init];
-    self.photoLibraryPicker.allowsEditing = isEdit; // 相册选取是否截图
+//    self.photoLibraryPicker.allowsEditing = isEdit; // 相册选取是否截图
     self.photoLibraryPicker.delegate = self;
     //去掉毛玻璃效果 否则在ios11 下 全局设置了UIScrollViewContentInsetAdjustmentNever 导致导航栏遮住了内容视图
     self.photoLibraryPicker.navigationBar.translucent = NO;
@@ -186,7 +186,7 @@ static void *isCut =  @"isCut"; //截取
     else{
         editedimage = info[@"UIImagePickerControllerOriginalImage"];
     }
-    __block NSData *imageData = UIImageJPEGRepresentation(editedimage, 0.0001);//首次进行压缩
+    __block NSData *imageData = UIImageJPEGRepresentation(editedimage, 0.5);//首次进行压缩
     __block UIImage *image = [UIImage imageWithData:imageData];
     //图片限制大小不超过 1M     CGFloat  kb =   data.lenth / 1000;  计算kb方法 os 按照千进制计算
     
@@ -218,11 +218,11 @@ static void *isCut =  @"isCut"; //截取
                                      
                                  }];
     }else{
-//        while (imageData.length/1000 > 1024) {
+        if (imageData.length/1000 > 1024 *3) {
 //            NSLog(@"图片超过1M 压缩");
             imageData = UIImageJPEGRepresentation(image, 0.1);
             image = [UIImage imageWithData:imageData];
-//        }
+        }
     }
     
     self.completionHandler(imageData, image);

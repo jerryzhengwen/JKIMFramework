@@ -115,8 +115,8 @@
 }
 
 - (void)fixImageViewFrame {
-    CGFloat imgW = _image.size.width;
-    CGFloat imgH = _image.size.height;
+    CGFloat imgW = ceil(_image.size.width);
+    CGFloat imgH = ceil(_image.size.height);
     CGFloat scale = 0.0;
     CGFloat W = 0.0;
     CGFloat H = 0.0;
@@ -136,8 +136,10 @@
             CGFloat min = MIN(imgH, self.scroll.frame.size.height);
             CGFloat max = MAX(imgH, self.scroll.frame.size.height);
             scale = min/max;
-            W = imgW * scale;
             H = self.scroll.frame.size.height;
+            W = imgW * scale;
+            W = (imgW * H)/imgH;
+            
         }
     }
     self.subImageView.frame = CGRectMake((self.scroll.frame.size.width - W)/2.0, (self.scroll.frame.size.height - H)/2.0, W, H);

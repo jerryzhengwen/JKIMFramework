@@ -141,6 +141,7 @@
     });
 }
 -(void)endDialogeClick {
+    dispatch_async(dispatch_get_main_queue(), ^{
     [self.view endEditing:YES];
     BOOL isCancel = [self.endDialogBtn.titleLabel.text isEqualToString:@"取消排队"]?YES:NO;
     self.alertView.content = isCancel ?@"您确定要取消排队吗？":@"您确定要结束对话吗？";
@@ -167,7 +168,8 @@
             }];
         }
     };
-    [[UIApplication sharedApplication].keyWindow addSubview:self.alertView]; 
+    [[UIApplication sharedApplication].keyWindow addSubview:self.alertView];
+        });
 }
 -(JYFaceView *)faceView {
     if (_faceView == nil) {
@@ -592,27 +594,26 @@
     };
     cell.clickCustomer = ^(NSString * customeName) {
             int visitorCustomer = customeName.intValue;
-            JKMessage *message = [JKMessage new];
-            message.content = [NSString stringWithFormat:@"%d",visitorCustomer];
-            [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:message robotMessageBlock:^(JKMessage *message, int count) {
+        
+            weakSelf.listMessage.messageType = JKMessageWord;
+            weakSelf.listMessage.whoSend = JK_Visitor;
+            weakSelf.listMessage.content = [NSString stringWithFormat:@"%d",visitorCustomer];
+            [JKIMSendHelp sendTextMessageWithMessageModel:weakSelf.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
+            messageFrame.hiddenTimeLabel = [weakSelf showTimeLabelWithModel:messageFrame];
+            messageFrame =  [weakSelf jisuanMessageFrame:messageFrame];
+            [weakSelf.dataFrameArray addObject:messageFrame];
+            [weakSelf tableViewMoveToLastPathNeedAnimated:YES];
+            }];
+        
+        if (!self.listMessage.to.length) {
+            [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:weakSelf.listMessage robotMessageBlock:^(JKMessage *message, int count) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-//                    if (!count) {
-//                        dispatch_async(dispatch_get_main_queue(), ^{
-//                            JKDialogModel * autoModel = [[JKDialogModel alloc] init];
-//                            JKMessageFrame *frameModel = [[JKMessageFrame alloc]init];
-//                            autoModel.content = message.content;
-//                            autoModel.whoSend = JK_SystemMarkShow;
-//                            autoModel.time = autoModel.time;
-//                            frameModel.message = autoModel;
-//                            [weakSelf.dataFrameArray addObject:frameModel];
-//                            [weakSelf tableViewMoveToLastPathNeedAnimated:YES];
-//                        });
-//                    }else{
-                        //再次进行机器人对话
-                        [weakSelf showRobotMessage:message count:count];
-//                    };
+                    //再次进行机器人对话
+                    [weakSelf showRobotMessage:message count:count];
                 });
             }];
+        }
+        
     };
     cell.richText = ^{
         if (weakSelf.customerName.length) {
@@ -654,6 +655,7 @@
 }
 /** 下方的view初始位置 */
 - (void)bottomViewInitialLayout{
+    dispatch_async(dispatch_get_main_queue(), ^{
     if (kStatusBarAndNavigationBarHeight == 88) {
         CGFloat safeSeparation = 24;
         
@@ -664,9 +666,12 @@
     }
     self.bottomView.frame = CGRectMake(0, self.tableView.bottom, [UIScreen mainScreen].bounds.size.width, BottomToolHeight);
     [self.view endEditing:YES];
+    });
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    
+    if (indexPath.row >self.dataFrameArray.count - 1) {
+        return 0;
+    }
     JKMessageFrame * messge = self.dataFrameArray[indexPath.row];
     JKDialogModel * message = messge.message;
     if (message.messageType == JKMessageLineUP) {
@@ -1146,6 +1151,7 @@
 }
 
 - (void)UIKeyboardWillShowNotification:(NSNotification *)noti {
+    dispatch_async(dispatch_get_main_queue(), ^{
     self.faceButton.selected = NO;
     self.moreBtn.selected = NO;
     NSString *filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"icon_expression"];
@@ -1178,10 +1184,12 @@
     }else {
         [self delayScrollew];
     }
+        });
 }
 
 
 - (void)keyBoardWillHidden:(NSNotification *)noti {
+    dispatch_async(dispatch_get_main_queue(), ^{
     double duration = [noti.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
     __weak typeof(self) weakSelf = self;
     CGFloat safeSeparation = 0.0f;
@@ -1210,6 +1218,7 @@
     /*
     CGFloat assoiateHeight = CGRectGetHeight(weakSelf.assoiateView.frame);
     weakSelf.assoiateView.frame = CGRectMake(0, self.bottomView.top- assoiateHeight, self.view.width, assoiateHeight);*/
+        });
 }
 
 /**
@@ -1277,85 +1286,89 @@
     return _faceButton;
 }
 -(void)plugInBtn:(UIButton *)button {
-    button.selected = !button.isSelected;
-    float duration = 0.1;
-    if (self.textView.isFirstResponder) {
-        [self.textView resignFirstResponder];
-        duration = 0.0;
-    }
-    if (self.faceButton.selected) {
-        self.faceButton.selected = !self.faceButton.selected;
-        NSString *facePath = [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"icon_expression"];
-        [self.faceButton setImage:[UIImage imageWithContentsOfFile:facePath] forState:UIControlStateNormal];
-        self.tableView.frame = CGRectMake(0, self.tableView.top, self.tableView.width, self.tableView.height + 145);
-        self.bottomView.frame = CGRectMake(0, self.tableView.bottom, self.bottomView.width, self.bottomView.height);
-        self.faceView.frame = CGRectMake(self.faceView.top, self.bottomView.bottom, self.faceView.width, self.faceView.height);
-    }
-    NSString *filePatch = @"";
-    if (button.selected) {
-        self.plugInView.hidden = NO;
-        filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"jkmoreclick"];
-        [UIView performWithoutAnimation:^{
-            self.tableView.frame = CGRectMake(0, self.tableView.top, self.tableView.width, self.tableView.height - 109);
-            self.bottomView.frame = CGRectMake(0, self.tableView.bottom, self.bottomView.width, self.bottomView.height);
-        }];
-        [UIView animateWithDuration:duration animations:^{
-            self.plugInView.frame = CGRectMake(0, self.bottomView.bottom, self.plugInView.width, self.plugInView.height);
-        }];
-    }else {
-        filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"jk_morebtn"];
-        [UIView performWithoutAnimation:^{
-            self.tableView.frame = CGRectMake(0, self.tableView.top, self.tableView.width, self.tableView.height + 109);
-            self.bottomView.frame = CGRectMake(0, self.tableView.bottom, self.bottomView.width, self.bottomView.height);
-        }];
-        
-        [UIView animateWithDuration:0.1 animations:^{
-            self.plugInView.frame = CGRectMake(0, self.bottomView.bottom, self.plugInView.width, self.plugInView.height);
-            self.plugInView.hidden = YES;
-        }];
-    }
-    [button setImage:[UIImage imageWithContentsOfFile:filePatch] forState:UIControlStateNormal];
-}
--(void)clickFaceBtn:(UIButton *)button {
-    button.selected = !button.isSelected;
-    float duration = 0.1;
-    if (self.textView.isFirstResponder) {
-        [self.textView resignFirstResponder];
-        duration = 0.0;
-    }
-    if (self.moreBtn.selected) {
-        self.moreBtn.selected = !self.moreBtn.selected;
-        NSString *morePath = [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"jk_morebtn"];
-        [self.moreBtn setImage:[UIImage imageWithContentsOfFile:morePath] forState:UIControlStateNormal];
-        self.tableView.frame = CGRectMake(0, self.tableView.top, self.tableView.width, self.tableView.height + 109);
-        self.bottomView.frame = CGRectMake(0, self.tableView.bottom, self.bottomView.width, self.bottomView.height);
-        self.plugInView.frame = CGRectMake(0, self.bottomView.bottom, self.plugInView.width, self.plugInView.height);
-    }
-    NSString *filePatch = @"";
-    if (button.selected) {
-        self.faceView.hidden = NO;
-        filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"icon_expression_hl"];
-        [UIView performWithoutAnimation:^{
-            self.tableView.frame = CGRectMake(0, self.tableView.top, self.tableView.width, self.tableView.height - 145);
-            self.bottomView.frame = CGRectMake(0, self.tableView.bottom, self.bottomView.width, self.bottomView.height);
-        }];
-        
-        [UIView animateWithDuration:duration animations:^{
-            self.faceView.frame = CGRectMake(0, self.bottomView.bottom, self.faceView.width, self.faceView.height);
-        }];
-    }else {
-        filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"icon_expression"];
-        [UIView performWithoutAnimation:^{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        button.selected = !button.isSelected;
+        float duration = 0.1;
+        if (self.textView.isFirstResponder) {
+            [self.textView resignFirstResponder];
+            duration = 0.0;
+        }
+        if (self.faceButton.selected) {
+            self.faceButton.selected = !self.faceButton.selected;
+            NSString *facePath = [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"icon_expression"];
+            [self.faceButton setImage:[UIImage imageWithContentsOfFile:facePath] forState:UIControlStateNormal];
             self.tableView.frame = CGRectMake(0, self.tableView.top, self.tableView.width, self.tableView.height + 145);
             self.bottomView.frame = CGRectMake(0, self.tableView.bottom, self.bottomView.width, self.bottomView.height);
-        }];
-        
-        [UIView animateWithDuration:0.1 animations:^{
-            self.faceView.frame = CGRectMake(0, self.bottomView.bottom, self.faceView.width, self.faceView.height);
-            self.faceView.hidden = YES;
-        }];
-    }
-    [button setImage:[UIImage imageWithContentsOfFile:filePatch] forState:UIControlStateNormal];
+            self.faceView.frame = CGRectMake(self.faceView.top, self.bottomView.bottom, self.faceView.width, self.faceView.height);
+        }
+        NSString *filePatch = @"";
+        if (button.selected) {
+            self.plugInView.hidden = NO;
+            filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"jkmoreclick"];
+            [UIView performWithoutAnimation:^{
+                self.tableView.frame = CGRectMake(0, self.tableView.top, self.tableView.width, self.tableView.height - 109);
+                self.bottomView.frame = CGRectMake(0, self.tableView.bottom, self.bottomView.width, self.bottomView.height);
+            }];
+            [UIView animateWithDuration:duration animations:^{
+                self.plugInView.frame = CGRectMake(0, self.bottomView.bottom, self.plugInView.width, self.plugInView.height);
+            }];
+        }else {
+            filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"jk_morebtn"];
+            [UIView performWithoutAnimation:^{
+                self.tableView.frame = CGRectMake(0, self.tableView.top, self.tableView.width, self.tableView.height + 109);
+                self.bottomView.frame = CGRectMake(0, self.tableView.bottom, self.bottomView.width, self.bottomView.height);
+            }];
+            
+            [UIView animateWithDuration:0.1 animations:^{
+                self.plugInView.frame = CGRectMake(0, self.bottomView.bottom, self.plugInView.width, self.plugInView.height);
+                self.plugInView.hidden = YES;
+            }];
+        }
+        [button setImage:[UIImage imageWithContentsOfFile:filePatch] forState:UIControlStateNormal];
+    });
+}
+-(void)clickFaceBtn:(UIButton *)button {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        button.selected = !button.isSelected;
+        float duration = 0.1;
+        if (self.textView.isFirstResponder) {
+            [self.textView resignFirstResponder];
+            duration = 0.0;
+        }
+        if (self.moreBtn.selected) {
+            self.moreBtn.selected = !self.moreBtn.selected;
+            NSString *morePath = [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"jk_morebtn"];
+            [self.moreBtn setImage:[UIImage imageWithContentsOfFile:morePath] forState:UIControlStateNormal];
+            self.tableView.frame = CGRectMake(0, self.tableView.top, self.tableView.width, self.tableView.height + 109);
+            self.bottomView.frame = CGRectMake(0, self.tableView.bottom, self.bottomView.width, self.bottomView.height);
+            self.plugInView.frame = CGRectMake(0, self.bottomView.bottom, self.plugInView.width, self.plugInView.height);
+        }
+        NSString *filePatch = @"";
+        if (button.selected) {
+            self.faceView.hidden = NO;
+            filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"icon_expression_hl"];
+            [UIView performWithoutAnimation:^{
+                self.tableView.frame = CGRectMake(0, self.tableView.top, self.tableView.width, self.tableView.height - 145);
+                self.bottomView.frame = CGRectMake(0, self.tableView.bottom, self.bottomView.width, self.bottomView.height);
+            }];
+            
+            [UIView animateWithDuration:duration animations:^{
+                self.faceView.frame = CGRectMake(0, self.bottomView.bottom, self.faceView.width, self.faceView.height);
+            }];
+        }else {
+            filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"icon_expression"];
+            [UIView performWithoutAnimation:^{
+                self.tableView.frame = CGRectMake(0, self.tableView.top, self.tableView.width, self.tableView.height + 145);
+                self.bottomView.frame = CGRectMake(0, self.tableView.bottom, self.bottomView.width, self.bottomView.height);
+            }];
+            
+            [UIView animateWithDuration:0.1 animations:^{
+                self.faceView.frame = CGRectMake(0, self.bottomView.bottom, self.faceView.width, self.faceView.height);
+                self.faceView.hidden = YES;
+            }];
+        }
+        [button setImage:[UIImage imageWithContentsOfFile:filePatch] forState:UIControlStateNormal];
+    });
 }
 -(UIButton *)moreBtn {
     if (_moreBtn == nil) {
