@@ -605,7 +605,7 @@
             [weakSelf tableViewMoveToLastPathNeedAnimated:YES];
             }];
         
-        if (!self.listMessage.to.length) {
+        if (!weakSelf.listMessage.to.length) {
             [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:weakSelf.listMessage robotMessageBlock:^(JKMessage *message, int count) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     //再次进行机器人对话
@@ -1196,16 +1196,23 @@
     if (kStatusBarAndNavigationBarHeight == 88) {
         safeSeparation = 24.0f;
     }
-    [UIView performWithoutAnimation:^{
-        self.tableView.size = CGSizeMake( [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height - BottomToolHeight - kStatusBarAndNavigationBarHeight - safeSeparation);
-    }];
+  
     
     if (self.faceButton.selected || self.moreBtn.selected) {
         [UIView performWithoutAnimation:^{
-            self.tableView.size = CGSizeMake( [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height - BottomToolHeight - kStatusBarAndNavigationBarHeight - safeSeparation);
-            self.bottomView.frame = CGRectMake(self.bottomView.left, self.tableView.bottom, self.tableView.width, self.bottomView.height);
+            CGFloat faceHeight = self.faceButton.selected ? 145 : 109;
+            self.tableView.size = CGSizeMake( [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height - BottomToolHeight - kStatusBarAndNavigationBarHeight - safeSeparation - faceHeight);
+            self.bottomView.frame = CGRectMake(0, self.tableView.bottom, self.bottomView.width, self.bottomView.height);
+            if (self.faceButton.selected) {
+                   self.faceView.frame = CGRectMake(0, self.bottomView.bottom, self.faceView.width, self.faceView.height);
+            }else {
+                self.plugInView.frame = CGRectMake(0, self.bottomView.bottom, self.faceView.width, self.faceView.height);
+            }
         }];
     }else {
+        [UIView performWithoutAnimation:^{
+                self.tableView.size = CGSizeMake( [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height - BottomToolHeight - kStatusBarAndNavigationBarHeight - safeSeparation);
+        }];
         [UIView animateWithDuration:duration animations:^{
             
             weakSelf.bottomView.frame = CGRectMake(0, weakSelf.tableView.bottom, [UIScreen mainScreen].bounds.size.width, BottomToolHeight);
@@ -1351,7 +1358,7 @@
                 self.tableView.frame = CGRectMake(0, self.tableView.top, self.tableView.width, self.tableView.height - 145);
                 self.bottomView.frame = CGRectMake(0, self.tableView.bottom, self.bottomView.width, self.bottomView.height);
             }];
-            
+
             [UIView animateWithDuration:duration animations:^{
                 self.faceView.frame = CGRectMake(0, self.bottomView.bottom, self.faceView.width, self.faceView.height);
             }];
