@@ -644,13 +644,13 @@
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [self.view endEditing:YES];
-    if (self.faceView.hidden == NO) {
-        self.faceView.hidden = YES;
-        self.faceButton.selected = NO;
-        NSString *filePatch = [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"icon_expression"];
-        [self.faceButton setImage:[UIImage imageWithContentsOfFile:filePatch] forState:UIControlStateNormal];
-        [self bottomViewInitialLayout];
-    }
+//    if (self.faceView.hidden == NO) {
+//        self.faceView.hidden = YES;
+//        self.faceButton.selected = NO;
+//        NSString *filePatch = [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"icon_expression"];
+//        [self.faceButton setImage:[UIImage imageWithContentsOfFile:filePatch] forState:UIControlStateNormal];
+//        [self bottomViewInitialLayout];
+//    }
     
 }
 /** 下方的view初始位置 */
@@ -861,16 +861,24 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         
         @try {
-            for (int i = 0; i < self.dataFrameArray.count;i++) {
-                JKMessageFrame * message = self.dataFrameArray[i];
-                if (message.message.messageType == JKMessageImage) {
-//                    NSLog(@"-shuaxin---%lf",message.contentF.size.height);
-                    if ([message.message.content containsString:imgUrl]) {
-                         NSIndexPath *index = [NSIndexPath indexPathForRow:i inSection:0];
-                        [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:index,nil] withRowAnimation:UITableViewRowAnimationNone];
-                    }
-                }
-            }
+            dispatch_queue_t q = dispatch_queue_create("chuan_xing", DISPATCH_QUEUE_SERIAL);
+            [self.refreshQ cancelAllOperations];
+            [self.refreshQ addOperationWithBlock:^{
+                dispatch_async(q, ^{
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self.tableView reloadData];
+                    });
+                });
+            }];
+//            for (int i = 0; i < self.dataFrameArray.count;i++) {
+//                JKMessageFrame * message = self.dataFrameArray[i];
+//                if (message.message.messageType == JKMessageImage) {
+//                    if ([message.message.content containsString:imgUrl]) {
+//                         NSIndexPath *index = [NSIndexPath indexPathForRow:i inSection:0];
+//                        [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:index,nil] withRowAnimation:UITableViewRowAnimationNone];
+//                    }
+//                }
+//            }
         }
         @catch (NSException *exception) {
 //            NSLog(@"----cash");
@@ -898,6 +906,11 @@
 }
 #pragma -
 #pragma mark - 消息的Delegate
+-(void)updateVisitorInfoToCustomerChat {
+    if (self.listMessage.to.length) {
+        [[JKConnectCenter sharedJKConnectCenter] upDateVisitorInfo:self.listMessage];
+    }
+}
 -(void)whetherHistoryRoomNeedUpdate {
     dispatch_async(dispatch_get_main_queue(), ^{
         if (self.isLineUp) {
@@ -959,6 +972,9 @@
                     frameModel.cellHeight = 0;
                 }
                 [self.dataFrameArray addObject:frameModel];
+//                if (self.dataFrameArray.count >= 11) {//需要删除的
+//                    break;
+//                }
             }
             //        [self reloadPath];
             //    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -966,7 +982,7 @@
             //        });
         });
     } @catch (NSException *exception) {
-        
+        NSLog(@"");
     } @finally {
         
     }
