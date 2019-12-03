@@ -87,7 +87,26 @@
     
     [self.tableView addObserver:self forKeyPath:@"frame" options:NSKeyValueObservingOptionNew context:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textViewEditeAction)name:UITextViewTextDidChangeNotification object:nil];
+    
+//    UIButton *button1 =[UIButton buttonWithType:UIButtonTypeCustom];
+//    [button1 setTitle:@"更新用户信息" forState:UIControlStateNormal];
+//    [button1 addTarget:self action:@selector(changeCustom) forControlEvents:UIControlEventTouchUpInside];
+//    button1.center = self.view.center;
+//    button1.frame = CGRectMake(self.view.centerX - 100, self.view.centerY + 150, 150, 150);
+//    button1.backgroundColor = [UIColor redColor];
+//    [self.tableView addSubview:button1];
 }
+//-(void)changeCustom {
+//    JKCustomer * custom = [[JKCustomer alloc] init];
+//    custom.visitor_name = @"E654IjMb8Qzt\/Pamc21t9TljnS76DULTB52cnNWjHh6DQ9bUEwbByPcQblkESgSH66Qwy0opzrwzxnfEifWVpT6UL8Ld1hsiH6w1ORWpOvj\/zhyhLiY1RAsqbguuE9TEqHSlUzP8SGv4fh\/DIw0m3AWAszuNDIzT9TIAl0SsP\/k=";
+//    custom.visitor_id = @"gnEDVdkWdQ\/nzzASKQBIrXuZ3SzZRvoVXhydhUe3VBuLgQKSCU5\/oJ+yR62fKZekJ8GOCan91U5y6TbiZwH4m3ph8A1QdU9thO8rD2agkzanXu17nIEdABi5jaIK+vy09rWWWGU6mTskwFhbKmaKCQbfHigPdPHYCVNR8XKXNns=";
+//    custom.mobile_phone = @"gnEDVdkWdQ\/nzzASKQBIrXuZ3SzZRvoVXhydhUe3VBuLgQKSCU5\/oJ+yR62fKZekJ8GOCan91U5y6TbiZwH4m3ph8A1QdU9thO8rD2agkzanXu17nIEdABi5jaIK+vy09rWWWGU6mTskwFhbKmaKCQbfHigPdPHYCVNR8XKXNns=";
+//    [[JKConnectCenter sharedJKConnectCenter] JKIM_statueChangeWithCustomer:custom];
+//}
+
+
+
+
 -(void)textViewEditeAction {
     if (self.textView.text.length >= 1000) {
         self.textView.text = [self.textView.text substringToIndex:1000];
@@ -906,6 +925,16 @@
 }
 #pragma -
 #pragma mark - 消息的Delegate
+-(void)updateContextIDReSendContent:(NSString *)content {
+    __weak JKDialogueViewController *weakSelf = self;
+    self.listMessage.content = content;
+    [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:self.listMessage robotMessageBlock:^(JKMessage *messageData, int count) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            //展示机器人消息
+            [weakSelf showRobotMessage:messageData count:count];
+        });
+    }];
+}
 -(void)updateVisitorInfoToCustomerChat {
     if (self.listMessage.to.length) {
         [[JKConnectCenter sharedJKConnectCenter] upDateVisitorInfo:self.listMessage];
@@ -1167,7 +1196,7 @@
 }
 
 - (void)UIKeyboardWillShowNotification:(NSNotification *)noti {
-    dispatch_async(dispatch_get_main_queue(), ^{
+//    dispatch_async(dispatch_get_main_queue(), ^{
     self.faceButton.selected = NO;
     self.moreBtn.selected = NO;
     NSString *filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"icon_expression"];
@@ -1200,7 +1229,7 @@
     }else {
         [self delayScrollew];
     }
-        });
+//        });
 }
 
 
@@ -1535,8 +1564,8 @@
 -(void)getSimilarWithResult:(id)result {
     dispatch_async(dispatch_get_main_queue(), ^{
         NSArray *array = [NSJSONSerialization JSONObjectWithData:result options:kNilOptions error:nil];
-        if ([array containsObject:@"sys_err_06"]) {
-            [[JKConnectCenter sharedJKConnectCenter] initDialogeWIthSatisFaction];
+        if ([array containsObject:@"sys_err_06"]) {//g服务端已去掉
+//            [[JKConnectCenter sharedJKConnectCenter] initDialogeWIthSatisFaction];
             return ;
         }
         if (!self.textView.text.length) {

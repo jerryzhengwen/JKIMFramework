@@ -63,6 +63,13 @@ typedef void(^JKInitCompleteBlock)(BOOL);
  */
 @required
 - (void)receiveNewListChat:(JKMessage *_Nullable)message;
+
+/**
+ context_id过期，重新发送
+
+ @param content 需要重新发送的内容
+ */
+- (void)updateContextIDReSendContent:(NSString *)content;
 @required
 /**
  取消排队成功
@@ -252,6 +259,8 @@ NS_ASSUME_NONNULL_BEGIN
 -(NSString *)JKIM_getContext_id;
 
 -(void)reInitHistoryRoomWhetherUpdate;
+
+-(void)needReSendContent:(NSString *)content;
 
 @end
 
