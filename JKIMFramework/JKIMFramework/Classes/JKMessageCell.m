@@ -151,7 +151,17 @@
         }else {
 //            self.btnContent.contentTV.text = messageFrame.message.content;
             self.btnContent.contentTV.attributedText = richText.attributedText;
+//             if (message.whoSend == JK_Visitor) {
+//                 self.btnContent.contentTV.linkTextAttributes = @{NSForegroundColorAttributeName:[UIColor whiteColor]};
+//             }else {
+//                 self.btnContent.contentTV.linkTextAttributes = @{NSForegroundColorAttributeName:UIColorFromRGB(0x3E3E3E)};
+//             }
         }
+//        BOOL isHttpText =   [self isHttpUrlWithContent:message.content];
+//        if (isHttpText) {
+            self.btnContent.contentTV.linkTextAttributes = @{NSForegroundColorAttributeName:UIColorFromRGB(0x34A2FF)};
+//        }
+        
     }
     
     CGFloat margin = 12;
@@ -461,6 +471,24 @@
         return NO;
     }
 }
+//-(BOOL)isHttpUrlWithContent:(NSString *)content {
+//    if (!content) {
+//        return NO;
+//    }
+////    NSError *error = NULL; //<a[^>]*>([^<]+)
+////    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"^((https|http|ftp|rtsp|mms)?:\/\/)[^\s]+" options:NSRegularExpressionCaseInsensitive error:&error];
+////    NSTextCheckingResult *result = [regex firstMatchInString:content options:0 range:NSMakeRange(0, [content length])];
+//    if ([content containsString:@"http"]||[content containsString:@"ftp"]||[content containsString:@"rtsp"]||[content containsString:@"mms"]) {
+//        return YES;
+//    }else {
+//        return NO;
+//    }
+////    if (result) {
+////        return YES;
+////    }else {
+////        return NO;
+////    }
+//}
 - (NSMutableAttributedString *)parseHtmlStr:(NSString *)htmlStr {
     NSMutableAttributedString *attributedString;
     @try {

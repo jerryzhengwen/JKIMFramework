@@ -79,7 +79,7 @@ typedef void(^JKInitCompleteBlock)(BOOL);
 - (void)whetherHistoryRoomNeedUpdate;
 
 /** 在对话的过程中更新用户信息*/
-- (void)updateVisitorInfoToCustomerChat;
+//- (void)updateVisitorInfoToCustomerChat;
 @end
 
 
@@ -87,7 +87,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JKConnectCenter : NSObject
 
-
+@property(nonatomic,copy) NSString *roomId;
 
 @property (nullable,weak)id <ConnectCenterDelegate> delegate;
 /**
@@ -167,7 +167,7 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)sendMessage:(JKMessage *)message;
 
 /** 发送消息到房间，告诉坐席更新ID @param message 发送消息体 */
--(void)upDateVisitorInfo:(JKMessage *)message;
+//-(void)upDateVisitorInfo:(JKMessage *)message;
 
 -(void)receiveHistoryArray:(NSArray<JKMessage *> *)messageArr;
 

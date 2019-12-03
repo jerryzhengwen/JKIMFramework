@@ -935,11 +935,11 @@
         });
     }];
 }
--(void)updateVisitorInfoToCustomerChat {
-    if (self.listMessage.to.length) {
-        [[JKConnectCenter sharedJKConnectCenter] upDateVisitorInfo:self.listMessage];
-    }
-}
+//-(void)updateVisitorInfoToCustomerChat {
+//    if (self.listMessage.to.length) {
+//        [[JKConnectCenter sharedJKConnectCenter] upDateVisitorInfo:self.listMessage];
+//    }
+//}
 -(void)whetherHistoryRoomNeedUpdate {
     dispatch_async(dispatch_get_main_queue(), ^{
         if (self.isLineUp) {
