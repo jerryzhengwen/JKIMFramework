@@ -218,11 +218,16 @@ static void *isCut =  @"isCut"; //截取
                                      
                                  }];
     }else{
-        if (imageData.length/1000 > 1024 *3) {
-//            NSLog(@"图片超过3M 压缩");
-            imageData = UIImageJPEGRepresentation(image, 0.6);
-            image = [UIImage imageWithData:imageData];
+        BOOL isBigImageSize = YES;
+        while (isBigImageSize) {
+            if (imageData.length/1000 > 1024 *3) {
+                imageData = UIImageJPEGRepresentation(image, 0.6);
+                image = [UIImage imageWithData:imageData];
+            }else {
+                isBigImageSize = NO;
+            }
         }
+        
     }
     
     self.completionHandler(imageData, image);

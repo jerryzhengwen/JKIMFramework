@@ -79,7 +79,7 @@
     }];
     [refresh setTitle:@"下拉查看更多历史消息" forState:MJRefreshStatePulling];
     self.tableView.mj_header = refresh;
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reneedInit) name:UIApplicationDidBecomeActiveNotification object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reneedInit) name:UIApplicationDidBecomeActiveNotification object:nil];
     
     self.lineUpView.frame =CGRectMake(0, CGRectGetMaxY(self.tableView.frame) - 76, self.view.width, 76);
     self.lineUpView.hidden = YES;
@@ -592,8 +592,9 @@
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.delegate = self;
-        JKMessageFrame * cellMessageFrame = self.dataFrameArray[indexPath.row];
-        [cell setMessageFrame:cellMessageFrame];
+//        JKMessageFrame * cellMessageFrame = self.dataFrameArray[indexPath.row];
+//        NSLog(@"-33333--刷新的--%ld--%lf",(long)indexPath.row,messageFrame.contentF.size.height);
+        [cell setMessageFrame:messageFrame];
         return cell;
     }
     static NSString *indentifier = @"JKMessageCell";
@@ -877,27 +878,39 @@
 }
 -(void)cellCompleteLoadImgeUrl:(NSString *)imgUrl {
 //    [UIView performWithoutAnimation:^{
-    dispatch_async(dispatch_get_main_queue(), ^{
-        
+//    dispatch_async(dispatch_get_main_queue(), ^{
+    
         @try {
+//            dispatch_queue_t q = dispatch_queue_create("chuan_xing", DISPATCH_QUEUE_SERIAL);
+//            [self.refreshQ cancelAllOperations];
+//            [self.refreshQ addOperationWithBlock:^{
+//                dispatch_async(q, ^{
+//                    dispatch_async(dispatch_get_main_queue(), ^{
+//                        [self.tableView reloadData];
+//                    });
+//                });
+//            }];
+            
             dispatch_queue_t q = dispatch_queue_create("chuan_xing", DISPATCH_QUEUE_SERIAL);
-            [self.refreshQ cancelAllOperations];
-            [self.refreshQ addOperationWithBlock:^{
-                dispatch_async(q, ^{
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [self.tableView reloadData];
-                    });
+            dispatch_async(q, ^{
+            for (int i = 0; i < self.dataFrameArray.count;i++) {
+                JKMessageFrame * message = self.dataFrameArray[i];
+                if (message.message.messageType == JKMessageImage) {
+                    if ([message.message.content containsString:imgUrl]) {
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            NSIndexPath *index = [NSIndexPath indexPathForRow:i inSection:0];
+//                            NSLog(@"--刷新的--%d",i);
+                            [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:index,nil] withRowAnimation:UITableViewRowAnimationNone];
+//                            JKMessageImageCell * cell = [self.tableView cellForRowAtIndexPath:index];
+//                            if (cell) {
+//                                [cell updateConstraints];
+//                            }
+                            
+                        });
+                    }
+                }
+            }
                 });
-            }];
-//            for (int i = 0; i < self.dataFrameArray.count;i++) {
-//                JKMessageFrame * message = self.dataFrameArray[i];
-//                if (message.message.messageType == JKMessageImage) {
-//                    if ([message.message.content containsString:imgUrl]) {
-//                         NSIndexPath *index = [NSIndexPath indexPathForRow:i inSection:0];
-//                        [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:index,nil] withRowAnimation:UITableViewRowAnimationNone];
-//                    }
-//                }
-//            }
         }
         @catch (NSException *exception) {
 //            NSLog(@"----cash");
@@ -905,7 +918,7 @@
         @finally {
             
         }
-        });
+//        });
 //    }];
 }
 - (void)cellCompleteLoadImage:(JKMessageCell *)cell{

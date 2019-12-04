@@ -31,7 +31,7 @@
     
     self.lineUpBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     CAGradientLayer *gradientLayer =  [CAGradientLayer layer];
-    gradientLayer.frame = CGRectMake(0, 0, MaxContentWidth + 20, 34);
+    gradientLayer.frame = CGRectMake(0, 0, MaxContentWidth + 30, 34);
     gradientLayer.startPoint = CGPointMake(0, 0);
     gradientLayer.endPoint = CGPointMake(1, 0);
     gradientLayer.locations = @[@(0.3),@(1.0)];//渐变点

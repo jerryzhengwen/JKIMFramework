@@ -88,7 +88,7 @@
     self.btnContent.backImageView.hidden = YES;
     
     self.btnContent.frame = messageFrame.contentF;
-    
+//    NSLog(@"-------111111-%lf",messageFrame.contentF.size.height);
 //    CGFloat margin = 12;
     self.btnContent.backImageView.hidden = NO;
     self.btnContent.contentTV.hidden = YES;
@@ -159,7 +159,7 @@
             
             modelFrame.message.imageWidth  = [[sizeArr objectAtIndex:0] floatValue];
             modelFrame.message.imageHeight = [[sizeArr objectAtIndex:1] floatValue];
-            
+        
             button.backImageView.image = image;
             
             if (modelFrame.message.whoSend == JK_Visitor) {
@@ -182,6 +182,6 @@
 //            }
         }
     }];
-    
+//    NSLog(@"-------22222-%lf",modelFrame.contentF.size.height);
 }
 @end

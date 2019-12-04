@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, retain)JKMessageContent *btnContent;
 
-@property (nonatomic, retain)JKMessageFrame *messageFrame;
+@property (nonatomic, strong)JKMessageFrame *messageFrame;
 
 @property (nonatomic, assign)id<JKMessageImageCellDelegate>delegate;
 @end
