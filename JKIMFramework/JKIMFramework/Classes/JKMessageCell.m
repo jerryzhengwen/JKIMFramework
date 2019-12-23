@@ -256,14 +256,16 @@
 -(BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange {
     NSString * urlStr = URL.absoluteString;
     if ([urlStr isEqualToString:JKGetBussiness]){
-        if (self.clickCustomer) {
+        if (self.clickCustomer && (!self.messageFrame.isClickOnce)) {
+            self.messageFrame.isClickOnce = YES;
             NSString *clickText = [textView.text substringWithRange:characterRange];
             self.clickCustomer(clickText);
         }
         return NO;
     }
     if ([urlStr isEqualToString:JKContinueLineUp]) { //继续排队
-        if (self.lineUpBlock) {
+        if (self.lineUpBlock&& (!self.messageFrame.isClickOnce)) {
+            self.messageFrame.isClickOnce = YES;
             self.lineUpBlock();
         }
         return NO;

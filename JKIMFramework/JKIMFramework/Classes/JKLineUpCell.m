@@ -74,10 +74,10 @@
     self.backView.layer.mask = maskLayer;
 }
 -(void)lineUpCustomer:(UIButton *)button {
-    if (self.model.isClickLineUpBtn) {
+    if (self.model.isClickOnce) {
         return;
     }
-    self.model.isClickLineUpBtn = YES;
+    self.model.isClickOnce = YES;
     if (self.lineUpBlock) {
         self.lineUpBlock();
     }

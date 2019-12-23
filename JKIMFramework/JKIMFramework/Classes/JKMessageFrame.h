@@ -50,5 +50,5 @@
 @property (nonatomic, assign) BOOL isSubmit;
 @property (nonatomic, assign) BOOL isFirstResign;
 /** 点击了转人工按钮，这个按钮就不让再点 */
-@property (nonatomic, assign) BOOL isClickLineUpBtn;
+@property (nonatomic, assign) BOOL isClickOnce;
 @end

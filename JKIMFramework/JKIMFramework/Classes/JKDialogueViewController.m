@@ -216,6 +216,7 @@
     self.textView.returnKeyType = UIReturnKeySend;
     self.textView.delegate = self;
     self.textView.frame = CGRectMake(16, 8, [UIScreen mainScreen].bounds.size.width - 32, 40);
+    self.textView.textContainerInset = UIEdgeInsetsMake(10,16, 10, 16);
     self.textView.text = self.placeHolerStr;
     self.textView.textColor = UIColorFromRGB(0x9B9B9B);
     self.moreBtn.hidden = YES;
@@ -592,8 +593,6 @@
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.delegate = self;
-//        JKMessageFrame * cellMessageFrame = self.dataFrameArray[indexPath.row];
-//        NSLog(@"-33333--刷新的--%ld--%lf",(long)indexPath.row,messageFrame.contentF.size.height);
         [cell setMessageFrame:messageFrame];
         return cell;
     }
@@ -1333,8 +1332,6 @@
         _textView.keyboardType = UIKeyboardTypeDefault;
         _textView.textColor = [UIColor blackColor];
         _textView.delegate = self;
-        _textView.layer.borderWidth = 0.5;
-        _textView.layer.borderColor = [[UIColor colorWithRed:196/255.0 green:196/255.0 blue:196/255.0 alpha:1.0] CGColor];
         _textView.layer.cornerRadius = 19;
     }
     return _textView;
@@ -1726,11 +1723,27 @@
     dispatch_once(&onceToken, ^{//生成一个同于计算文本高度的label
         stringLabel = [[UITextView alloc] init];
         stringLabel.font = font;
+//        stringLabel.textContainerInset = UIEdgeInsetsZero;
+//        stringLabel.textContainer.lineFragmentPadding = 0;
     });
-    
+
     stringLabel.attributedText = attributedString;
     CGSize size = [stringLabel sizeThatFits:CGSizeMake(width, 0)];
     CGSize ceilSize = CGSizeMake(ceil(size.width), ceil(size.height));
     return ceilSize;
+    
+//    NSString *str = attributedString.string;
+//    str = [NSString stringWithFormat:@"<head><style>img{width:%f !important;height:auto}</style></head>%@",[UIScreen mainScreen].bounds.size.width,str];
+//
+//    NSMutableAttributedString *htmlString =[[NSMutableAttributedString alloc] initWithData:[str dataUsingEncoding:NSUTF8StringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType, NSCharacterEncodingDocumentAttribute:[NSNumber numberWithInt:NSUTF8StringEncoding]} documentAttributes:NULL error:nil];
+//    [htmlString addAttributes:@{NSFontAttributeName:font} range:NSMakeRange(0, htmlString.length)];
+//    //设置行间距
+//    NSMutableParagraphStyle *paragraphStyle1 = [[NSMutableParagraphStyle alloc] init];
+//    [paragraphStyle1 setLineSpacing:0];
+//    [htmlString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle1 range:NSMakeRange(0, [htmlString length])];
+//    //    [htmlString addAttribute:<#(nonnull NSAttributedStringKey)#> value:<#(nonnull id)#> range:<#(NSRange)#>];
+//    CGSize contextSize = [htmlString boundingRectWithSize:(CGSize){width, CGFLOAT_MAX} options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading context:nil].size;
+//    return contextSize;
+    
 }
 @end
