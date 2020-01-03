@@ -108,8 +108,6 @@
 
 
 -(void)textViewEditeAction {
-    self.textView.text = [self.textView.text stringByReplacingOccurrencesOfString:@"<" withString:@"《"];
-    self.textView.text = [self.textView.text stringByReplacingOccurrencesOfString:@">" withString:@"》"];
     if (self.textView.text.length >= 1000) {
         self.textView.text = [self.textView.text substringToIndex:1000];
     }
@@ -334,6 +332,8 @@
     if (self.textView.text.length < 1) {
         return;
     }
+    self.textView.text = [self.textView.text stringByReplacingOccurrencesOfString:@"<" withString:@"《"];
+    self.textView.text = [self.textView.text stringByReplacingOccurrencesOfString:@">" withString:@"》"];
     BOOL isAll = [self.view isEmpty:self.textView.text];
     if (isAll) {
         return;
