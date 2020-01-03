@@ -494,6 +494,8 @@
 - (NSMutableAttributedString *)parseHtmlStr:(NSString *)htmlStr {
     NSMutableAttributedString *attributedString;
     @try {
+//        htmlStr = [htmlStr stringByReplacingOccurrencesOfString:@"</br>" withString:@"\n"];
+//        attributedString = [[NSMutableAttributedString alloc] initWithString:htmlStr];
         attributedString  = [[NSMutableAttributedString alloc] initWithData:[htmlStr dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:nil];
 //        [attributedString setAttributes:@{NSUnderlineStyleAttributeName : @(NSUnderlineStyleNone)}
 //                         range:NSMakeRange(0, attributedString.string.length)];

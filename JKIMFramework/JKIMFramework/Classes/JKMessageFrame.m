@@ -18,61 +18,6 @@
 
 @implementation JKMessageFrame
 
-
-
-//- (void)setMessage:(JKDialogModel *)message{
-//
-//    _message = message;
-//
-//    CGFloat screenW = [UIScreen mainScreen].bounds.size.width;
-//
-//    // 1、计算时间的位置
-//    CGFloat timeY = JKChatMargin;
-//    _timeF = CGRectMake(0, timeY, screenW, 17);
-//    CGFloat contentY = CGRectGetMaxY(_timeF);
-//    CGFloat contentX = 0;
-//    if (_message.whoSend !=JK_Visitor) {
-//        _nameF = CGRectMake(24, CGRectGetMaxY(_timeF) + 30, screenW - 100, 20);
-//        contentY = CGRectGetMaxY(_nameF) + 4;
-//        contentX =  20;
-//    }else {
-//        contentY = contentY + 21;
-//    }
-//    //根据种类分
-//    CGSize contentSize;
-//    switch (_message.messageType) {
-//        case JKMessageWord:
-//            contentSize = [self jiSuanMessageHeigthWithModel:message message:message.content font:JKChatContentFont];
-//
-//            if ([message.content containsString:@"\r\n"] && message.whoSend != JK_Visitor) {
-//                contentSize.width = JKChatContentW;
-//            }
-//
-//            break;
-//        case JKMessageImage:
-//            contentSize = CGSizeMake(message.imageWidth, message.imageHeight);
-//            break;
-//        case JKMessageVedio:
-//            contentSize = CGSizeMake(120, 20);
-//            break;
-//        default:
-//            break;
-//    }
-//    if (_message.whoSend == JK_Visitor) {
-//        contentX = screenW -20-contentSize.width - 44;
-//    }
-//
-//    if (message.whoSend == JK_SystemMarkShow) {
-//        _contentF = CGRectMake(0, 0, contentSize.width + 44, contentSize.height);
-//        _cellHeight = CGRectGetMaxY(_contentF);
-//    }else{
-//        _contentF = CGRectMake(contentX, contentY, contentSize.width + 44, contentSize.height);
-//        _cellHeight = MAX(CGRectGetMaxY(_contentF), CGRectGetMaxY(_nameF))  ;
-//    }
-//
-//
-//}
-
 - (CGSize )jiSuanMessageHeigthWithModel:(JKDialogModel *)model message:(NSString *)message font:(UIFont *)font{
     if (!message.length) {
         return CGSizeZero;
@@ -100,6 +45,8 @@
 - (NSMutableAttributedString *)praseHtmlStr:(NSString *)htmlStr {
     NSMutableAttributedString *attributedString;
     @try {
+//        htmlStr = [htmlStr stringByReplacingOccurrencesOfString:@"</br>" withString:@"\n"];
+//        attributedString = [[NSMutableAttributedString alloc] initWithString:htmlStr];
         attributedString  = [[NSMutableAttributedString alloc] initWithData:[htmlStr dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:nil];
     } @catch (NSException *exception) {
         attributedString = [[NSMutableAttributedString alloc] initWithString:htmlStr];

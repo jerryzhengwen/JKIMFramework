@@ -131,11 +131,13 @@
         }else {
 //             substr = [[NSAttributedString alloc] initWithString:part.text];
             @try {
-                NSError *error = nil;
-                substr = [[NSMutableAttributedString alloc] initWithData:[part.text dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:&error];
-                if (error) {
-                    NSLog(@"");
-                }
+                part.text = [part.text stringByReplacingOccurrencesOfString:@"</br>" withString:@"\n"];
+                substr = [[NSAttributedString alloc] initWithString:part.text];
+//                NSError *error = nil;
+//                substr = [[NSMutableAttributedString alloc] initWithData:[part.text dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:&error];
+//                if (error) {
+//                    NSLog(@"");
+//                }
             } @catch (NSException *exception) {
                 substr = [[NSAttributedString alloc] initWithString:part.text];
             } @finally {
@@ -169,8 +171,5 @@
     }
     return isContain;
 }
-//- (NSMutableAttributedString *)praseHtmlStr:(NSString *)htmlStr {
-//    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithData:[htmlStr dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:nil];
-//    return attributedString;
-//}
+
 @end

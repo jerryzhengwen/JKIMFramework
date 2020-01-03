@@ -108,6 +108,8 @@
 
 
 -(void)textViewEditeAction {
+    self.textView.text = [self.textView.text stringByReplacingOccurrencesOfString:@"<" withString:@"《"];
+    self.textView.text = [self.textView.text stringByReplacingOccurrencesOfString:@">" withString:@"》"];
     if (self.textView.text.length >= 1000) {
         self.textView.text = [self.textView.text substringToIndex:1000];
     }
@@ -449,12 +451,12 @@
             NSString *soluteStr = @"";
             NSString *satisStr = @"";
             if (frameModel.soluteArr.count) {
-                    soluteStr = [NSString stringWithFormat:@"问题是否解决：%@ <br>",soluteName];
+                    soluteStr = [NSString stringWithFormat:@"问题是否解决：%@ </br>",soluteName];
             }
             if (frameModel.satisArr.count) {
-                    satisStr =[NSString stringWithFormat:@"服务是否满意：%@ <br>",satisName];
+                    satisStr =[NSString stringWithFormat:@"服务是否满意：%@ </br>",satisName];
             }
-            dialog.content = [NSString stringWithFormat:@"您已成功完成满意度评价，评价结果为：<br>%@%@意见反馈：%@",soluteStr,satisStr,content];
+            dialog.content = [NSString stringWithFormat:@"您已成功完成满意度评价，评价结果为：</br>%@%@意见反馈：%@",soluteStr,satisStr,content];
             messageFrame.message = dialog;
             messageFrame.hiddenTimeLabel = [weakSelf showTimeLabelWithModel:messageFrame];
             messageFrame =  [weakSelf jisuanMessageFrame:messageFrame];
@@ -1707,7 +1709,14 @@
 - (NSMutableAttributedString *)praseHtmlStr:(NSString *)htmlStr {
     NSMutableAttributedString *attributedString;
     @try {
-        attributedString  = [[NSMutableAttributedString alloc] initWithData:[htmlStr dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:nil];
+//        htmlStr = [htmlStr stringByReplacingOccurrencesOfString:@"</br>" withString:@"\n"];
+//        attributedString = [[NSMutableAttributedString alloc] initWithString:htmlStr];
+        
+        NSError * error = nil;
+        attributedString  = [[NSMutableAttributedString alloc] initWithData:[htmlStr dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:&error];
+        if (error) {
+            NSLog(@"---%@",error);
+        }
     } @catch (NSException *exception) {
         attributedString = [[NSMutableAttributedString alloc] initWithString:htmlStr];
     } @finally {
