@@ -821,12 +821,35 @@
 }
 -(void)delayScrollew {
     @try {
-        NSIndexPath *lastPath = [NSIndexPath indexPathForRow:self.dataFrameArray.count - 1 inSection:0];
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//
+////            [self.tableView reloadData];
+//
+////        NSIndexPath *lastPath = [NSIndexPath indexPathForRow:self.dataFrameArray.count - 1 inSection:0];
+////
+////        [self.tableView scrollToRowAtIndexPath:lastPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+//
+//
+//            });
         
-        [self.tableView scrollToRowAtIndexPath:lastPath atScrollPosition:UITableViewScrollPositionBottom animated:NO];
-    }
-    @catch (NSException *exception) {
+//        [self.tableView setContentOffset:CGPointMake(0, self.tableView.contentSize.height -self.tableView.bounds.size.height) animated:YES];
+        
+        
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+//            [self.tableView reloadData];
+            if ( self.tableView.contentSize.height -self.tableView.bounds.size.height > 0) {
+                [self.tableView setContentOffset:CGPointMake(0, self.tableView.contentSize.height -self.tableView.bounds.size.height) animated:YES];
+            }
+            
+            
+        });
+        
+        
+    }@catch (NSException *exception) {
         [self.tableView reloadData];
+        
     }
     @finally {
         

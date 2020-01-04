@@ -257,21 +257,27 @@
     NSString * urlStr = URL.absoluteString;
     if ([urlStr isEqualToString:JKGetBussiness]){
         if (self.clickCustomer && (!self.messageFrame.isClickOnce)) {
+            dispatch_async(dispatch_get_main_queue(), ^{
             self.messageFrame.isClickOnce = YES;
             NSString *clickText = [textView.text substringWithRange:characterRange];
             self.clickCustomer(clickText);
+                });
         }
         return NO;
     }
     if ([urlStr isEqualToString:JKContinueLineUp]) { //继续排队
         if (self.lineUpBlock&& (!self.messageFrame.isClickOnce)) {
+            dispatch_async(dispatch_get_main_queue(), ^{
             self.messageFrame.isClickOnce = YES;
             self.lineUpBlock();
+                });
         }
         return NO;
     }
     if (urlStr.length) {
+        dispatch_async(dispatch_get_main_queue(), ^{
          [[JKMessageOpenUrl sharedOpenUrl] JK_ClickHyperMediaMessageOpenUrl:urlStr];
+            });
     }else { //获取下一级业务类型
         
     }

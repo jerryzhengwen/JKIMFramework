@@ -88,8 +88,6 @@
     self.btnContent.backImageView.hidden = YES;
     
     self.btnContent.frame = messageFrame.contentF;
-//    NSLog(@"-------111111-%lf",messageFrame.contentF.size.height);
-//    CGFloat margin = 12;
     self.btnContent.backImageView.hidden = NO;
     self.btnContent.contentTV.hidden = YES;
     self.btnContent.backgroundImageView.hidden = YES;
