@@ -334,6 +334,8 @@
     }
     self.textView.text = [self.textView.text stringByReplacingOccurrencesOfString:@"<" withString:@"《"];
     self.textView.text = [self.textView.text stringByReplacingOccurrencesOfString:@">" withString:@"》"];
+    self.textView.text = [self.textView.text stringByReplacingOccurrencesOfString:@"%3c" withString:@"《"];
+    self.textView.text = [self.textView.text stringByReplacingOccurrencesOfString:@"%2f%3e" withString:@"/》"];
     BOOL isAll = [self.view isEmpty:self.textView.text];
     if (isAll) {
         return;
