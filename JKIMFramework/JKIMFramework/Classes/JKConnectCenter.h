@@ -10,7 +10,7 @@
 #import "JKCompanyInfo.h"
 #import "JKCustomer.h"
 #import "JKENUMObject.h"
-
+#import "JKSurcketModel.h"
 @class JKMessage;
 @class JKDialogeContentManager;
 
@@ -49,6 +49,13 @@ typedef void(^JKInitCompleteBlock)(BOOL);
 
 @optional
 -(void)getRoomHistory:(NSArray<JKMessage *> *)messageArr;
+@optional
+/**
+ 底部吸盘的功能
+
+ @param surcketArr 吸盘的arr数组
+ */
+-(void)getSurcketModelArr:(NSMutableArray<JKSurcketModel *> *)surcketArr;
 /**
  收到消息
 
@@ -224,6 +231,9 @@ NS_ASSUME_NONNULL_BEGIN
  @param JKMessage 热点消息的JKMessage
  */
 -(void)sendHotJKMessage:(JKMessage *)message;
+
+/** 吸盘功能 @param message 吸盘的message */
+-(void)sendJKSurketModelArr:(NSMutableArray<JKSurcketModel *> *)message;
 
 /**
  查询数据

@@ -84,25 +84,26 @@
     self.lineUpView.frame =CGRectMake(0, CGRectGetMaxY(self.tableView.frame) - 76, self.view.width, 76);
     self.lineUpView.hidden = YES;
     [self.view addSubview:self.lineUpView];
+    self.suckerView.hidden = NO;
+    self.suckerView.suckerBlock = ^(JKSurcketModel * _Nonnull model) {
+        if ([model.pattern isEqualToString:@"1"]) {
+              [weakSelf showHotMsgQuestion:model.content];
+        }else {
+            [[JKMessageOpenUrl sharedOpenUrl] JK_ClickHyperMediaMessageOpenUrl:model.content];
+        }
+        if ([weakSelf.textView isFirstResponder]) {
+            weakSelf.textView.text = @"";
+        }else {
+            weakSelf.textView.text = weakSelf.placeHolerStr;
+        }
+    };
+    [self.view addSubview:self.suckerView];
     
     [self.tableView addObserver:self forKeyPath:@"frame" options:NSKeyValueObservingOptionNew context:nil];
+    [self.suckerView addObserver:self forKeyPath:@"hidden" options:NSKeyValueObservingOptionNew context:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textViewEditeAction)name:UITextViewTextDidChangeNotification object:nil];
-    
-//    UIButton *button1 =[UIButton buttonWithType:UIButtonTypeCustom];
-//    [button1 setTitle:@"更新用户信息" forState:UIControlStateNormal];
-//    [button1 addTarget:self action:@selector(changeCustom) forControlEvents:UIControlEventTouchUpInside];
-//    button1.center = self.view.center;
-//    button1.frame = CGRectMake(self.view.centerX - 100, self.view.centerY + 150, 150, 150);
-//    button1.backgroundColor = [UIColor redColor];
-//    [self.tableView addSubview:button1];
+    [self.view bringSubviewToFront:self.suckerView];
 }
-//-(void)changeCustom {
-//    JKCustomer * custom = [[JKCustomer alloc] init];
-//    custom.visitor_name = @"E654IjMb8Qzt\/Pamc21t9TljnS76DULTB52cnNWjHh6DQ9bUEwbByPcQblkESgSH66Qwy0opzrwzxnfEifWVpT6UL8Ld1hsiH6w1ORWpOvj\/zhyhLiY1RAsqbguuE9TEqHSlUzP8SGv4fh\/DIw0m3AWAszuNDIzT9TIAl0SsP\/k=";
-//    custom.visitor_id = @"gnEDVdkWdQ\/nzzASKQBIrXuZ3SzZRvoVXhydhUe3VBuLgQKSCU5\/oJ+yR62fKZekJ8GOCan91U5y6TbiZwH4m3ph8A1QdU9thO8rD2agkzanXu17nIEdABi5jaIK+vy09rWWWGU6mTskwFhbKmaKCQbfHigPdPHYCVNR8XKXNns=";
-//    custom.mobile_phone = @"gnEDVdkWdQ\/nzzASKQBIrXuZ3SzZRvoVXhydhUe3VBuLgQKSCU5\/oJ+yR62fKZekJ8GOCan91U5y6TbiZwH4m3ph8A1QdU9thO8rD2agkzanXu17nIEdABi5jaIK+vy09rWWWGU6mTskwFhbKmaKCQbfHigPdPHYCVNR8XKXNns=";
-//    [[JKConnectCenter sharedJKConnectCenter] JKIM_statueChangeWithCustomer:custom];
-//}
 
 
 
@@ -118,9 +119,20 @@
     if ([keyPath isEqualToString:@"frame"]) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [UIView animateWithDuration:0.2 animations:^{
-                self.lineUpView.frame =CGRectMake(0, CGRectGetMaxY(self.tableView.frame) - 76, self.view.width, 76);
+                self.lineUpView.frame = CGRectMake(0, CGRectGetMaxY(self.tableView.frame) - 76, self.view.width, 76);
+
+                    self.suckerView.frame = CGRectMake(0, CGRectGetMaxY(self.tableView.frame) - 48, self.view.width, 48);
+//                    self.suckerView.frame = CGRectMake(0, CGRectGetMinY(self.bottomView.frame) - 48, self.view.width, 48);
+//                }
             }];
+            
         });
+    }else if ([keyPath isEqualToString:@"hidden"]){
+        if (!self.suckerView.hidden) {
+            if (!self.suckerView.surcketArr.count) {
+                self.suckerView.hidden = YES;
+            }
+        }
     }
 }
 - (void)backAction {
@@ -351,7 +363,11 @@
         [self tableViewMoveToLastPathNeedAnimated:YES];
     }];
     self.textView.text = @"";
-    self.assoiateView.hidden = YES;
+    self.assoiateView.hidden = YES; //需要判断是否在人工
+    self.suckerView.hidden = self.listMessage.to.length?YES:NO;
+    if (self.isLineUp) {
+        self.suckerView.hidden = YES;
+    }
     __weak JKDialogueViewController *weakSelf = self;
     if (!self.listMessage.to.length) {
             [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:self.listMessage robotMessageBlock:^(JKMessage *messageData, int count) {
@@ -476,13 +492,25 @@
     }
     return _lineUpView;
 }
+-(JKSuckerView *)suckerView {
+    if (_suckerView == nil) {
+        _suckerView = [[JKSuckerView alloc] init];
+    }
+    return _suckerView;
+}
 #pragma -
 #pragma mark - delegate
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
-    return self.isLineUp?76:16;
+    if (self.isLineUp) {
+        return 76;
+    }else if (!self.suckerView.hidden){
+        return 48;
+    }else {
+        return 16;
+//        return self.isLineUp?76:16;
+    }
 }
 -(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
-//    return self.isLineUp?self.lineUpView:[[UIView alloc]init];
     return [[UIView alloc] init];
 }
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
@@ -964,6 +992,15 @@
 }
 #pragma -
 #pragma mark - 消息的Delegate
+-(void)getSurcketModelArr:(NSMutableArray<JKSurcketModel *> *)surcketArr {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (!surcketArr.count) {
+            self.suckerView.hidden= YES;
+        }else {
+            self.suckerView.surcketArr = surcketArr;
+        }
+    });
+}
 -(void)updateContextIDReSendContent:(NSString *)content {
     __weak JKDialogueViewController *weakSelf = self;
     self.listMessage.content = content;
@@ -1077,6 +1114,7 @@
         autoModel.from = autoModel.from?self.customerName:autoModel.from;
         JKMessageFrame *frameModel = [[JKMessageFrame alloc]init];
         if (autoModel.whoSend == JK_SystemMark) {
+            self.suckerView.hidden = NO;
             //在这里判断初始化context_id，以及判断是否弹满意度
             NSString *contextId = [[JKConnectCenter sharedJKConnectCenter] JKIM_getContext_id];
             [[JKConnectCenter sharedJKConnectCenter] getEndChatBlock:^(BOOL satisFaction) {
@@ -1210,6 +1248,7 @@
         self.listMessage.to = message.from;
         self.customerName = message.from;
         self.listMessage.from = @"";
+        self.suckerView.hidden = YES;
         //    if (self.listMessage.chatterName) {
         //        self.titleLabel.text = self.listMessage.chatterName;
         //    }
@@ -1305,6 +1344,10 @@
     //需求，键盘下去的时候隐藏联想问题
     dispatch_async(dispatch_get_main_queue(), ^{
         self.assoiateView.hidden = YES;
+        self.suckerView.hidden =  self.listMessage.to.length?YES:NO;
+        if (self.isLineUp) {
+            self.suckerView.hidden = YES;
+        }
     });
     /*
     CGFloat assoiateHeight = CGRectGetHeight(weakSelf.assoiateView.frame);
@@ -1607,22 +1650,28 @@
         }
         if (!self.textView.text.length) {
             self.assoiateView.hidden = YES;
-            return;
-        }
-        if (array.count) {
-            self.assoiateView.hidden = NO;
-            self.assoiateView.associateArr = [[NSMutableArray alloc] initWithArray:array];
-            self.assoiateView.keyWord = self.textView.text;
-            CGFloat height = 46 * array.count;
-            self.assoiateView.frame = CGRectMake(0, self.bottomView.top - height, self.view.width, height);
-            [self.assoiateView.tableView reloadData];
         }else {
-            self.assoiateView.hidden = YES;
+            if (array.count) {
+                self.assoiateView.hidden = NO;
+                self.assoiateView.associateArr = [[NSMutableArray alloc] initWithArray:array];
+                self.assoiateView.keyWord = self.textView.text;
+                CGFloat height = 46 * array.count;
+                self.assoiateView.frame = CGRectMake(0, self.bottomView.top - height, self.view.width, height);
+                [self.assoiateView.tableView reloadData];
+            }else {
+                self.assoiateView.hidden = YES;
+            }
+        }
+        if (self.assoiateView.hidden && (!self.listMessage.to.length) &&(!self.isLineUp)) {
+            self.suckerView.hidden = NO;
+        }else {
+            self.suckerView.hidden = YES;
         }
     });
 }
 -(void)textViewDidChange:(UITextView *)textView {
     if (self.isLineUp || self.listMessage.to.length) { //排队或者人工的时候不展示
+        self.suckerView.hidden = YES;
         if (self.assoiateView.hidden == NO) {
             self.assoiateView.hidden = YES;
         }

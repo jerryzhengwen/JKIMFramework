@@ -22,6 +22,7 @@
 #import "UIViewController+JKImagePicker.h"
 #import "UIView+JKCommonView.h"
 #import "NSDate+Utils.h"
+#import "JKMessageOpenUrl.h"
 #import "JKLineUpCell.h"
 #import "JKLineUpView.h"
 #define JKChatContentW  [UIScreen mainScreen].bounds.size.width - 103    //内容宽度
@@ -29,6 +30,8 @@
 #define iPhoneXR ([UIScreen mainScreen].bounds.size.width == 414 && [UIScreen mainScreen].bounds.size.height == 896)
 #define kStatusBarAndNavigationBarHeight (iPhoneX || iPhoneXR ? 88.f : 64.f)
 #define JKBGDefaultColor UIColorFromRGB(0xEFEFEF)
+
+#define JKFontDefaultColor UIColorFromRGB(0x3E3E3E)
 /** 最大的内容宽度*/
 #define MaxContentWidth [UIScreen mainScreen].bounds.size.width - 103
 

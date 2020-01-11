@@ -69,4 +69,13 @@
         }
     }
 }
+CGSize countStringWordWidth(NSString *aString,UIFont * font, CGSize labelSize) {
+    
+    CGSize size =[aString
+                  boundingRectWithSize:labelSize
+                  options:NSStringDrawingUsesLineFragmentOrigin
+                  attributes:@{NSFontAttributeName:font}
+                  context:nil].size;
+    return size;
+}
 @end

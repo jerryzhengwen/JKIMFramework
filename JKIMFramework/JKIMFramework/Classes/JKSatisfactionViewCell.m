@@ -241,15 +241,6 @@
     }
     return _adviseTV;
 }
-CGSize countStringWordWidth(NSString *aString,UIFont * font, CGSize labelSize) {
-    
-    CGSize size =[aString
-                  boundingRectWithSize:labelSize
-                  options:NSStringDrawingUsesLineFragmentOrigin
-                  attributes:@{NSFontAttributeName:font}
-                  context:nil].size;
-    return size;
-}
 -(void)layoutSubviews {
     [super layoutSubviews];
     CGFloat minWidth =  [UIScreen mainScreen].bounds.size.width - 103 + 24;

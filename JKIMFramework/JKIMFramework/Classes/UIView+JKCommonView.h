@@ -24,6 +24,15 @@ NS_ASSUME_NONNULL_BEGIN
  @return 字符串是否全部为空
  */
 - (BOOL) isEmpty:(NSString *) str;
+/**
+ 计算字符串的宽度
+
+ @param aString 字符串
+ @param font 字体大小
+ @param labelSize 字符串最大的宽度
+ @return 真实的宽度
+ */
+CGSize countStringWordWidth(NSString *aString,UIFont * font, CGSize labelSize);
 @end
 
 NS_ASSUME_NONNULL_END
