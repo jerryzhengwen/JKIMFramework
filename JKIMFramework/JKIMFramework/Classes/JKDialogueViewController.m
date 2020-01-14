@@ -183,6 +183,7 @@
                 JKMessage * message = [[JKMessage alloc] init];
                 message.content = @"quitQueue";
                 message.messageType = JKMessageCancelLineUp;
+                weakSelf.suckerView.hidden = NO;
                 [weakSelf sendRobotMessageWith:message];
                 return ;
             }
@@ -1104,10 +1105,12 @@
             self.lineUpView.hidden = NO;
             self.lineUpView.index = @([message.index integerValue]);
             [self.endDialogBtn setTitle:@"取消排队" forState:UIControlStateNormal];
+            self.suckerView.hidden = YES;
         }
         if ([message.timeoutqueue boolValue]) {
             self.isLineUp = NO;
             self.lineUpView.hidden = YES;
+            self.suckerView.hidden = NO;
             [self.endDialogBtn setTitle:@"结束对话" forState:UIControlStateNormal];
         }
         JKDialogModel * autoModel =[JKDialogModel changeMsgTypeWithJKModel:message];
@@ -1726,8 +1729,7 @@
             
             if ([message.message.content containsString:@"\r\n"] && message.message.whoSend != JK_Visitor) {
                 contentSize.width = JKChatContentW;
-            }
-            
+            } 
             break;
         case JKMessageImage: {
             contentSize = CGSizeMake(message.message.imageWidth, message.message.imageHeight);
