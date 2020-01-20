@@ -12,6 +12,10 @@
 #import <UIKit/UIKit.h>
 #import "JKBundleTool.h"
 
+@interface JKRichTextStatue()
+@property (nonatomic,strong)NSAttributedString *substr;
+@end
+
 @implementation JKRichTextStatue
 -(void)setText:(NSString *)text {
     _text = [text copy];
@@ -89,7 +93,7 @@
     NSString *bundlePatch = [JKBundleTool initBundlePathWithImage];
     for (JKTextPat *part in parts) {
         // 等会需要拼接的子串
-        NSAttributedString *substr = [[NSAttributedString alloc] init];
+//        NSAttributedString *substr = [[NSAttributedString alloc] init];
         if (part.isSpecial) {
             if (![part.text containsString:@"http"]) {
                 part.isSpecial = NO;
@@ -102,7 +106,7 @@
                      NSString *filePatch =  [bundlePatch stringByAppendingPathComponent:face[i][@"face_image_name"]];
                     textAttachment.image = [UIImage imageWithContentsOfFile:filePatch];
                     textAttachment.bounds = CGRectMake(0, -6, 25, 25);
-                    substr = [NSAttributedString attributedStringWithAttachment:textAttachment];
+                    _substr = [NSAttributedString attributedStringWithAttachment:textAttachment];
                     break;
                 }
             }
@@ -124,7 +128,7 @@
 //                substr = [[NSAttributedString alloc]initWithAttributedString:tempAttribute];
 //                // 创建特殊对象
 //            }else {
-                substr = [[NSAttributedString alloc] initWithString:part.text attributes:@{
+            _substr = [[NSAttributedString alloc] initWithString:part.text attributes:@{
                                                                                            NSLinkAttributeName:[NSString stringWithFormat:@"%@",part.text],NSForegroundColorAttributeName : [UIColor redColor]
                                                                                            }];
 //            }
@@ -134,19 +138,22 @@
 //                part.text = [part.text stringByReplacingOccurrencesOfString:@"</br>" withString:@"\n"];
 //                substr = [[NSAttributedString alloc] initWithString:part.text];
                 NSError *error = nil;
-                substr = [[NSMutableAttributedString alloc] initWithData:[part.text dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:&error];
+                _substr = [[NSMutableAttributedString alloc] initWithData:[part.text dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:&error];
+                
+               
+                
                 if (error) {
                     NSLog(@"");
                 }
             } @catch (NSException *exception) {
-                substr = [[NSAttributedString alloc] initWithString:part.text];
+                _substr = [[NSAttributedString alloc] initWithString:part.text];
             } @finally {
                 
             }
             
         }
-        if (substr) {
-            [attributedText appendAttributedString:substr];
+        if (_substr) {
+            [attributedText appendAttributedString:_substr];
         }
     }
     [attributedText addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, attributedText.length)];

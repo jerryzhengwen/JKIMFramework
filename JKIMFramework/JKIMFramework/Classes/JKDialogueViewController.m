@@ -880,7 +880,6 @@
         
     }@catch (NSException *exception) {
         [self.tableView reloadData];
-        
     }
     @finally {
         
@@ -1088,7 +1087,6 @@
             //        });
         });
     } @catch (NSException *exception) {
-        NSLog(@"");
     } @finally {
         
     }
@@ -1277,7 +1275,7 @@
 }
 
 - (void)UIKeyboardWillShowNotification:(NSNotification *)noti {
-//    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(dispatch_get_main_queue(), ^{
     self.faceButton.selected = NO;
     self.moreBtn.selected = NO;
     NSString *filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"icon_expression"];
@@ -1310,7 +1308,7 @@
     }else {
         [self delayScrollew];
     }
-//        });
+        });
 }
 
 
