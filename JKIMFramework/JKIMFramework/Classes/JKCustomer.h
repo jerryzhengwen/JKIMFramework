@@ -29,8 +29,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,copy)NSString *mobile_phone;
 /// qq 非必填
 @property (nonatomic,copy)NSString *qq;
+
 /**
- 客户类型
+ 客户类型新增加的
  */
 @property (nonatomic,copy) NSString *customer_type;
 /**
