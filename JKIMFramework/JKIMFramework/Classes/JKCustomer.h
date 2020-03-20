@@ -29,6 +29,22 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,copy)NSString *mobile_phone;
 /// qq 非必填
 @property (nonatomic,copy)NSString *qq;
+/**
+ 客户类型
+ */
+@property (nonatomic,copy) NSString *customer_type;
+/**
+ 注册手机号
+ */
+@property (nonatomic,copy) NSString *register_phone;
+/**
+ 客户号
+ */
+@property (nonatomic,copy) NSString *customer_number;
+/**
+ 证件号
+ */
+@property (nonatomic,copy) NSString *certificate_number;
 @end
 
 NS_ASSUME_NONNULL_END
