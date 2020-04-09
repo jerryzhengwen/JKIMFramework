@@ -51,8 +51,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.hud = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
-    
-    
+    if (self.scanPathDate.length) {
+        [JKConnectCenter sharedJKConnectCenter].scanPath = self.scanPathDate;
+    }
     self.hud.label.text = @"加载中";
     [self.view bringSubviewToFront:self.hud];
     self.placeHolerStr = @"请描述您遇到的问题……";

@@ -131,6 +131,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic,assign)BOOL isNeedResend;
 /**
+ 用户的浏览轨迹
+ */
+@property (nonatomic,copy) NSString *scanPath;
+/**
  返回单例本身
 
  @return 初始化当前单例

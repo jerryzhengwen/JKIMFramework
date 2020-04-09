@@ -27,6 +27,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,assign)BOOL isNeedResend;
 /** 是否排队，改变tableview的表尾 */
 @property(nonatomic,assign)BOOL isLineUp;
+
+/**
+ 用户的浏览轨迹
+ */
+@property(nonatomic,copy) NSString *scanPathDate;
 @end
 
 NS_ASSUME_NONNULL_END
