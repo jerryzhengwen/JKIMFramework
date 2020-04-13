@@ -8,8 +8,8 @@
 
 Pod::Spec.new do |s|
   s.name             = 'JKIMFramework'
-  s.version          = '1.5.6'
-  s.summary          = '这是一个关于久科IMSDK的初级版'
+  s.version          = '1.5.7'
+  s.summary          = '这是IMSDK，可以快速集成和实现IM聊天'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
