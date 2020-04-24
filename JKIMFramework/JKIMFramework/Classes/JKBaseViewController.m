@@ -48,12 +48,12 @@
 }
 -(void)createCenterImageView {
     NSString *filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"jk_customer"];
-    UIImageView * imageView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:filePatch]];
+    self.imageView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:filePatch]];
     CGRect rect = self.navigation.frame;
-    imageView.layer.cornerRadius = 18;
-    imageView.clipsToBounds = YES;
-    imageView.frame = CGRectMake(CGRectGetMidX(rect)-20, CGRectGetMaxY(rect) - 40, 36, 36);
-    [self.view addSubview:imageView];
+    self.imageView.layer.cornerRadius = 18;
+    self.imageView.clipsToBounds = YES;
+    self.imageView.frame = CGRectMake(CGRectGetMidX(rect)-20, CGRectGetMaxY(rect) - 40, 36, 36);
+    [self.view addSubview:self.imageView];
 }
 -(UIButton *)endDialogBtn {
     if (_endDialogBtn == nil) {

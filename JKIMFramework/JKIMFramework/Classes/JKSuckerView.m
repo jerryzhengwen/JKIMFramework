@@ -23,7 +23,6 @@
 }
 -(void)setSurcketArr:(NSMutableArray *)surcketArr {
     _surcketArr = surcketArr;
-    NSLog(@"------22222");
     dispatch_async(dispatch_get_main_queue(), ^{
     self.btnArr = [NSMutableArray array];
     for (UIView *view  in self.subviews) {

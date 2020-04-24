@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "UIView+JKFloatFrame.h"
 #import "JKAlertView.h"
+#import "YYWebImage.h"
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JKBaseViewController : UIViewController
@@ -18,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic,strong)UIButton *endDialogBtn;
 
-
+@property (nonatomic,strong)UIImageView *imageView;
 /** 整体数组的DataArray */
 @property(nonatomic, strong)NSMutableArray *dataFrameArray;
 /**
