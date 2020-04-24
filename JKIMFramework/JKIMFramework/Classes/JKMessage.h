@@ -42,6 +42,11 @@ typedef NS_ENUM(NSInteger, JKChatStatue) {
  谁发送来的
  */
 @property(nonatomic,copy) NSString *from;
+
+/**
+ 坐席当前头像opImgUrl
+ */
+@property(nonatomic,copy) NSString *opImgUrl;
 /**
  消息类型
  */

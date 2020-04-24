@@ -1042,6 +1042,10 @@
         self.plugInView.hidden = YES;
         [self bottomViewInitialLayout];
     }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSString *filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"jk_customer"];
+        self.imageView.image = [UIImage imageWithContentsOfFile:filePatch];
+    });
 }
 -(void)receiveRobotRePlay:(JKMessage *)message {
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -1250,6 +1254,11 @@
         self.listMessage.to = message.from;
         self.customerName = message.from;
         self.listMessage.from = @"";
+//        if (self.listMessage.opImgUrl.length) { //如果头像的url存在
+//            NSString *filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"jk_customer"];
+//            [self.imageView yy_setImageWithURL:[NSURL URLWithString:self.listMessage.opImgUrl] placeholder:[UIImage imageWithContentsOfFile:filePatch]];
+//            
+//        }
         self.suckerView.hidden = YES;
         //    if (self.listMessage.chatterName) {
         //        self.titleLabel.text = self.listMessage.chatterName;
@@ -1815,7 +1824,6 @@
     CGSize size = [stringLabel sizeThatFits:CGSizeMake(width, 0)];
     CGSize ceilSize = CGSizeMake(ceil(size.width), ceil(size.height));
     return ceilSize;
-    
 //    NSString *str = attributedString.string;
 //    str = [NSString stringWithFormat:@"<head><style>img{width:%f !important;height:auto}</style></head>%@",[UIScreen mainScreen].bounds.size.width,str];
 //
