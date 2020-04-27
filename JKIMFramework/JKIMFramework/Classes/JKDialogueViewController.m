@@ -20,6 +20,7 @@
 #import "RegexKitLite.h"
 #import "MJRefresh.h"
 #import "MBProgressHUD.h"
+#import "YYWebImage.h"
 @interface JKDialogueViewController ()<UITableViewDelegate,UITableViewDataSource,UITextViewDelegate,ConnectCenterDelegate,JKMessageCellDelegate,JKMessageImageCellDelegate>
 
 /** 获取图片资源路径 */
@@ -354,17 +355,45 @@
     if (isAll) {
         return;
     }
+    [self sendMessageToServer:self.textView.text];
+    self.textView.text = @"";
+//    self.listMessage.messageType = JKMessageWord;
+//    self.listMessage.msgSendType = JK_SocketMSG;
+//    self.listMessage.whoSend = JK_Visitor;
+//    self.listMessage.content = self.textView.text;
+//    [JKIMSendHelp sendTextMessageWithMessageModel:self.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
+//        messageFrame.hiddenTimeLabel = [self showTimeLabelWithModel:messageFrame];
+//        messageFrame =  [self jisuanMessageFrame:messageFrame];
+//        [self.dataFrameArray addObject:messageFrame];
+//        [self tableViewMoveToLastPathNeedAnimated:YES];
+//    }];
+//    self.textView.text = @"";
+//    self.assoiateView.hidden = YES; //需要判断是否在人工
+//    self.suckerView.hidden = self.listMessage.to.length?YES:NO;
+//    if (self.isLineUp) {
+//        self.suckerView.hidden = YES;
+//    }
+//    __weak JKDialogueViewController *weakSelf = self;
+//    if (!self.listMessage.to.length) {
+//            [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:self.listMessage robotMessageBlock:^(JKMessage *messageData, int count) {
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    //展示机器人消息
+//                    [weakSelf showRobotMessage:messageData count:count];
+//                });
+//            }];
+//    }
+}
+-(void)sendMessageToServer:(NSString *)content {
     self.listMessage.messageType = JKMessageWord;
     self.listMessage.msgSendType = JK_SocketMSG;
     self.listMessage.whoSend = JK_Visitor;
-    self.listMessage.content = self.textView.text;
+    self.listMessage.content = content;
     [JKIMSendHelp sendTextMessageWithMessageModel:self.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
         messageFrame.hiddenTimeLabel = [self showTimeLabelWithModel:messageFrame];
         messageFrame =  [self jisuanMessageFrame:messageFrame];
         [self.dataFrameArray addObject:messageFrame];
         [self tableViewMoveToLastPathNeedAnimated:YES];
     }];
-    self.textView.text = @"";
     self.assoiateView.hidden = YES; //需要判断是否在人工
     self.suckerView.hidden = self.listMessage.to.length?YES:NO;
     if (self.isLineUp) {
@@ -372,23 +401,13 @@
     }
     __weak JKDialogueViewController *weakSelf = self;
     if (!self.listMessage.to.length) {
-            [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:self.listMessage robotMessageBlock:^(JKMessage *messageData, int count) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    //展示机器人消息
-                    [weakSelf showRobotMessage:messageData count:count];
-                });
-            }];
+        [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:self.listMessage robotMessageBlock:^(JKMessage *messageData, int count) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //展示机器人消息
+                [weakSelf showRobotMessage:messageData count:count];
+            });
+        }];
     }
-    
-//    NSString *content = @"转人工";
-//    message.content = content;
-//    [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:message robotMessageBlock:^(JKMessage *messageData, int count) {
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            //展示机器人消息
-//            [weakSelf showRobotMessage:messageData count:count];
-//        });
-//    }];
-    
 }
 -(BOOL)showTimeLabelWithModel:(JKMessageFrame *)messageModel {
     @try {
@@ -534,6 +553,9 @@
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.model = messageFrame;
+        cell.sendMsgBlock = ^(NSString * _Nonnull content) {
+            [weakSelf sendMessageToServer:content];
+        };
         cell.lineUpBlock = ^{
             JKMessage * message = [[JKMessage alloc] init];
             message.content = @"转人工";
@@ -667,6 +689,9 @@
             }];
         }
         
+    };
+    cell.sendMsgBlock = ^(NSString * content) {
+        [weakSelf sendMessageToServer:content];
     };
     cell.richText = ^{
         if (weakSelf.customerName.length) {
@@ -1254,11 +1279,11 @@
         self.listMessage.to = message.from;
         self.customerName = message.from;
         self.listMessage.from = @"";
-//        if (self.listMessage.opImgUrl.length) { //如果头像的url存在
-//            NSString *filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"jk_customer"];
-//            [self.imageView yy_setImageWithURL:[NSURL URLWithString:self.listMessage.opImgUrl] placeholder:[UIImage imageWithContentsOfFile:filePatch]];
-//            
-//        }
+        if (self.listMessage.opImgUrl.length) { //如果头像的url存在
+            NSString *filePatch =  [[JKBundleTool initBundlePathWithImage] stringByAppendingPathComponent:@"jk_customer"];
+            [self.imageView yy_setImageWithURL:[NSURL URLWithString:self.listMessage.opImgUrl] placeholder:[UIImage imageWithContentsOfFile:filePatch]];
+            
+        }
         self.suckerView.hidden = YES;
         //    if (self.listMessage.chatterName) {
         //        self.titleLabel.text = self.listMessage.chatterName;

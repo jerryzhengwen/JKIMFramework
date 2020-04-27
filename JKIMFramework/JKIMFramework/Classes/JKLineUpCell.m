@@ -54,8 +54,19 @@
 }
 -(void)setModel:(JKMessageFrame *)model {
     _model = model;
+    NSString *contentTxt = model.message.content;
     JKRichTextStatue * richText = [[JKRichTextStatue alloc] init];
-    richText.text = model.message.content;
+    if ([contentTxt containsString:@"class='instructClass' target='_blank'"]||[contentTxt containsString:@"class='nc-send-msg'"]|| [contentTxt containsString:@"class=\"instructClass\" target=\"_blank\""] || [contentTxt containsString:@"class=\"nc-send-msg\""]) {
+        NSString *text = [self returnSpanContent:contentTxt AndZhengZe:@"<a[^>]*>([^<]+)</a>"];
+        NSString *content = [[contentTxt componentsSeparatedByString:text] componentsJoinedByString:@""];
+        richText.text = content;
+        NSString *aText = [self returnSpanContent:contentTxt AndZhengZe:@"<a[^>]*>([^<]+)"];
+        NSString *aLabel = [self returnSpanContent:contentTxt AndZhengZe:@"<a[^>]*>"];
+        NSString *btnTitle = [[aText componentsSeparatedByString:aLabel] componentsJoinedByString:@""];
+        [self.lineUpBtn setTitle:btnTitle forState:UIControlStateNormal];
+    }else {
+        richText.text = contentTxt;
+    }
     self.textView.attributedText = richText.attributedText;
 }
 -(void)layoutSubviews {
@@ -74,6 +85,24 @@
     self.backView.layer.mask = maskLayer;
 }
 -(void)lineUpCustomer:(UIButton *)button {
+    NSString *contentTxt = self.model.message.content;
+    if ([contentTxt containsString:@"class='instructClass' target='_blank'"]||[contentTxt containsString:@"class='nc-send-msg'"] || [contentTxt containsString:@"class=\"instructClass\" target=\"_blank\""] || [contentTxt containsString:@"class=\"nc-send-msg\""]) {
+        if ([contentTxt containsString:@"class='instructClass' target='_blank'"]) { //给app
+            NSString * href = [self returnSpanContent:contentTxt AndZhengZe:@"href=\'(.+?)\'"]; //href=['\"](.+?)['\"]
+            NSString * hrefUrl = [href componentsSeparatedByString:@"="].lastObject;
+            href = [[hrefUrl componentsSeparatedByString:@"\""] componentsJoinedByString:@""];
+            NSString * url =  [[hrefUrl componentsSeparatedByString:@"'"] componentsJoinedByString:@""];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[JKMessageOpenUrl sharedOpenUrl] JK_ClickHyperMediaMessageOpenUrl:url];
+            });
+        }else { //发送文字
+            if (self.sendMsgBlock) {
+                self.sendMsgBlock(self.lineUpBtn.titleLabel.text);
+            }
+        }
+        
+        return;
+    }
     if (self.model.isClickOnce) {
         return;
     }
@@ -92,5 +121,18 @@
 
     // Configure the view for the selected state
 }
-
+//两次提取a标签用来提取<a> 2</a>中的值
+-(NSString *)returnSpanContent:(NSString *)span AndZhengZe:(NSString *)pattern {
+    if (!span) {
+        return @"";
+    }
+    NSError *error = NULL;
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:pattern options:NSRegularExpressionCaseInsensitive error:&error];
+    NSTextCheckingResult *result = [regex firstMatchInString:span options:0 range:NSMakeRange(0, [span length])];
+    if (result) {
+        return  [span substringWithRange:result.range];
+    }else {
+        return @"";
+    }
+}
 @end

@@ -255,6 +255,17 @@
 #pragma mark - textView的代理
 -(BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange {
     NSString * urlStr = URL.absoluteString;
+    NSString *contentTxt = self.messageFrame.message.content;
+    //此时是发送文字链接
+    if ([contentTxt containsString:@"class='nc-text-link' href='javascript:void(0);'"]) {
+        NSString *aText = [self returnSpanContent:contentTxt AndZhengZe:@"<a[^>]*>([^<]+)"];
+        NSString *aLabel = [self returnSpanContent:contentTxt AndZhengZe:@"<a[^>]*>"];
+        NSString *text = [[aText componentsSeparatedByString:aLabel] componentsJoinedByString:@""];
+        if (self.sendMsgBlock) {
+            self.sendMsgBlock(text);
+        }
+        return NO;
+    }
     if ([urlStr isEqualToString:JKGetBussiness]){
         if (self.clickCustomer && (!self.messageFrame.isClickOnce)) {
             dispatch_async(dispatch_get_main_queue(), ^{
