@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'JKIMFramework'
-  s.version          = '1.6.0'
+  s.version          = '1.6.1'
   s.summary          = '这是IMSDK，可以快速集成和实现IM聊天'
 
 # This description is used to generate tags and improve search results.
@@ -46,4 +46,5 @@ s.requires_arc = ['JKIMFramework/**/Classes/*.{h,m}']
 s.dependency 'YYWebImage'
 s.dependency 'MJRefresh'
 s.dependency 'MBProgressHUD', '~> 1.1.0'
+s.dependency 'IQKeyboardManager'
 end

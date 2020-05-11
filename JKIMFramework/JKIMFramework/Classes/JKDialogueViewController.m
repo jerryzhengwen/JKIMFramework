@@ -19,6 +19,7 @@
 #import "JKConnectCenter.h"
 #import "RegexKitLite.h"
 #import "MJRefresh.h"
+#import "IQKeyboardManager.h"
 #import "MBProgressHUD.h"
 #import "YYWebImage.h"
 @interface JKDialogueViewController ()<UITableViewDelegate,UITableViewDataSource,UITextViewDelegate,ConnectCenterDelegate,JKMessageCellDelegate,JKMessageImageCellDelegate>
@@ -1551,6 +1552,7 @@
 }
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
+    [[IQKeyboardManager sharedManager] setEnable:NO];
     self.navigationController.navigationBarHidden = YES;
     if (self.isNeedResend) { //重新发送一遍问题
         NSString * reText = @"";
@@ -1590,6 +1592,7 @@
 
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
+    [[IQKeyboardManager sharedManager] setEnable:YES];
     //    self.navigationController.navigationBar.hidden = NO;
     self.navigationController.navigationBarHidden = NO;
 }
