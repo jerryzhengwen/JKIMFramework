@@ -254,7 +254,7 @@
 #pragma -
 #pragma mark - textView的代理
 -(BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange {
-    NSString * urlStr = URL.absoluteString;
+    __block  NSString * urlStr = URL.absoluteString;
     NSString *contentTxt = self.messageFrame.message.content;
     //此时是发送文字链接
     if ([contentTxt containsString:@"class='nc-text-link' href='javascript:void(0);'"]) {
@@ -287,6 +287,13 @@
     }
     if (urlStr.length) {
         dispatch_async(dispatch_get_main_queue(), ^{
+            NSString * lastStr = [urlStr substringFromIndex:urlStr.length -1];
+            if ([lastStr isEqualToString:@"/"]) {
+                NSString * lowerString = [contentTxt lowercaseString];
+                if (![lowerString containsString:urlStr]) {
+                    urlStr = [urlStr substringToIndex:urlStr.length - 1];
+                }
+            }
          [[JKMessageOpenUrl sharedOpenUrl] JK_ClickHyperMediaMessageOpenUrl:urlStr];
             });
     }else { //获取下一级业务类型

@@ -1553,6 +1553,7 @@
 - (void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     [[IQKeyboardManager sharedManager] setEnable:NO];
+    [IQKeyboardManager sharedManager].enableAutoToolbar = NO;
     self.navigationController.navigationBarHidden = YES;
     if (self.isNeedResend) { //重新发送一遍问题
         NSString * reText = @"";
@@ -1593,6 +1594,7 @@
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
     [[IQKeyboardManager sharedManager] setEnable:YES];
+    [IQKeyboardManager sharedManager].enableAutoToolbar = YES;
     //    self.navigationController.navigationBar.hidden = NO;
     self.navigationController.navigationBarHidden = NO;
 }
