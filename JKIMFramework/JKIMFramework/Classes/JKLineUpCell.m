@@ -87,11 +87,11 @@
 -(void)lineUpCustomer:(UIButton *)button {
     NSString *contentTxt = self.model.message.content;
     if ([contentTxt containsString:@"class='instructClass' target='_blank'"]||[contentTxt containsString:@"class='nc-send-msg'"] || [contentTxt containsString:@"class=\"instructClass\" target=\"_blank\""] || [contentTxt containsString:@"class=\"nc-send-msg\""]) {
-        if ([contentTxt containsString:@"class='instructClass' target='_blank'"]) { //给app
-            NSString * href = [self returnSpanContent:contentTxt AndZhengZe:@"href=\'(.+?)\'"]; //href=['\"](.+?)['\"]
+        if ([contentTxt containsString:@"class='instructClass' target='_blank'"]||[contentTxt containsString:@"class=\"instructClass\" target=\"_blank\""]) { //给app
+            NSString * href = [self returnSpanContent:contentTxt AndZhengZe:@"href=['\"](.+?)['\"]"]; //href=['\"](.+?)['\"]
             NSString * hrefUrl = [href componentsSeparatedByString:@"="].lastObject;
             href = [[hrefUrl componentsSeparatedByString:@"\""] componentsJoinedByString:@""];
-            NSString * url =  [[hrefUrl componentsSeparatedByString:@"'"] componentsJoinedByString:@""];
+            NSString * url =  [[href componentsSeparatedByString:@"'"] componentsJoinedByString:@""];
             dispatch_async(dispatch_get_main_queue(), ^{
                 [[JKMessageOpenUrl sharedOpenUrl] JK_ClickHyperMediaMessageOpenUrl:url];
             });

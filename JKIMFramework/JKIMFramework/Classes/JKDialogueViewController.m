@@ -1555,7 +1555,7 @@
     [[IQKeyboardManager sharedManager] setEnable:NO];
     [IQKeyboardManager sharedManager].enableAutoToolbar = NO;
     self.navigationController.navigationBarHidden = YES;
-    if (self.isNeedResend) { //重新发送一遍问题
+    if (self.isNeedResend && (!self.listMessage.to.length)) { //重新发送一遍问题
         NSString * reText = @"";
         for (int i = (int)self.dataFrameArray.count - 1; i >=0; i--) {
             JKMessageFrame *frameModel = self.dataFrameArray[i];
