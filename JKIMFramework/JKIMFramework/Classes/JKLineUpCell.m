@@ -89,9 +89,14 @@
     if ([contentTxt containsString:@"class='instructClass' target='_blank'"]||[contentTxt containsString:@"class='nc-send-msg'"] || [contentTxt containsString:@"class=\"instructClass\" target=\"_blank\""] || [contentTxt containsString:@"class=\"nc-send-msg\""]) {
         if ([contentTxt containsString:@"class='instructClass' target='_blank'"]||[contentTxt containsString:@"class=\"instructClass\" target=\"_blank\""]) { //给app
             NSString * href = [self returnSpanContent:contentTxt AndZhengZe:@"href=['\"](.+?)['\"]"]; //href=['\"](.+?)['\"]
-            NSString * hrefUrl = [href componentsSeparatedByString:@"="].lastObject;
-            href = [[hrefUrl componentsSeparatedByString:@"\""] componentsJoinedByString:@""];
-            NSString * url =  [[href componentsSeparatedByString:@"'"] componentsJoinedByString:@""];
+            NSString * url = @"";
+            if ([href containsString:@"href='"]) {
+                url = [href substringWithRange:NSMakeRange(6, href.length - 7)];
+            }else {
+                NSString * hrefUrl = [href componentsSeparatedByString:@"="].lastObject;
+                href = [[hrefUrl componentsSeparatedByString:@"\""] componentsJoinedByString:@""];
+                url =  [[href componentsSeparatedByString:@"'"] componentsJoinedByString:@""];
+            }
             dispatch_async(dispatch_get_main_queue(), ^{
                 [[JKMessageOpenUrl sharedOpenUrl] JK_ClickHyperMediaMessageOpenUrl:url];
             });

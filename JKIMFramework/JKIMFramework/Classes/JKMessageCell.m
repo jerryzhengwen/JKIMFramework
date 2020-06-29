@@ -258,9 +258,11 @@
     NSString *contentTxt = self.messageFrame.message.content;
     //此时是发送文字链接
     if ([contentTxt containsString:@"class='nc-text-link' href='javascript:void(0);'"]) {
-        NSString *aText = [self returnSpanContent:contentTxt AndZhengZe:@"<a[^>]*>([^<]+)"];
-        NSString *aLabel = [self returnSpanContent:contentTxt AndZhengZe:@"<a[^>]*>"];
-        NSString *text = [[aText componentsSeparatedByString:aLabel] componentsJoinedByString:@""];
+//        NSString *aText = [self returnSpanContent:contentTxt AndZhengZe:@"<a[^>]*>([^<]+)"];
+//        NSString *aLabel = [self returnSpanContent:contentTxt AndZhengZe:@"<a[^>]*>"];
+//        NSString *text = [[aText componentsSeparatedByString:aLabel] componentsJoinedByString:@""];
+        NSString *text = @"";
+        text = [textView.text substringWithRange:characterRange];
         if (self.sendMsgBlock) {
             self.sendMsgBlock(text);
         }
