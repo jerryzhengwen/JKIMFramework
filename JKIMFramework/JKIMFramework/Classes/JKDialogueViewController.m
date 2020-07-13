@@ -754,7 +754,7 @@
     JKMessageFrame * messge = self.dataFrameArray[indexPath.row];
     JKDialogModel * message = messge.message;
     if (message.messageType == JKMessageLineUP) {
-        return messge.contentF.size.height + 122;
+        return messge.contentF.size.height + 122 -25;
     }
     if (message.messageType == JKMessageSatisfaction) { //先判断有没有提交按钮
         if (message.isSubmit) { //已经提交，不再显示提交按钮
@@ -1142,8 +1142,14 @@
             self.suckerView.hidden = NO;
             [self.endDialogBtn setTitle:@"结束对话" forState:UIControlStateNormal];
         }
+        for (JKMessageFrame * msgFrame in self.dataFrameArray) {
+            if ([msgFrame.message.messageId isEqualToString:message.messageId]) {
+                return ;
+            }
+        }
         JKDialogModel * autoModel =[JKDialogModel changeMsgTypeWithJKModel:message];
-        autoModel.from = autoModel.from?self.customerName:autoModel.from;
+//        autoModel.from = autoModel.from?self.customerName:autoModel.from;
+        autoModel.from = self.customerName?self.customerName:autoModel.from;
         JKMessageFrame *frameModel = [[JKMessageFrame alloc]init];
         if (autoModel.whoSend == JK_SystemMark) {
             self.suckerView.hidden = NO;
@@ -1763,6 +1769,10 @@
     CGSize contentSize;
     switch (message.message.messageType) {
         case JKMessageWord: case JKMessageLineUP:
+            if (message.message.messageType == JKMessageLineUP) {
+                contentSize = [self jiSuanMessageHeigthWithModel:message.message message:[[message.message.content componentsSeparatedByString:@"<br/>"]componentsJoinedByString:@""] font:JKChatContentFont];
+                break;
+            }
             contentSize = [self jiSuanMessageHeigthWithModel:message.message message:message.message.content font:JKChatContentFont];
             
             if ([message.message.content containsString:@"\r\n"] && message.message.whoSend != JK_Visitor) {

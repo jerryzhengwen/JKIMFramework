@@ -66,16 +66,18 @@
         [self.lineUpBtn setTitle:btnTitle forState:UIControlStateNormal];
     }else {
         richText.text = contentTxt;
+        [self.lineUpBtn setTitle:@"转人工" forState:UIControlStateNormal];
     }
     self.textView.attributedText = richText.attributedText;
+//    self.textView.backgroundColor = [UIColor redColor];
 }
 -(void)layoutSubviews {
     [super layoutSubviews];
     CGFloat textHeight = self.model.contentF.size.height;
-    CGFloat backHeight = textHeight + 102;
+    CGFloat backHeight = textHeight + 102 -25;
     self.backView.frame = CGRectMake(16, 4, self.model.contentF.size.width + 24, backHeight);
     self.textView.frame = CGRectMake(12, 12, self.model.contentF.size.width, textHeight);
-    self.lineUpBtn.frame = CGRectMake(12, textHeight + 40, self.model.contentF.size.width, 34);
+    self.lineUpBtn.frame = CGRectMake(12, textHeight + 15, self.model.contentF.size.width, 34);
     
     
     UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:self.backView.bounds byRoundingCorners:UIRectCornerTopRight|UIRectCornerBottomLeft|UIRectCornerBottomRight cornerRadii:CGSizeMake(10, 10)];
