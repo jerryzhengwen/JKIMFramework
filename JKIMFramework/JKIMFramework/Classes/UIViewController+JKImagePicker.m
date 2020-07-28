@@ -101,9 +101,11 @@ static void *isCut =  @"isCut"; //截取
             
             [noticeAlertController addAction:cancelAction];
             [noticeAlertController addAction:okAction];
-            [self presentViewController:noticeAlertController animated:YES completion:^{
-                
-            }];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self presentViewController:noticeAlertController animated:YES completion:^{
+                    
+                }];
+            });
         }
     }];
 }
@@ -123,7 +125,9 @@ static void *isCut =  @"isCut"; //截取
         
         [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
             if (granted) {
+                dispatch_async(dispatch_get_main_queue(), ^{
                 [self presentViewController:self.cameraPicker animated:YES completion:nil];
+                    });
             }
         }];
         
@@ -146,9 +150,14 @@ static void *isCut =  @"isCut"; //截取
         
         [noticeAlertController addAction:cancelAction];
         [noticeAlertController addAction:okAction];
-        [self presentViewController:noticeAlertController animated:YES completion:^{
-            
-        }];}
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self presentViewController:noticeAlertController animated:YES completion:^{
+                
+            }];
+        });
+
+        
+    }
     
     
     

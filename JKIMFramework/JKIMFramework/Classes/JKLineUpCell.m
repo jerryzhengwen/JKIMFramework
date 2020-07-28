@@ -50,6 +50,8 @@
     self.textView = [self createRegularTextViewWithTitle:@"" size:15];
     self.textView.font = JKChatContentFont;
     self.textView.textColor = UIColorFromRGB(0x3E3E3E);
+    self.textView.showsVerticalScrollIndicator = NO;
+    self.textView.scrollEnabled = NO;
     [self.backView addSubview:self.textView];
 }
 -(void)setModel:(JKMessageFrame *)model {
