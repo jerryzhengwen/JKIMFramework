@@ -1571,20 +1571,22 @@
                 break;
             }
         }
-        
-        self.listMessage.messageType = JKMessageWord;
-        self.listMessage.msgSendType = JK_SocketMSG;
-        self.listMessage.whoSend = JK_Visitor;
-        self.listMessage.content = reText;
-        
-        [JKIMSendHelp sendTextMessageWithMessageModel:self.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
-            messageFrame.hiddenTimeLabel = [self showTimeLabelWithModel:messageFrame];
-            messageFrame =  [self jisuanMessageFrame:messageFrame];
-            [self.dataFrameArray addObject:messageFrame];
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [self tableViewMoveToLastPathNeedAnimated:YES];
-            });
-        }];
+        if (reText.length) {
+            [self sendMessageToServer:reText];
+//            self.listMessage.messageType = JKMessageWord;
+//            self.listMessage.msgSendType = JK_SocketMSG;
+//            self.listMessage.whoSend = JK_Visitor;
+//            self.listMessage.content = reText;
+//
+//            [JKIMSendHelp sendTextMessageWithMessageModel:self.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
+//                messageFrame.hiddenTimeLabel = [self showTimeLabelWithModel:messageFrame];
+//                messageFrame =  [self jisuanMessageFrame:messageFrame];
+//                [self.dataFrameArray addObject:messageFrame];
+//                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//                    [self tableViewMoveToLastPathNeedAnimated:YES];
+//                });
+//            }];
+        }
         self.isNeedResend = NO;
     }
     //    if (self.navigationController) {
