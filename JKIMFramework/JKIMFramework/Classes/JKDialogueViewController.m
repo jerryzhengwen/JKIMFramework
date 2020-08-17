@@ -356,7 +356,7 @@
     if (isAll) {
         return;
     }
-    [self sendMessageToServer:self.textView.text];
+    [self sendMessageToServer:self.textView.text Delay:NO];
     self.textView.text = @"";
 //    self.listMessage.messageType = JKMessageWord;
 //    self.listMessage.msgSendType = JK_SocketMSG;
@@ -384,7 +384,7 @@
 //            }];
 //    }
 }
--(void)sendMessageToServer:(NSString *)content {
+-(void)sendMessageToServer:(NSString *)content Delay:(BOOL)delay {
     self.listMessage.messageType = JKMessageWord;
     self.listMessage.msgSendType = JK_SocketMSG;
     self.listMessage.whoSend = JK_Visitor;
@@ -401,13 +401,17 @@
         self.suckerView.hidden = YES;
     }
     __weak JKDialogueViewController *weakSelf = self;
-    if (!self.listMessage.to.length) {
-        [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:self.listMessage robotMessageBlock:^(JKMessage *messageData, int count) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                //展示机器人消息
-                [weakSelf showRobotMessage:messageData count:count];
-            });
-        }];
+    if (!self.listMessage.to.length) {//登录账号重发延迟2s
+        int delayCount = delay ? 2: 0;
+        dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayCount * NSEC_PER_SEC));
+        dispatch_after(delayTime, dispatch_get_main_queue(), ^{
+            [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:self.listMessage robotMessageBlock:^(JKMessage *messageData, int count) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    //展示机器人消息
+                    [weakSelf showRobotMessage:messageData count:count];
+                });
+            }];
+        });
     }
 }
 -(BOOL)showTimeLabelWithModel:(JKMessageFrame *)messageModel {
@@ -555,7 +559,7 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.model = messageFrame;
         cell.sendMsgBlock = ^(NSString * _Nonnull content) {
-            [weakSelf sendMessageToServer:content];
+            [weakSelf sendMessageToServer:content Delay:NO];
         };
         cell.lineUpBlock = ^{
             JKMessage * message = [[JKMessage alloc] init];
@@ -692,7 +696,7 @@
         
     };
     cell.sendMsgBlock = ^(NSString * content) {
-        [weakSelf sendMessageToServer:content];
+        [weakSelf sendMessageToServer:content Delay:NO];
     };
     cell.richText = ^{
         if (weakSelf.customerName.length) {
@@ -1572,7 +1576,7 @@
             }
         }
         if (reText.length) {
-            [self sendMessageToServer:reText];
+            [self sendMessageToServer:reText Delay:YES];
 //            self.listMessage.messageType = JKMessageWord;
 //            self.listMessage.msgSendType = JK_SocketMSG;
 //            self.listMessage.whoSend = JK_Visitor;

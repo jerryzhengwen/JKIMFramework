@@ -8,7 +8,7 @@
 
 #import "JKLineUpCell.h"
 #import "JKDialogueHeader.h"
-@interface JKLineUpCell()
+@interface JKLineUpCell()<UITextViewDelegate>
 @property (nonatomic,strong)UITextView *textView;
 @property (nonatomic,strong)UIView *backView;
 @property (nonatomic,strong)UIButton *lineUpBtn;
@@ -49,6 +49,7 @@
     
     self.textView = [self createRegularTextViewWithTitle:@"" size:15];
     self.textView.font = JKChatContentFont;
+    self.textView.delegate = self;
     self.textView.textColor = UIColorFromRGB(0x3E3E3E);
     self.textView.showsVerticalScrollIndicator = NO;
     self.textView.scrollEnabled = NO;
@@ -61,7 +62,11 @@
     if ([contentTxt containsString:@"class='instructClass' target='_blank'"]||[contentTxt containsString:@"class='nc-send-msg'"]|| [contentTxt containsString:@"class=\"instructClass\" target=\"_blank\""] || [contentTxt containsString:@"class=\"nc-send-msg\""]) {
         NSString *text = [self returnSpanContent:contentTxt AndZhengZe:@"<a[^>]*>([^<]+)</a>"];
         NSString *content = [[contentTxt componentsSeparatedByString:text] componentsJoinedByString:@""];
-        richText.text = content;
+//        richText.text = content;   修改
+        
+        
+        NSMutableAttributedString *contentStr = [self parseHtmlStr:content];
+        richText.attributedText = contentStr;
         NSString *aText = [self returnSpanContent:contentTxt AndZhengZe:@"<a[^>]*>([^<]+)"];
         NSString *aLabel = [self returnSpanContent:contentTxt AndZhengZe:@"<a[^>]*>"];
         NSString *btnTitle = [[aText componentsSeparatedByString:aLabel] componentsJoinedByString:@""];
@@ -70,7 +75,10 @@
         richText.text = contentTxt;
         [self.lineUpBtn setTitle:@"转人工" forState:UIControlStateNormal];
     }
+    self.textView.linkTextAttributes = @{NSForegroundColorAttributeName:UIColorFromRGB(0xEC5642)};
     self.textView.attributedText = richText.attributedText;
+    self.textView.font = JKChatContentFont;
+    self.textView.textColor = UIColorFromRGB(0x3E3E3E);
 //    self.textView.backgroundColor = [UIColor redColor];
 }
 -(void)layoutSubviews {
@@ -138,10 +146,66 @@
     NSError *error = NULL;
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:pattern options:NSRegularExpressionCaseInsensitive error:&error];
     NSTextCheckingResult *result = [regex firstMatchInString:span options:0 range:NSMakeRange(0, [span length])];
-    if (result) {
-        return  [span substringWithRange:result.range];
-    }else {
+    
+    
+   NSArray <NSTextCheckingResult *> * test = [regex matchesInString:span options:0 range:NSMakeRange(0, [span length])];
+    NSTextCheckingResult * last = test.lastObject;
+    if (last) {
+        return [span substringWithRange:last.range];
+    }else{
         return @"";
     }
+    
+//    if (result) {
+//        return  [span substringWithRange:result.range];
+//    }else {
+//        return @"";
+//    }
+}
+- (NSMutableAttributedString *)parseHtmlStr:(NSString *)htmlStr {
+    NSMutableAttributedString *attributedString;
+    @try {
+        //        htmlStr = [htmlStr stringByReplacingOccurrencesOfString:@"</br>" withString:@"\n"];
+        //        attributedString = [[NSMutableAttributedString alloc] initWithString:htmlStr];
+        attributedString  = [[NSMutableAttributedString alloc] initWithData:[htmlStr dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute :@(NSUTF8StringEncoding)} documentAttributes:nil error:nil];
+        //        [attributedString setAttributes:@{NSUnderlineStyleAttributeName : @(NSUnderlineStyleNone)}
+        //                         range:NSMakeRange(0, attributedString.string.length)];
+    } @catch (NSException *exception) {
+        attributedString = [[NSMutableAttributedString alloc] initWithString:htmlStr];
+    } @finally {
+    }
+    
+    return attributedString;
+}
+-(BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)URL inRange:(NSRange)characterRange {
+    __block  NSString * urlStr = URL.absoluteString;
+    NSString *contentTxt = self.model.message.content;
+    //此时是发送文字链接
+    if ([contentTxt containsString:@"class='nc-text-link' href='javascript:void(0);'"]) {
+        //        NSString *aText = [self returnSpanContent:contentTxt AndZhengZe:@"<a[^>]*>([^<]+)"];
+        //        NSString *aLabel = [self returnSpanContent:contentTxt AndZhengZe:@"<a[^>]*>"];
+        //        NSString *text = [[aText componentsSeparatedByString:aLabel] componentsJoinedByString:@""];
+        NSString *text = @"";
+        text = [textView.text substringWithRange:characterRange];
+        if (self.sendMsgBlock) {
+            self.sendMsgBlock(text);
+        }
+        return NO;
+    }
+    if (urlStr.length) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSString * lastStr = [urlStr substringFromIndex:urlStr.length -1];
+            if ([lastStr isEqualToString:@"/"]) {
+                NSString * lowerString = [contentTxt lowercaseString];
+                if (![lowerString containsString:urlStr]) {
+                    urlStr = [urlStr substringToIndex:urlStr.length - 1];
+                }
+            }
+            [[JKMessageOpenUrl sharedOpenUrl] JK_ClickHyperMediaMessageOpenUrl:urlStr];
+        });
+    }else { //获取下一级业务类型
+        
+    }
+    return NO;
 }
 @end
