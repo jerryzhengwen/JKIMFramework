@@ -1316,6 +1316,7 @@
 #pragma mark- 通知方法
 -(void)dealloc {
     [self.tableView removeObserver:self forKeyPath:@"frame"];
+    [self.suckerView removeObserver:self forKeyPath:@"hidden"];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     NSLog(@"JKDialogueViewController 释放了");
 }
