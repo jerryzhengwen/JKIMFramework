@@ -100,7 +100,8 @@
     NSString *contentTxt = self.model.message.content;
     if ([contentTxt containsString:@"class='instructClass' target='_blank'"]||[contentTxt containsString:@"class='nc-send-msg'"] || [contentTxt containsString:@"class=\"instructClass\" target=\"_blank\""] || [contentTxt containsString:@"class=\"nc-send-msg\""]) {
         if ([contentTxt containsString:@"class='instructClass' target='_blank'"]||[contentTxt containsString:@"class=\"instructClass\" target=\"_blank\""]) { //给app
-            NSString * href = [self returnSpanContent:contentTxt AndZhengZe:@"href=['\"](.+?)['\"]"]; //href=['\"](.+?)['\"]
+            NSString *aLink = [self returnSpanContent:contentTxt AndZhengZe:[NSString stringWithFormat:@"<a[^>]*>%@</a>",self.lineUpBtn.titleLabel.text]];
+            NSString * href = [self returnSpanContent:aLink AndZhengZe:@"href=['\"](.+?)['\"]"]; //href=['\"](.+?)['\"]
             NSString * url = @"";
             if ([href containsString:@"href='"]) {
                 url = [href substringWithRange:NSMakeRange(6, href.length - 7)];
@@ -149,6 +150,15 @@
     
     
    NSArray <NSTextCheckingResult *> * test = [regex matchesInString:span options:0 range:NSMakeRange(0, [span length])];
+    for (NSTextCheckingResult *obj in test) {
+        NSString * str = [span substringWithRange:obj.range];
+        if ([str containsString:@"class='instructClass' target='_blank'"]||[str containsString:@"class=\"instructClass\" target=\"_blank\""]||[str containsString:@"class='nc-send-msg'"]||[str containsString:@"class=\"nc-send-msg\""]) {
+            return str;
+        }else {
+            continue;
+        }
+    }
+    
     NSTextCheckingResult * last = test.lastObject;
     if (last) {
         return [span substringWithRange:last.range];
@@ -182,15 +192,16 @@
     NSString *contentTxt = self.model.message.content;
     //此时是发送文字链接
     if ([contentTxt containsString:@"class='nc-text-link' href='javascript:void(0);'"]) {
-        //        NSString *aText = [self returnSpanContent:contentTxt AndZhengZe:@"<a[^>]*>([^<]+)"];
-        //        NSString *aLabel = [self returnSpanContent:contentTxt AndZhengZe:@"<a[^>]*>"];
-        //        NSString *text = [[aText componentsSeparatedByString:aLabel] componentsJoinedByString:@""];
+        
         NSString *text = @"";
         text = [textView.text substringWithRange:characterRange];
-        if (self.sendMsgBlock) {
-            self.sendMsgBlock(text);
+        NSString *aLink = [self returnSpanContent:contentTxt AndZhengZe:[NSString stringWithFormat:@"<a[^>]*>%@</a>",text]];
+        if ([aLink containsString:@"class='nc-text-link' href='javascript:void(0);'"]) {
+            if (self.sendMsgBlock) {
+                self.sendMsgBlock(text);
+            }
+            return NO;
         }
-        return NO;
     }
     if (urlStr.length) {
         dispatch_async(dispatch_get_main_queue(), ^{

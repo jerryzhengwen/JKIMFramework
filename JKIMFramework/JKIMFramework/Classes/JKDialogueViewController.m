@@ -1776,10 +1776,10 @@
     CGSize contentSize;
     switch (message.message.messageType) {
         case JKMessageWord: case JKMessageLineUP:
-            if (message.message.messageType == JKMessageLineUP) {
-                contentSize = [self jiSuanMessageHeigthWithModel:message.message message:[[message.message.content componentsSeparatedByString:@"<br/>"]componentsJoinedByString:@""] font:JKChatContentFont];
-                break;
-            }
+//            if (message.message.messageType == JKMessageLineUP) {
+//                contentSize = [self jiSuanMessageHeigthWithModel:message.message message:[[message.message.content componentsSeparatedByString:@"<br/>"]componentsJoinedByString:@""] font:JKChatContentFont];
+//                break;
+//            }
             contentSize = [self jiSuanMessageHeigthWithModel:message.message message:message.message.content font:JKChatContentFont];
             
             if ([message.message.content containsString:@"\r\n"] && message.message.whoSend != JK_Visitor) {
