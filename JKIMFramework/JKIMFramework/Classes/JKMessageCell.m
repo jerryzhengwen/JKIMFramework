@@ -258,15 +258,15 @@
     NSString *contentTxt = self.messageFrame.message.content;
     //此时是发送文字链接
     if ([contentTxt containsString:@"class='nc-text-link' href='javascript:void(0);'"]) {
-//        NSString *aText = [self returnSpanContent:contentTxt AndZhengZe:@"<a[^>]*>([^<]+)"];
-//        NSString *aLabel = [self returnSpanContent:contentTxt AndZhengZe:@"<a[^>]*>"];
-//        NSString *text = [[aText componentsSeparatedByString:aLabel] componentsJoinedByString:@""];
         NSString *text = @"";
         text = [textView.text substringWithRange:characterRange];
-        if (self.sendMsgBlock) {
-            self.sendMsgBlock(text);
+        NSString *aLink = [self returnSpanContent:contentTxt AndZhengZe:[NSString stringWithFormat:@"<a[^>]*>%@</a>",text]];
+        if ([aLink containsString:@"class='nc-text-link' href='javascript:void(0);'"]) {
+            if (self.sendMsgBlock) {
+                self.sendMsgBlock(text);
+            }
+            return NO;
         }
-        return NO;
     }
     if ([urlStr isEqualToString:JKGetBussiness]){
         if (self.clickCustomer && (!self.messageFrame.isClickOnce)) {
