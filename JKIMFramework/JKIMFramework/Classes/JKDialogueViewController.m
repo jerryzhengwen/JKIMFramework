@@ -1776,10 +1776,29 @@
     CGSize contentSize;
     switch (message.message.messageType) {
         case JKMessageWord: case JKMessageLineUP:
-//            if (message.message.messageType == JKMessageLineUP) {
+            if (message.message.messageType == JKMessageLineUP) {
+//                NSString * detail = message.message.content;
+//                NSArray * lineUpArr = [detail componentsSeparatedByString:@"<br/>"];
+//                NSString *detailContent = @"";
+//                for (int i = 0; i < lineUpArr.count; i++) {
+//                    if (i >= 3) {
+//                        detailContent = [NSString stringWithFormat:@"%@%@",detailContent,lineUpArr[i]];
+//                    }else {
+//                        detailContent = [NSString stringWithFormat:@"%@<br/>%@",detailContent,lineUpArr[i]];
+//                    }
+//                }
+//                contentSize = [self jiSuanMessageHeigthWithModel:message.message message:detailContent font:JKChatContentFont];
+//
 //                contentSize = [self jiSuanMessageHeigthWithModel:message.message message:[[message.message.content componentsSeparatedByString:@"<br/>"]componentsJoinedByString:@""] font:JKChatContentFont];
-//                break;
-//            }
+                contentSize = [self jiSuanMessageHeigthWithModel:message.message message:message.message.content font:JKChatContentFont];
+                NSArray * array = [message.message.content componentsSeparatedByString:@"<br/>"];
+                if (array.count == 2) {
+                    contentSize = CGSizeMake(contentSize.width, contentSize.height - 20);
+                }else if (array.count >2) {
+                    contentSize = CGSizeMake(contentSize.width, contentSize.height - 40);
+                }
+                break;
+            }
             contentSize = [self jiSuanMessageHeigthWithModel:message.message message:message.message.content font:JKChatContentFont];
             
             if ([message.message.content containsString:@"\r\n"] && message.message.whoSend != JK_Visitor) {
