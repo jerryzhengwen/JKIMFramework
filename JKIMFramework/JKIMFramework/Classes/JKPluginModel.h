@@ -16,7 +16,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,copy) NSString *title;
 ///图片url
 @property(nonatomic,copy) NSString *iconUrl;
-
+/**
+ 是否选中
+ */
+@property(nonatomic,assign)BOOL isSeleted;
 @end
 
 NS_ASSUME_NONNULL_END

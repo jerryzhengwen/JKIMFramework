@@ -60,7 +60,7 @@
         self.msgLab.textColor = [UIColor whiteColor];
         self.msgLab.backgroundColor = [UIColor clearColor];
         self.msgLab.numberOfLines = 0;
-        self.msgLab.font = [UIFont systemFontOfSize:18];
+        self.msgLab.font = [UIFont systemFontOfSize:16];
         self.msgLab.textAlignment = NSTextAlignmentCenter;
         self.msgLab.lineBreakMode = NSLineBreakByCharWrapping;
         

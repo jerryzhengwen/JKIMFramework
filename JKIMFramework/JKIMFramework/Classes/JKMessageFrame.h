@@ -51,4 +51,8 @@
 @property (nonatomic, assign) BOOL isFirstResign;
 /** 点击了转人工按钮，这个按钮就不让再点 */
 @property (nonatomic, assign) BOOL isClickOnce;
+/**
+ 上一通对话
+ */
+@property (nonatomic, assign) BOOL isBeforeDialog;
 @end

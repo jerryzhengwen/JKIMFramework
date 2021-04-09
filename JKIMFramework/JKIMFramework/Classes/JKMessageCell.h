@@ -16,6 +16,11 @@ typedef void(^ClickSkipBlock)(NSString *);
 typedef void(^ClickCustomer)(NSString *);
 typedef void(^ClickLineUpBlock)(void);
 typedef void(^ClickSendMsgBlock)(NSString *);
+//点解决、未解决键盘消失
+typedef void(^DisMissKeyBoardBlock)(void);
+//点击解决、未解决按钮
+typedef void(^ClickSolveBtnBlock)(BOOL clickSolveBtn,NSString*answer,NSString *messageId,NSString *content_id);
+
 
 @protocol JKMessageCellDelegate <NSObject>
 @optional
@@ -53,10 +58,25 @@ typedef void(^ClickSendMsgBlock)(NSString *);
 @property (nonatomic,copy) ClickCustomer clickCustomer;
 @property (nonatomic,copy) ClickSkipBlock skipBlock;
 @property (nonatomic,copy) ClickLineUpBlock lineUpBlock;
-
+/**
+ 键盘消失block
+ */
+@property (nonatomic,copy) DisMissKeyBoardBlock dissMissKeyBoardBlock;
+/**
+ 点击解决、未解决按钮
+ */
+@property (nonatomic,copy) ClickSolveBtnBlock clickSolveBtn;
 /**
  新的消息的发送类型
  */
 @property (nonatomic,copy) ClickSendMsgBlock sendMsgBlock;
+/**
+ 解决按钮
+ */
+@property (nonatomic,strong)UIButton *solveBtn;
+/**
+ 未解决按钮
+ */
+@property (nonatomic,strong)UIButton *unSloveBtn;
 @end
 

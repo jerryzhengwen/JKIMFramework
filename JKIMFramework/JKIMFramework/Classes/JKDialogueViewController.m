@@ -22,6 +22,7 @@
 #import "IQKeyboardManager.h"
 #import "MBProgressHUD.h"
 #import "YYWebImage.h"
+#import "JKLabHUD.h"
 @interface JKDialogueViewController ()<UITableViewDelegate,UITableViewDataSource,UITextViewDelegate,ConnectCenterDelegate,JKMessageCellDelegate,JKMessageImageCellDelegate>
 
 /** 获取图片资源路径 */
@@ -159,9 +160,17 @@
     }
 }
 -(void)reneedInit {
+    [self reloadComments];
     [[JKConnectCenter sharedJKConnectCenter] initDialogeWIthSatisFaction]; //人工消息的时候需要判断下
     //    [[JKConnectCenter sharedJKConnectCenter] checkoutInitCompleteBlock:^(BOOL isComplete) {
     //    }];
+}
+-(void)reloadComments {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        for (JKMessageFrame * messageFrame in self.dataFrameArray) {
+            messageFrame.isBeforeDialog = YES;
+        }
+    });
 }
 -(void)sendRobotMessageWith:(JKMessage *)message {
     __weak JKDialogueViewController *weakSelf = self;
@@ -199,6 +208,7 @@
                         [weakSelf.navigationController popViewControllerAnimated:YES];
                     } //结束对话
                     [[JKConnectCenter sharedJKConnectCenter] getReallyEndChat];
+                    [weakSelf reloadComments];
                 });
             }];
         }
@@ -524,6 +534,12 @@
     }
     return _suckerView;
 }
+-(JKUnSolveView *)unSolveView {
+    if (_unSolveView == nil) {
+        _unSolveView = [[JKUnSolveView alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height)];
+    }
+    return _unSolveView;
+}
 #pragma -
 #pragma mark - delegate
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
@@ -558,6 +574,9 @@
         }
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.model = messageFrame;
+        cell.dissMissKeyBoardBlock = ^{
+            [weakSelf.view endEditing:YES];
+        };
         cell.sendMsgBlock = ^(NSString * _Nonnull content) {
             [weakSelf sendMessageToServer:content Delay:NO];
         };
@@ -570,6 +589,35 @@
                     [weakSelf showRobotMessage:messageData count:count];
                 });
             }];
+        };
+        cell.clickBtnBlock = ^(BOOL clickSolveBtn, NSString * _Nonnull answer, NSString * _Nonnull messageId, NSString * _Nonnull content_id) {
+            NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+            [dict setObject:answer forKey:@"answer"];
+            [dict setObject:clickSolveBtn?@"0":@"1" forKey:@"isLikes"];
+            [dict setObject:messageId forKey:@"messageId"];
+            [dict setObject:content_id forKey:@"contextId"];
+            if (clickSolveBtn) {
+                [weakSelf requestRobotCommentsWithPara:dict];
+            }else {
+                //判断是否点击了解决、未解决按钮
+                NSArray *titleArr = [[JKConnectCenter sharedJKConnectCenter] getUnsolveArr];
+                if (!titleArr.count) {
+                    [weakSelf requestRobotCommentsWithPara:dict];
+                    return ;
+                }
+                weakSelf.unSolveView.titleArr = titleArr;
+                weakSelf.unSolveView.clickTipsBlock = ^(NSString * _Nonnull selectTips) {
+                    if (messageFrame.isBeforeDialog) {
+                        [[JKLabHUD shareHUD] showWithMsg:@"已结束对话不能点评"];
+                        return ;
+                    }
+                    if (selectTips.length) {
+                        [dict setObject:selectTips forKey:@"option"];
+                    }
+                    [weakSelf requestRobotCommentsWithPara:dict];
+                };
+                [weakSelf.navigationController.view addSubview:weakSelf.unSolveView];
+            }
         };
         return cell;
     }
@@ -693,7 +741,38 @@
                 });
             }];
         }
-        
+    };
+    cell.dissMissKeyBoardBlock = ^{
+        [weakSelf.view endEditing:YES];
+    };
+    cell.clickSolveBtn = ^(BOOL clickSolveBtn, NSString *answer, NSString *messageId, NSString *content_id) {
+        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+        [dict setObject:answer forKey:@"answer"];
+        [dict setObject:clickSolveBtn?@"0":@"1" forKey:@"isLikes"];
+        [dict setObject:messageId forKey:@"messageId"];
+        [dict setObject:content_id forKey:@"contextId"];
+        if (clickSolveBtn) {
+            [weakSelf requestRobotCommentsWithPara:dict];
+        }else {
+            //判断是否点击了解决、未解决按钮
+            NSArray *titleArr = [[JKConnectCenter sharedJKConnectCenter] getUnsolveArr];
+            if (!titleArr.count) {
+                [weakSelf requestRobotCommentsWithPara:dict];
+                return ;
+            }
+            weakSelf.unSolveView.titleArr = titleArr;
+            weakSelf.unSolveView.clickTipsBlock = ^(NSString * _Nonnull selectTips) {
+                if (messageFrame.isBeforeDialog) {
+                    [[JKLabHUD shareHUD] showWithMsg:@"已结束对话不能点评"];
+                    return ;
+                }
+                if (selectTips.length) {
+                    [dict setObject:selectTips forKey:@"option"];
+                }
+                [weakSelf requestRobotCommentsWithPara:dict];
+            };
+            [weakSelf.navigationController.view addSubview:weakSelf.unSolveView];
+        }
     };
     cell.sendMsgBlock = ^(NSString * content) {
         [weakSelf sendMessageToServer:content Delay:NO];
@@ -725,6 +804,23 @@
         [self.view addSubview:callWebview];
     }
 }
+-(void)requestRobotCommentsWithPara:(NSMutableDictionary *)dict {
+    [[JKConnectCenter sharedJKConnectCenter] requestRobotCommentsWithPara:dict result:^(BOOL isSuccess, NSString * _Nonnull tips) {
+        if (!isSuccess) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[JKLabHUD shareHUD] showWithMsg:tips?tips:@"提交失败"];
+            });   
+        }else {
+            if ([dict.allKeys containsObject:@"option"]) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                   [[JKLabHUD shareHUD] showWithMsg:@"提交成功"];
+                });
+            }
+        }
+    } error:^(NSString * _Nonnull errorMsg) {
+        [[JKLabHUD shareHUD] showWithMsg:errorMsg];
+    }];
+}
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [self.view endEditing:YES];
 //    if (self.faceView.hidden == NO) {
@@ -752,13 +848,14 @@
     });
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (indexPath.row >self.dataFrameArray.count - 1) {
+    if (indexPath.row >self.dataFrameArray.count - 1) { 
         return 0;
     }
     JKMessageFrame * messge = self.dataFrameArray[indexPath.row];
     JKDialogModel * message = messge.message;
     if (message.messageType == JKMessageLineUP) {
-        return messge.contentF.size.height + 122 -25;
+        CGFloat height = messge.contentF.size.height + 122 -25;
+        return height < 120?120:height; //带解决和未解决按钮
     }
     if (message.messageType == JKMessageSatisfaction) { //先判断有没有提交按钮
         if (message.isSubmit) { //已经提交，不再显示提交按钮
@@ -815,6 +912,11 @@
     }
     //判断下上一个的message的时间
     CGFloat height = messge.cellHeight;
+    if (message.isComments) {
+        if (height < 120 ) { //46 * 2 + 10 +10
+            height = 120;
+        }
+    }
     return  height;
 }
 
@@ -1094,17 +1196,25 @@
     });
 }
 -(void)getRoomHistory:(NSArray<JKMessage *> *)messageArr {
+    
     @try {
         dispatch_async(dispatch_get_main_queue(), ^{
+            for (JKMessageFrame *frameModel in self.dataFrameArray) {
+                for (JKMessage * message in messageArr) {
+                    if ([frameModel.message.messageId isEqualToString:message.messageId]) {
+                        message.isClickSolveBtn = frameModel.message.isClickSolveBtn;
+                        message.isClickUnSolveBtn = frameModel.message.isClickUnSolveBtn;
+                    }
+                }
+            }
+            
+            
             self.dataArray = [NSMutableArray array];
             self.dataFrameArray = [NSMutableArray array];
             [self.tableView reloadData];
             for (JKMessage * message in messageArr) {
                 JKDialogModel * autoModel = [message mutableCopy];
                 JKMessageFrame *frameModel = [[JKMessageFrame alloc] init];
-//                if (message.from.length) {
-//                    self.customerName = message.from;
-//                }
                 frameModel.message = autoModel;
                 frameModel.hiddenTimeLabel = [self showTimeLabelWithModel:frameModel];
                 frameModel = [self jisuanMessageFrame:frameModel];
@@ -1112,9 +1222,6 @@
                     frameModel.cellHeight = 0;
                 }
                 [self.dataFrameArray addObject:frameModel];
-//                if (self.dataFrameArray.count >= 11) {//需要删除的
-//                    break;
-//                }
             }
             //        [self reloadPath];
             //    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -1166,6 +1273,7 @@
                     }
                 });
             }];
+            [self reloadComments];
             //初始化一下context_id;
             [[JKConnectCenter sharedJKConnectCenter] initDialogeWIthSatisFaction];
             return;
@@ -1184,6 +1292,7 @@
                 [self hiddenFaceEmojiOrPicture];
             }]; //重新初始化 context_Id
             //初始化一下context_id;
+            [self reloadComments];
             [[JKConnectCenter sharedJKConnectCenter] initDialogeWIthSatisFaction];
         }
         
@@ -1316,6 +1425,7 @@
 #pragma mark- 通知方法
 -(void)dealloc {
     [self.tableView removeObserver:self forKeyPath:@"frame"];
+    [self.suckerView removeObserver:self forKeyPath:@"hidden"];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     NSLog(@"JKDialogueViewController 释放了");
 }
@@ -1606,7 +1716,7 @@
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
     [[IQKeyboardManager sharedManager] setEnable:YES];
-    [IQKeyboardManager sharedManager].enableAutoToolbar = YES;
+//    [IQKeyboardManager sharedManager].enableAutoToolbar = YES;
     //    self.navigationController.navigationBar.hidden = NO;
     self.navigationController.navigationBarHidden = NO;
 }
@@ -1776,7 +1886,26 @@
     switch (message.message.messageType) {
         case JKMessageWord: case JKMessageLineUP:
             if (message.message.messageType == JKMessageLineUP) {
-                contentSize = [self jiSuanMessageHeigthWithModel:message.message message:[[message.message.content componentsSeparatedByString:@"<br/>"]componentsJoinedByString:@""] font:JKChatContentFont];
+//                NSString * detail = message.message.content;
+//                NSArray * lineUpArr = [detail componentsSeparatedByString:@"<br/>"];
+//                NSString *detailContent = @"";
+//                for (int i = 0; i < lineUpArr.count; i++) {
+//                    if (i >= 3) {
+//                        detailContent = [NSString stringWithFormat:@"%@%@",detailContent,lineUpArr[i]];
+//                    }else {
+//                        detailContent = [NSString stringWithFormat:@"%@<br/>%@",detailContent,lineUpArr[i]];
+//                    }
+//                }
+//                contentSize = [self jiSuanMessageHeigthWithModel:message.message message:detailContent font:JKChatContentFont];
+//
+//                contentSize = [self jiSuanMessageHeigthWithModel:message.message message:[[message.message.content componentsSeparatedByString:@"<br/>"]componentsJoinedByString:@""] font:JKChatContentFont];
+                contentSize = [self jiSuanMessageHeigthWithModel:message.message message:message.message.content font:JKChatContentFont];
+                NSArray * array = [message.message.content componentsSeparatedByString:@"<br/>"];
+                if (array.count == 2) {
+                    contentSize = CGSizeMake(contentSize.width, contentSize.height - 20);
+                }else if (array.count >2) {
+                    contentSize = CGSizeMake(contentSize.width, contentSize.height - 40);
+                }
                 break;
             }
             contentSize = [self jiSuanMessageHeigthWithModel:message.message message:message.message.content font:JKChatContentFont];
@@ -1809,7 +1938,6 @@
         message.contentF = CGRectMake(contentX, contentY, contentSize.width + 24, contentSize.height);
         message.cellHeight = MAX(CGRectGetMaxY(message.contentF), CGRectGetMaxY(message.nameF))  + 12;
     }
-    
     return message;
     
 }
