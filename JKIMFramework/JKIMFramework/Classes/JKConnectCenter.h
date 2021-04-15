@@ -259,7 +259,10 @@ NS_ASSUME_NONNULL_BEGIN
  @param customer 用户的基本信息
  */
 -(void)JKIM_statueChangeWithCustomer:(JKCustomer *)customer;
-
+/// 用户信息同步 必填visitor_name、mobile_phone字段 如果退出，传nil即可。
+/// @param customer 用户的基本信息
+/// @param resultBlock 回调
+-(void)JKIM_statueChangeWithCustomer:(JKCustomer *)customer ResultBlock:(void(^)(BOOL isSuccess,NSString *tips))resultBlock;
 /**
  获取context_id
 

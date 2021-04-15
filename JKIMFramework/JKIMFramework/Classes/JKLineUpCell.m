@@ -67,9 +67,6 @@
         return;
     }
     if (self.solveBtn.selected || self.unSloveBtn.selected) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[JKLabHUD shareHUD] showWithMsg:@"您已经点评过了请勿重复点评"];
-        });
         return;
     }
     [button setTitleColor:UIColorFromRGB(0xEC5642) forState:UIControlStateNormal];
@@ -177,22 +174,21 @@
     CGFloat backHeight = textHeight + 102 -25;
     self.backView.frame = CGRectMake(16, 4, self.model.contentF.size.width + 24, backHeight);
     self.textView.frame = CGRectMake(12, 12, self.model.contentF.size.width, textHeight);
-//    self.textView.backgroundColor = [UIColor redColor];
     self.lineUpBtn.frame = CGRectMake(12, textHeight + 15, self.model.contentF.size.width, 34);
-    
-    
     UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:self.backView.bounds byRoundingCorners:UIRectCornerTopRight|UIRectCornerBottomLeft|UIRectCornerBottomRight cornerRadii:CGSizeMake(10, 10)];
     CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
     maskLayer.frame = self.backView.bounds;
     maskLayer.path = maskPath.CGPath;
     self.backView.layer.mask = maskLayer;
-    
-    self.solveBtn.frame = CGRectMake([UIScreen mainScreen].bounds.size.width - 60, 6, 46, 46);
-    self.solveBtn.titleEdgeInsets = UIEdgeInsetsMake(28, -22, 0, 0);
-    self.solveBtn.imageEdgeInsets = UIEdgeInsetsMake(6, 12, 18, 12);
-    self.unSloveBtn.frame = CGRectMake(CGRectGetMinX(self.solveBtn.frame), CGRectGetMaxY(self.solveBtn.frame) + 10, 46, 46);
-    self.unSloveBtn.titleEdgeInsets = UIEdgeInsetsMake(28, -22, 0, 0);
-    self.unSloveBtn.imageEdgeInsets = UIEdgeInsetsMake(6, 12, 18, 12);   
+    if (!self.solveBtn.hidden) {
+        CGFloat margin = CGRectGetMaxY(self.backView.frame) > 102?CGRectGetMaxY(self.backView.frame) -102:CGRectGetMaxY(self.contentView.frame)- 105;
+        self.solveBtn.frame = CGRectMake([UIScreen mainScreen].bounds.size.width - 60, margin, 46, 46);
+        self.solveBtn.titleEdgeInsets = UIEdgeInsetsMake(28, -22, 0, 0);
+        self.solveBtn.imageEdgeInsets = UIEdgeInsetsMake(6, 12, 18, 12);
+        self.unSloveBtn.frame = CGRectMake(CGRectGetMinX(self.solveBtn.frame), CGRectGetMaxY(self.solveBtn.frame) + 10, 46, 46);
+        self.unSloveBtn.titleEdgeInsets = UIEdgeInsetsMake(28, -22, 0, 0);
+        self.unSloveBtn.imageEdgeInsets = UIEdgeInsetsMake(6, 12, 18, 12); 
+    }
 }
 -(void)lineUpCustomer:(UIButton *)button {
     NSString *contentTxt = self.model.message.content;

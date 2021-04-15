@@ -98,9 +98,6 @@
         return;
     }
     if (self.solveBtn.selected || self.unSloveBtn.selected) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-           [[JKLabHUD shareHUD] showWithMsg:@"您已经点评过了请勿重复点评"];
-        });
         return;
     }
     [button setTitleColor:UIColorFromRGB(0xEC5642) forState:UIControlStateNormal];
@@ -196,14 +193,6 @@
             
             UIImage *unSolveImage = [UIImage imageWithContentsOfFile:unSolvePath];
             [self.unSloveBtn setImage:unSolveImage forState:UIControlStateNormal];
-            
-            CGFloat minHeight = self.labelTime.hidden?CGRectGetMinY(self.nameLabel.frame)- 6:CGRectGetMinY(self.labelTime.frame) - 6;
-            self.solveBtn.frame = CGRectMake([UIScreen mainScreen].bounds.size.width - 60, minHeight, 46, 46);
-            self.solveBtn.titleEdgeInsets = UIEdgeInsetsMake(28, -22, 0, 0);
-            self.solveBtn.imageEdgeInsets = UIEdgeInsetsMake(6, 12, 18, 12);
-            self.unSloveBtn.frame = CGRectMake(CGRectGetMinX(self.solveBtn.frame), CGRectGetMaxY(self.solveBtn.frame) + 10, 46, 46);
-            self.unSloveBtn.titleEdgeInsets = UIEdgeInsetsMake(28, -22, 0, 0);
-            self.unSloveBtn.imageEdgeInsets = UIEdgeInsetsMake(6, 12, 18, 12);
         }
     }else {
         self.nameLabel.hidden = YES;
@@ -643,6 +632,18 @@
         return  [span substringWithRange:result.range];
     }else {
         return @"";
+    }
+}
+-(void)layoutSubviews {
+    [super layoutSubviews];
+    if (!self.solveBtn.hidden) {
+        CGFloat margin = CGRectGetMaxY(self.btnContent.frame) > 102?CGRectGetMaxY(self.btnContent.frame) -102:CGRectGetMaxY(self.contentView.frame)-105;
+        self.solveBtn.frame = CGRectMake([UIScreen mainScreen].bounds.size.width - 60, margin, 46, 46);
+        self.solveBtn.titleEdgeInsets = UIEdgeInsetsMake(28, -22, 0, 0);
+        self.solveBtn.imageEdgeInsets = UIEdgeInsetsMake(6, 12, 18, 12);
+        self.unSloveBtn.frame = CGRectMake(CGRectGetMinX(self.solveBtn.frame), CGRectGetMaxY(self.solveBtn.frame) + 10, 46, 46);
+        self.unSloveBtn.titleEdgeInsets = UIEdgeInsetsMake(28, -22, 0, 0);
+        self.unSloveBtn.imageEdgeInsets = UIEdgeInsetsMake(6, 12, 18, 12);
     }
 }
 @end

@@ -1955,8 +1955,11 @@
     }
     NSMutableAttributedString *attribute = [self praseHtmlStr:message];
     [attribute addAttributes:@{NSFontAttributeName: font} range:NSMakeRange(0, attribute.string.length)];
-    
-    CGSize size = [self getAttributedStringHeightWithText:attribute andWidth:JKChatContentW andFont:font];
+    CGFloat maxWth = JKChatContentW;
+    if (model.isComments && model.messageType == JKMessageLineUP) {
+        maxWth = maxWth - 22;
+    }
+    CGSize size = [self getAttributedStringHeightWithText:attribute andWidth:maxWth andFont:font];
     
     model.imageHeight = size.height;
     if (!model.imageWidth) {
