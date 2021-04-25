@@ -48,14 +48,14 @@ typedef void(^JKInitCompleteBlock)(BOOL);
 -(void)receiveHotJKMessage:(JKMessage *_Nonnull)message;
 
 @optional
--(void)getRoomHistory:(NSArray<JKMessage *> *)messageArr;
+-(void)getRoomHistory:(NSArray<JKMessage *> *_Nullable)messageArr;
 @optional
 /**
  底部吸盘的功能
  
  @param surcketArr 吸盘的arr数组
  */
--(void)getSurcketModelArr:(NSMutableArray<JKSurcketModel *> *)surcketArr;
+-(void)getSurcketModelArr:(NSMutableArray<JKSurcketModel *> *_Nullable)surcketArr;
 /**
  收到消息
 
@@ -76,7 +76,7 @@ typedef void(^JKInitCompleteBlock)(BOOL);
 
  @param content 需要重新发送的内容
  */
-- (void)updateContextIDReSendContent:(NSString *)content;
+- (void)updateContextIDReSendContent:(NSString *_Nullable)content;
 @required
 /**
  取消排队成功
@@ -228,7 +228,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  热点消息的Array
 
- @param JKMessage 热点消息的JKMessage
+ @param message 热点消息的JKMessage
  */
 -(void)sendHotJKMessage:(JKMessage *)message;
 
@@ -259,7 +259,10 @@ NS_ASSUME_NONNULL_BEGIN
  @param customer 用户的基本信息
  */
 -(void)JKIM_statueChangeWithCustomer:(JKCustomer *)customer;
-
+/// 用户信息同步 必填visitor_name、mobile_phone字段 如果退出，传nil即可。
+/// @param customer 用户的基本信息
+/// @param resultBlock 回调
+-(void)JKIM_statueChangeWithCustomer:(JKCustomer *)customer ResultBlock:(void(^)(BOOL isSuccess,NSString *tips))resultBlock;
 /**
  获取context_id
 
@@ -270,7 +273,20 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)reInitHistoryRoomWhetherUpdate;
 
 -(void)needReSendContent:(NSString *)content;
+/**
+ 获取未解决提示数组
 
+ @return 获取未解决的反馈数组
+ */
+-(NSArray *)getUnsolveArr;
+/**
+ 点赞或者点踩调用的接口
+
+ @param dict 入参
+ @param success 接口请求成功
+ @param errorBlock 接口请求失败
+ */
+-(void)requestRobotCommentsWithPara:(NSMutableDictionary *)dict result:(void(^)(BOOL isSuccess,NSString *tips))success error:(void (^)(NSString * errorMsg))errorBlock;
 @end
 
 NS_ASSUME_NONNULL_END

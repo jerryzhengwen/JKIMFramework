@@ -12,7 +12,7 @@
 #import "JKAssoiateView.h"
 #import "JKSatisfactionModel.h"
 #import "JKSuckerView.h"
-
+#import "JKUnSolveView.h"
 #define BottomToolHeight 56
 
 NS_ASSUME_NONNULL_BEGIN
@@ -23,6 +23,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,strong)JKAssoiateView *assoiateView;
 /** 吸盘 */
 @property(nonatomic,strong)JKSuckerView *suckerView;
+
+/**
+ 点踩的view
+ */
+@property(nonatomic,strong)JKUnSolveView *unSolveView;
+
 /** 是否需要重新带入问题展示 */
 @property(nonatomic,assign)BOOL isNeedResend;
 /** 是否排队，改变tableview的表尾 */

@@ -7,6 +7,7 @@
 //
 
 #import "JKLineUpCell.h"
+#import "JKLabHUD.h"
 #import "JKDialogueHeader.h"
 @interface JKLineUpCell()<UITextViewDelegate>
 @property (nonatomic,strong)UITextView *textView;
@@ -54,6 +55,63 @@
     self.textView.showsVerticalScrollIndicator = NO;
     self.textView.scrollEnabled = NO;
     [self.backView addSubview:self.textView];
+    [self.contentView addSubview:self.solveBtn];
+    [self.contentView addSubview:self.unSloveBtn];
+}
+-(void)clickSolveBtn:(UIButton *)button {
+    if (self.dissMissKeyBoardBlock) {
+        self.dissMissKeyBoardBlock();
+    }
+    if (self.model.isBeforeDialog) {
+        [[JKLabHUD shareHUD] showWithMsg:@"已结束对话不能点评"];
+        return;
+    }
+    if (self.solveBtn.selected || self.unSloveBtn.selected) {
+        return;
+    }
+    [button setTitleColor:UIColorFromRGB(0xEC5642) forState:UIControlStateNormal];
+    button.selected = !button.selected;
+    if ([self.solveBtn isEqual:button]) {
+        self.model.message.isClickSolveBtn = YES;
+    }else {
+        self.model.message.isClickUnSolveBtn = YES;
+    }
+    NSString * imgStr = [self.solveBtn isEqual:button]?@"jkim_praise_press":@"jkim_trample_press";
+    NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
+    NSString *filePatch = [bundlePatch stringByAppendingPathComponent:imgStr];
+    UIImage *image = [UIImage imageWithContentsOfFile:filePatch];
+    [button setImage:image forState:UIControlStateNormal];
+    if (self.clickBtnBlock) {
+        self.clickBtnBlock([self.solveBtn isEqual:button],self.model.message.content,self.model.message.messageId,[[JKConnectCenter sharedJKConnectCenter] JKIM_getContext_id]);
+    }
+}
+-(UIButton *)solveBtn {
+    if (_solveBtn == nil) {
+        _solveBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_solveBtn setTitle:@"解决" forState:UIControlStateNormal];
+        [_solveBtn addTarget:self action:@selector(clickSolveBtn:) forControlEvents:UIControlEventTouchUpInside];
+        [_solveBtn setTitleColor:UIColorFromRGB(0x9B9B9B) forState:UIControlStateNormal];
+        _solveBtn.backgroundColor = UIColor.whiteColor;
+        _solveBtn.layer.cornerRadius = 10;
+        _solveBtn.clipsToBounds = YES;
+        _solveBtn.hidden = YES;
+        _solveBtn.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:10];
+    }
+    return _solveBtn;
+}
+-(UIButton *)unSloveBtn {
+    if (_unSloveBtn == nil) {
+        _unSloveBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_unSloveBtn setTitle:@"未解决" forState:UIControlStateNormal];
+        [_unSloveBtn addTarget:self action:@selector(clickSolveBtn:) forControlEvents:UIControlEventTouchUpInside];
+        [_unSloveBtn setTitleColor:UIColorFromRGB(0x9B9B9B) forState:UIControlStateNormal];
+        _unSloveBtn.backgroundColor = UIColor.whiteColor;
+        _unSloveBtn.layer.cornerRadius = 10;
+        _unSloveBtn.clipsToBounds = YES;
+        _unSloveBtn.hidden = YES;
+        _unSloveBtn.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:10];
+    }
+    return _unSloveBtn;
 }
 -(void)setModel:(JKMessageFrame *)model {
     _model = model;
@@ -79,28 +137,67 @@
     self.textView.attributedText = richText.attributedText;
     self.textView.font = JKChatContentFont;
     self.textView.textColor = UIColorFromRGB(0x3E3E3E);
-//    self.textView.backgroundColor = [UIColor redColor];
+    self.unSloveBtn.hidden = !model.message.isComments;
+    self.solveBtn.hidden = !model.message.isComments;
+    if (!self.solveBtn.hidden) {
+        NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
+        NSString *filePatch;
+        if (model.message.isClickSolveBtn) {
+            filePatch = [bundlePatch stringByAppendingPathComponent:@"jkim_praise_press"];
+            self.solveBtn.selected = YES;
+            [self.solveBtn setTitleColor:UIColorFromRGB(0xEC5642) forState:UIControlStateNormal];
+        }else {
+            [self.solveBtn setTitleColor:UIColorFromRGB(0x9B9B9B) forState:UIControlStateNormal];
+            self.solveBtn.selected = NO;
+            filePatch = [bundlePatch stringByAppendingPathComponent:@"jkim_praise_def"];
+        }
+        NSString *unSolvePath;
+        if (model.message.isClickUnSolveBtn) {
+            unSolvePath   = [bundlePatch stringByAppendingPathComponent:@"jkim_trample_press"];
+            self.unSloveBtn.selected = YES;
+            [self.unSloveBtn setTitleColor:UIColorFromRGB(0xEC5642) forState:UIControlStateNormal];
+        }else {
+            unSolvePath = [bundlePatch stringByAppendingPathComponent:@"jkim_trample_def"];
+            self.unSloveBtn.selected = NO;
+             [self.unSloveBtn setTitleColor:UIColorFromRGB(0x9B9B9B) forState:UIControlStateNormal];
+        }
+        UIImage *image = [UIImage imageWithContentsOfFile:filePatch];
+        [self.solveBtn setImage:image forState:UIControlStateNormal];
+        
+        UIImage *unSolveImage = [UIImage imageWithContentsOfFile:unSolvePath];
+        [self.unSloveBtn setImage:unSolveImage forState:UIControlStateNormal];
+    }
 }
 -(void)layoutSubviews {
     [super layoutSubviews];
     CGFloat textHeight = self.model.contentF.size.height;
     CGFloat backHeight = textHeight + 102 -25;
-    self.backView.frame = CGRectMake(16, 4, self.model.contentF.size.width + 24, backHeight);
-    self.textView.frame = CGRectMake(12, 12, self.model.contentF.size.width, textHeight);
-    self.lineUpBtn.frame = CGRectMake(12, textHeight + 15, self.model.contentF.size.width, 34);
-    
-    
+//    self.backView.frame = CGRectMake(16, 4, self.model.contentF.size.width, backHeight);
+    CGFloat height = backHeight > 100?backHeight:100;
+    self.backView.frame = CGRectMake(16, 4, [UIScreen mainScreen].bounds.size.width - 84, height);
+    self.textView.frame = CGRectMake(12, 12, self.model.contentF.size.width - 24, textHeight);
+    self.lineUpBtn.frame = CGRectMake(12, textHeight + 15, self.model.contentF.size.width - 24, 34);
     UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:self.backView.bounds byRoundingCorners:UIRectCornerTopRight|UIRectCornerBottomLeft|UIRectCornerBottomRight cornerRadii:CGSizeMake(10, 10)];
     CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
     maskLayer.frame = self.backView.bounds;
     maskLayer.path = maskPath.CGPath;
     self.backView.layer.mask = maskLayer;
+    if (!self.solveBtn.hidden) {
+        CGFloat margin = CGRectGetMaxY(self.backView.frame) > 100?CGRectGetMaxY(self.backView.frame) -100:CGRectGetMaxY(self.contentView.frame)- 103;
+        self.solveBtn.frame = CGRectMake([UIScreen mainScreen].bounds.size.width - 60, margin, 46, 46);
+        self.solveBtn.titleEdgeInsets = UIEdgeInsetsMake(28, -22, 0, 0);
+        self.solveBtn.imageEdgeInsets = UIEdgeInsetsMake(6, 12, 18, 12);
+        self.unSloveBtn.frame = CGRectMake(CGRectGetMinX(self.solveBtn.frame), CGRectGetMaxY(self.solveBtn.frame) + 8, 46, 46);
+        self.unSloveBtn.titleEdgeInsets = UIEdgeInsetsMake(28, -22, 0, 0);
+        self.unSloveBtn.imageEdgeInsets = UIEdgeInsetsMake(6, 12, 18, 12); 
+    }
 }
 -(void)lineUpCustomer:(UIButton *)button {
     NSString *contentTxt = self.model.message.content;
     if ([contentTxt containsString:@"class='instructClass' target='_blank'"]||[contentTxt containsString:@"class='nc-send-msg'"] || [contentTxt containsString:@"class=\"instructClass\" target=\"_blank\""] || [contentTxt containsString:@"class=\"nc-send-msg\""]) {
         if ([contentTxt containsString:@"class='instructClass' target='_blank'"]||[contentTxt containsString:@"class=\"instructClass\" target=\"_blank\""]) { //给app
-            NSString * href = [self returnSpanContent:contentTxt AndZhengZe:@"href=['\"](.+?)['\"]"]; //href=['\"](.+?)['\"]
+            NSString *aLink = [self returnSpanContent:contentTxt AndZhengZe:[NSString stringWithFormat:@"<a[^>]*>%@</a>",self.lineUpBtn.titleLabel.text]];
+            NSString * href = [self returnSpanContent:aLink AndZhengZe:@"href=['\"](.+?)['\"]"]; //href=['\"](.+?)['\"]
             NSString * url = @"";
             if ([href containsString:@"href='"]) {
                 url = [href substringWithRange:NSMakeRange(6, href.length - 7)];
@@ -149,6 +246,15 @@
     
     
    NSArray <NSTextCheckingResult *> * test = [regex matchesInString:span options:0 range:NSMakeRange(0, [span length])];
+    for (NSTextCheckingResult *obj in test) {
+        NSString * str = [span substringWithRange:obj.range];
+        if ([str containsString:@"class='instructClass' target='_blank'"]||[str containsString:@"class=\"instructClass\" target=\"_blank\""]||[str containsString:@"class='nc-send-msg'"]||[str containsString:@"class=\"nc-send-msg\""]) {
+            return str;
+        }else {
+            continue;
+        }
+    }
+    
     NSTextCheckingResult * last = test.lastObject;
     if (last) {
         return [span substringWithRange:last.range];
@@ -182,15 +288,16 @@
     NSString *contentTxt = self.model.message.content;
     //此时是发送文字链接
     if ([contentTxt containsString:@"class='nc-text-link' href='javascript:void(0);'"]) {
-        //        NSString *aText = [self returnSpanContent:contentTxt AndZhengZe:@"<a[^>]*>([^<]+)"];
-        //        NSString *aLabel = [self returnSpanContent:contentTxt AndZhengZe:@"<a[^>]*>"];
-        //        NSString *text = [[aText componentsSeparatedByString:aLabel] componentsJoinedByString:@""];
+        
         NSString *text = @"";
         text = [textView.text substringWithRange:characterRange];
-        if (self.sendMsgBlock) {
-            self.sendMsgBlock(text);
+        NSString *aLink = [self returnSpanContent:contentTxt AndZhengZe:[NSString stringWithFormat:@"<a[^>]*>%@</a>",text]];
+        if ([aLink containsString:@"class='nc-text-link' href='javascript:void(0);'"]) {
+            if (self.sendMsgBlock) {
+                self.sendMsgBlock(text);
+            }
+            return NO;
         }
-        return NO;
     }
     if (urlStr.length) {
         dispatch_async(dispatch_get_main_queue(), ^{

@@ -104,6 +104,24 @@ typedef NS_ENUM(NSInteger, JKChatStatue) {
  */
 @property (nonatomic,copy)NSString  *index;
 @property (nonatomic,copy)NSString  *timeoutqueue;
+
+/**
+ 此条消息是否支持点评
+ */
+@property (nonatomic,assign)BOOL isComments;
+/**
+ 是否需要点评。0代表除多轮、问答库以外的答案不用点评；1代表多轮、问答库答案可以点评，但未点评；2代表用户已经点评（点赞）；3代表用户已经点评（点踩）
+ */
+@property (nonatomic,assign)int commentsStatus;
+/**
+ 点击了解决的按钮
+ */
+@property (nonatomic,assign) BOOL isClickSolveBtn;
+
+/**
+ 点击了未解决的按钮
+ */
+@property (nonatomic,assign) BOOL isClickUnSolveBtn;
 ///** 热点问题ID */
 //@property (nonatomic,copy) NSString * hotId;
 ///** 标准答案ID  */

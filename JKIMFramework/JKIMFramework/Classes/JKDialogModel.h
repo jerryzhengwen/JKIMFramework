@@ -71,7 +71,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,assign) BOOL isSubmit;//是否已提交(满意度的)
 
 
-
 - (void)minuteOffSetStart:(NSString *)start end:(NSString *)end;
 
 

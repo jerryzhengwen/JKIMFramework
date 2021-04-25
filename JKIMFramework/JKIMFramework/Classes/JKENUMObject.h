@@ -29,6 +29,8 @@ typedef NS_ENUM(NSInteger, JKMessageType) {
     JKMessageLineUP,//转人工的
     JKMessageCancelLineUp,//取消排队
     JKMessageContinueLineUp,//继续排队
+    JKMessageSkipAPP,//点击跳转url到APP
+    JKMessageClickSend,//点击发送文字
 };
 
 /**

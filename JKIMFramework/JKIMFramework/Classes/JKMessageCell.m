@@ -19,6 +19,7 @@
 #import "JKDialogueHeader.h"
 #import "RegexKitLite.h"
 #import "JKMessageOpenUrl.h"
+#import "JKLabHUD.h"
 @interface JKMessageCell ()
 {
     AVAudioPlayer *player;
@@ -60,6 +61,9 @@
         self.btnContent.contentTV.font = JKChatContentFont;
         self.btnContent.contentTV.delegate = self;
         [self.contentView addSubview:self.btnContent];
+        
+        [self.contentView addSubview:self.solveBtn];
+        [self.contentView addSubview:self.unSloveBtn];
     }
     return self;
 }
@@ -85,13 +89,65 @@
         
     }
 }
-
+-(void)clickSolveBtn:(UIButton *)button {
+    if (self.dissMissKeyBoardBlock) {
+        self.dissMissKeyBoardBlock();
+    }
+    if (self.messageFrame.isBeforeDialog) {
+        [[JKLabHUD shareHUD] showWithMsg:@"已结束对话不能点评"];
+        return;
+    }
+    if (self.solveBtn.selected || self.unSloveBtn.selected) {
+        return;
+    }
+    [button setTitleColor:UIColorFromRGB(0xEC5642) forState:UIControlStateNormal];
+    button.selected = !button.selected;
+    if ([self.solveBtn isEqual:button]) {
+        self.messageFrame.message.isClickSolveBtn = YES;
+    }else {
+        self.messageFrame.message.isClickUnSolveBtn = YES;
+    }
+    NSString * imgStr = [self.solveBtn isEqual:button]?@"jkim_praise_press":@"jkim_trample_press";
+    NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
+    NSString *filePatch = [bundlePatch stringByAppendingPathComponent:imgStr];
+    UIImage *image = [UIImage imageWithContentsOfFile:filePatch];
+    [button setImage:image forState:UIControlStateNormal];
+    if (self.clickSolveBtn) {
+        self.clickSolveBtn([self.solveBtn isEqual:button],self.messageFrame.message.content,self.messageFrame.message.messageId,[[JKConnectCenter sharedJKConnectCenter] JKIM_getContext_id]);
+    }
+}
+-(UIButton *)solveBtn {
+    if (_solveBtn == nil) {
+        _solveBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_solveBtn setTitle:@"解决" forState:UIControlStateNormal];
+        [_solveBtn addTarget:self action:@selector(clickSolveBtn:) forControlEvents:UIControlEventTouchUpInside];
+        [_solveBtn setTitleColor:UIColorFromRGB(0x9B9B9B) forState:UIControlStateNormal];
+        _solveBtn.backgroundColor = UIColor.whiteColor;
+        _solveBtn.layer.cornerRadius = 10;
+        _solveBtn.clipsToBounds = YES;
+        _solveBtn.hidden = YES;
+        _solveBtn.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:10];
+    }
+    return _solveBtn;
+}
+-(UIButton *)unSloveBtn {
+    if (_unSloveBtn == nil) {
+        _unSloveBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_unSloveBtn setTitle:@"未解决" forState:UIControlStateNormal];
+        [_unSloveBtn addTarget:self action:@selector(clickSolveBtn:) forControlEvents:UIControlEventTouchUpInside];
+        [_unSloveBtn setTitleColor:UIColorFromRGB(0x9B9B9B) forState:UIControlStateNormal];
+        _unSloveBtn.backgroundColor = UIColor.whiteColor;
+        _unSloveBtn.layer.cornerRadius = 10;
+        _unSloveBtn.clipsToBounds = YES;
+        _unSloveBtn.hidden = YES;
+        _unSloveBtn.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:10];
+    }
+    return _unSloveBtn;
+}
 //内容及Frame设置
 - (void)setMessageFrame:(JKMessageFrame *)messageFrame{
-
     _messageFrame = messageFrame;
     JKDialogModel *message = messageFrame.message;
-    
     self.btnContent.frame = _messageFrame.contentF;
     self.nameLabel.frame = _messageFrame.nameF;
     
@@ -108,8 +164,40 @@
     if (message.whoSend !=JK_Visitor) {
         self.nameLabel.hidden = NO;
         self.nameLabel.text = message.from.length?message.from:@"智能客服-小广";
+        self.unSloveBtn.hidden = !message.isComments;
+        self.solveBtn.hidden = !message.isComments;
+        if (!self.solveBtn.hidden) {
+            NSString *bundlePatch =  [JKBundleTool initBundlePathWithImage];
+            NSString *filePatch;
+            if (messageFrame.message.isClickSolveBtn) {
+                filePatch = [bundlePatch stringByAppendingPathComponent:@"jkim_praise_press"];
+                self.solveBtn.selected = YES;
+                [self.solveBtn setTitleColor:UIColorFromRGB(0xEC5642) forState:UIControlStateNormal];
+            }else {
+                filePatch = [bundlePatch stringByAppendingPathComponent:@"jkim_praise_def"];
+                self.solveBtn.selected = NO;
+                [self.solveBtn setTitleColor:UIColorFromRGB(0x9B9B9B) forState:UIControlStateNormal];
+            }
+            NSString *unSolvePath;
+            if (messageFrame.message.isClickUnSolveBtn) {
+                unSolvePath   = [bundlePatch stringByAppendingPathComponent:@"jkim_trample_press"];
+                self.unSloveBtn.selected = YES;
+                [self.unSloveBtn setTitleColor:UIColorFromRGB(0xEC5642) forState:UIControlStateNormal];
+            }else {
+                unSolvePath = [bundlePatch stringByAppendingPathComponent:@"jkim_trample_def"];
+                self.unSloveBtn.selected = NO;
+                [self.unSloveBtn setTitleColor:UIColorFromRGB(0x9B9B9B) forState:UIControlStateNormal];
+            }
+            UIImage *image = [UIImage imageWithContentsOfFile:filePatch];
+            [self.solveBtn setImage:image forState:UIControlStateNormal];
+            
+            UIImage *unSolveImage = [UIImage imageWithContentsOfFile:unSolvePath];
+            [self.unSloveBtn setImage:unSolveImage forState:UIControlStateNormal];
+        }
     }else {
         self.nameLabel.hidden = YES;
+        self.unSloveBtn.hidden = YES;
+        self.solveBtn.hidden = YES;
     }
 
     // 4、设置内容
@@ -118,8 +206,12 @@
     self.btnContent.voiceBackView.hidden = YES;
     self.btnContent.backImageView.hidden = YES;
 
-    self.btnContent.frame = messageFrame.contentF;
-    
+    if (!self.solveBtn.hidden) {
+        CGFloat maxHeight = messageFrame.contentF.size.height > 100?messageFrame.contentF.size.height:100;
+        self.btnContent.frame = CGRectMake(messageFrame.contentF.origin.x, messageFrame.contentF.origin.y, [UIScreen mainScreen].bounds.size.width - 84, maxHeight);
+    }else {
+        self.btnContent.frame = messageFrame.contentF;
+    }
     [self.btnContent.contentTV setSelectable:YES];
     [self.btnContent.contentTV setEditable:NO];
     self.btnContent.contentTV.dataDetectorTypes = UIDataDetectorTypeLink;
@@ -249,6 +341,7 @@
     }else{
         self.btnContent.systemMarkLabel.hidden = YES;
     }
+//    self.btnContent.backgroundColor = [UIColor redColor];
 }
 
 #pragma -
@@ -258,15 +351,15 @@
     NSString *contentTxt = self.messageFrame.message.content;
     //此时是发送文字链接
     if ([contentTxt containsString:@"class='nc-text-link' href='javascript:void(0);'"]) {
-//        NSString *aText = [self returnSpanContent:contentTxt AndZhengZe:@"<a[^>]*>([^<]+)"];
-//        NSString *aLabel = [self returnSpanContent:contentTxt AndZhengZe:@"<a[^>]*>"];
-//        NSString *text = [[aText componentsSeparatedByString:aLabel] componentsJoinedByString:@""];
         NSString *text = @"";
         text = [textView.text substringWithRange:characterRange];
-        if (self.sendMsgBlock) {
-            self.sendMsgBlock(text);
+        NSString *aLink = [self returnSpanContent:contentTxt AndZhengZe:[NSString stringWithFormat:@"<a[^>]*>%@</a>",text]];
+        if ([aLink containsString:@"class='nc-text-link' href='javascript:void(0);'"]) {
+            if (self.sendMsgBlock) {
+                self.sendMsgBlock(text);
+            }
+            return NO;
         }
-        return NO;
     }
     if ([urlStr isEqualToString:JKGetBussiness]){
         if (self.clickCustomer && (!self.messageFrame.isClickOnce)) {
@@ -544,6 +637,18 @@
         return  [span substringWithRange:result.range];
     }else {
         return @"";
+    }
+}
+-(void)layoutSubviews {
+    [super layoutSubviews];
+    if (!self.solveBtn.hidden) {
+        CGFloat margin = CGRectGetMaxY(self.btnContent.frame) > 100?CGRectGetMaxY(self.btnContent.frame) -100:CGRectGetMaxY(self.contentView.frame)-103;
+        self.solveBtn.frame = CGRectMake([UIScreen mainScreen].bounds.size.width - 60, margin, 46, 46);
+        self.solveBtn.titleEdgeInsets = UIEdgeInsetsMake(28, -22, 0, 0);
+        self.solveBtn.imageEdgeInsets = UIEdgeInsetsMake(6, 12, 18, 12);
+        self.unSloveBtn.frame = CGRectMake(CGRectGetMinX(self.solveBtn.frame), CGRectGetMaxY(self.solveBtn.frame) + 8, 46, 46);
+        self.unSloveBtn.titleEdgeInsets = UIEdgeInsetsMake(28, -22, 0, 0);
+        self.unSloveBtn.imageEdgeInsets = UIEdgeInsetsMake(6, 12, 18, 12);
     }
 }
 @end
