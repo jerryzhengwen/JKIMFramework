@@ -23,6 +23,7 @@
 #import "MBProgressHUD.h"
 #import "YYWebImage.h"
 #import "JKLabHUD.h"
+#import <libkern/OSAtomic.h>
 @interface JKDialogueViewController ()<UITableViewDelegate,UITableViewDataSource,UITextViewDelegate,ConnectCenterDelegate,JKMessageCellDelegate,JKMessageImageCellDelegate>
 
 /** 获取图片资源路径 */
@@ -48,6 +49,8 @@
 //收到新的消息时的Message
 @property(nonatomic, strong)JKMessage *listMessage;
 @property(nonatomic, strong)MBProgressHUD *hud;
+
+@property (nonatomic, assign)BOOL isConnect;//是否已经建立连接
 @end
 
 @implementation JKDialogueViewController
@@ -161,7 +164,7 @@
 }
 -(void)reneedInit {
     [self reloadComments];
-    [[JKConnectCenter sharedJKConnectCenter] initDialogeWIthSatisFaction]; //人工消息的时候需要判断下
+    //[[JKConnectCenter sharedJKConnectCenter] initDialogeWIthSatisFaction]; //人工消息的时候需要判断下
     //    [[JKConnectCenter sharedJKConnectCenter] checkoutInitCompleteBlock:^(BOOL isComplete) {
     //    }];
 }
@@ -175,10 +178,16 @@
 -(void)sendRobotMessageWith:(JKMessage *)message {
     __weak JKDialogueViewController *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:message robotMessageBlock:^(JKMessage *messageData, int count) {
+//        [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:message robotMessageBlock:^(JKMessage *messageData, int count) {
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                //展示机器人消息
+//                [weakSelf showRobotMessage:messageData count:count];
+//            });
+//        }withFirstReNeedBlock:nil];
+        [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:message firstReNeedBlock:nil withRobotMessageBlock:^(JKMessage * _Nullable message, int count) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 //展示机器人消息
-                [weakSelf showRobotMessage:messageData count:count];
+                [weakSelf showRobotMessage:message count:count];
             });
         }];
     });
@@ -208,6 +217,7 @@
                         [weakSelf.navigationController popViewControllerAnimated:YES];
                     } //结束对话
                     [[JKConnectCenter sharedJKConnectCenter] getReallyEndChat];
+                    [weakSelf hideEndDialogBtn];
                     [weakSelf reloadComments];
                 });
             }];
@@ -366,33 +376,64 @@
     if (isAll) {
         return;
     }
-    [self sendMessageToServer:self.textView.text Delay:NO];
-    self.textView.text = @"";
-//    self.listMessage.messageType = JKMessageWord;
-//    self.listMessage.msgSendType = JK_SocketMSG;
-//    self.listMessage.whoSend = JK_Visitor;
-//    self.listMessage.content = self.textView.text;
-//    [JKIMSendHelp sendTextMessageWithMessageModel:self.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
-//        messageFrame.hiddenTimeLabel = [self showTimeLabelWithModel:messageFrame];
-//        messageFrame =  [self jisuanMessageFrame:messageFrame];
-//        [self.dataFrameArray addObject:messageFrame];
-//        [self tableViewMoveToLastPathNeedAnimated:YES];
-//    }];
-//    self.textView.text = @"";
-//    self.assoiateView.hidden = YES; //需要判断是否在人工
-//    self.suckerView.hidden = self.listMessage.to.length?YES:NO;
-//    if (self.isLineUp) {
-//        self.suckerView.hidden = YES;
-//    }
-//    __weak JKDialogueViewController *weakSelf = self;
-//    if (!self.listMessage.to.length) {
-//            [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:self.listMessage robotMessageBlock:^(JKMessage *messageData, int count) {
-//                dispatch_async(dispatch_get_main_queue(), ^{
-//                    //展示机器人消息
-//                    [weakSelf showRobotMessage:messageData count:count];
-//                });
-//            }];
-//    }
+    JKConnectCenter * center = [JKConnectCenter sharedJKConnectCenter];
+    BOOL needInit = center.isNeedInitDialog;
+    if (needInit) {
+        __weak typeof(self) weakSelf = self;
+        self.hud = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
+        self.hud.label.text = @"加载中";
+        [self.view bringSubviewToFront:self.hud];
+        [[JKConnectCenter sharedJKConnectCenter] initDialogeAfterClickSendWithMessage:self.textView.text andsuccessBlock:^(BOOL isTure) {
+            if (isTure) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [weakSelf.hud hideAnimated:YES];
+                    [weakSelf firstSendMessageWithText:weakSelf.textView.text];
+                    weakSelf.textView.text = @"";
+                    [weakSelf showEndDialogBtn];
+                });
+            }else{
+                //初始化对话失败提示
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [weakSelf.hud hideAnimated:YES];
+                    [[JKLabHUD shareHUD] showWithMsg:@"网络异常，请稍后重试"];
+                    [weakSelf hideEndDialogBtn];
+                });
+            }
+        }];
+    }else{
+        [self sendMessageToServer:self.textView.text Delay:NO];
+        self.textView.text = @"";
+    }
+}
+-(void)firstSendMessageWithText:(NSString *)content{
+    self.listMessage.messageType = JKMessageWord;
+    self.listMessage.msgSendType = JK_SocketMSG;
+    self.listMessage.whoSend = JK_Visitor;
+    self.listMessage.content = content;
+    self.assoiateView.hidden = YES; //需要判断是否在人工
+    self.suckerView.hidden = self.listMessage.to.length?YES:NO;
+    __weak JKDialogueViewController *weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        //展示
+        [[JKConnectCenter sharedJKConnectCenter]sendRobotMessage:self.listMessage firstReNeedBlock:^(BOOL isSuccess, NSString *errorMsg) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //展示访客消息
+                if (isSuccess) {
+                    [JKIMSendHelp sendTextMessageWithMessageModel:weakSelf.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
+                        messageFrame.hiddenTimeLabel = [weakSelf showTimeLabelWithModel:messageFrame];
+                        messageFrame =  [weakSelf jisuanMessageFrame:messageFrame];
+                        [weakSelf.dataFrameArray addObject:messageFrame];
+                        [weakSelf tableViewMoveToLastPathNeedAnimated:YES];
+                    }];
+                }else{
+                    [[JKLabHUD shareHUD] showWithMsg:errorMsg];
+                }
+            });
+        } withRobotMessageBlock:^(JKMessage * _Nullable message, int count) {
+            [weakSelf showRobotMessage:message count:count];
+        }];
+
+    });
 }
 -(void)sendMessageToServer:(NSString *)content Delay:(BOOL)delay {
     self.listMessage.messageType = JKMessageWord;
@@ -415,10 +456,10 @@
         int delayCount = delay ? 2: 0;
         dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayCount * NSEC_PER_SEC));
         dispatch_after(delayTime, dispatch_get_main_queue(), ^{
-            [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:self.listMessage robotMessageBlock:^(JKMessage *messageData, int count) {
+            [[JKConnectCenter sharedJKConnectCenter]sendRobotMessage:weakSelf.listMessage firstReNeedBlock:nil withRobotMessageBlock:^(JKMessage * _Nullable message, int count) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     //展示机器人消息
-                    [weakSelf showRobotMessage:messageData count:count];
+                    [weakSelf showRobotMessage:message count:count ];
                 });
             }];
         });
@@ -583,10 +624,16 @@
         cell.lineUpBlock = ^{
             JKMessage * message = [[JKMessage alloc] init];
             message.content = @"转人工";
-            [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:message robotMessageBlock:^(JKMessage *messageData, int count) {
+//            [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:message robotMessageBlock:^(JKMessage *messageData, int count ) {
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    //展示机器人消息
+//                    [weakSelf showRobotMessage:messageData count:count];
+//                });
+//            }withFirstReNeedBlock:nil];
+            [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:message firstReNeedBlock:nil withRobotMessageBlock:^(JKMessage * _Nullable message, int count) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     //展示机器人消息
-                    [weakSelf showRobotMessage:messageData count:count];
+                    [weakSelf showRobotMessage:message count:count];
                 });
             }];
         };
@@ -734,7 +781,13 @@
             }];
         
         if (!weakSelf.listMessage.to.length) {
-            [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:weakSelf.listMessage robotMessageBlock:^(JKMessage *message, int count) {
+//            [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:weakSelf.listMessage robotMessageBlock:^(JKMessage *message, int count) {
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    //再次进行机器人对话
+//                    [weakSelf showRobotMessage:message count:count];
+//                });
+//            }withFirstReNeedBlock:nil];
+            [[JKConnectCenter sharedJKConnectCenter]sendRobotMessage:weakSelf.listMessage firstReNeedBlock:nil withRobotMessageBlock:^(JKMessage * _Nullable message, int count) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     //再次进行机器人对话
                     [weakSelf showRobotMessage:message count:count];
@@ -1140,10 +1193,16 @@
 -(void)updateContextIDReSendContent:(NSString *)content {
     __weak JKDialogueViewController *weakSelf = self;
     self.listMessage.content = content;
-    [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:self.listMessage robotMessageBlock:^(JKMessage *messageData, int count) {
+//    [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:self.listMessage robotMessageBlock:^(JKMessage *messageData, int count ) {
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            //展示机器人消息
+//            [weakSelf showRobotMessage:messageData count:count ];
+//        });
+//    }withFirstReNeedBlock:nil];
+    [[JKConnectCenter sharedJKConnectCenter] sendRobotMessage:self.listMessage firstReNeedBlock:nil withRobotMessageBlock:^(JKMessage * _Nullable message, int count) {
         dispatch_async(dispatch_get_main_queue(), ^{
             //展示机器人消息
-            [weakSelf showRobotMessage:messageData count:count];
+            [weakSelf showRobotMessage:message count:count ];
         });
     }];
 }
@@ -1241,6 +1300,7 @@
  @param message 消息
  */
 - (void)receiveMessage:(JKMessage *)message{
+    //NSLog(@"--message:-- %@",message);
     __weak JKDialogueViewController *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
         if (message.index) {
@@ -1262,7 +1322,6 @@
             }
         }
         JKDialogModel * autoModel =[JKDialogModel changeMsgTypeWithJKModel:message];
-//        autoModel.from = autoModel.from?self.customerName:autoModel.from;
         autoModel.from = self.customerName?self.customerName:autoModel.from;
         JKMessageFrame *frameModel = [[JKMessageFrame alloc]init];
         if (autoModel.whoSend == JK_SystemMark) {
@@ -1278,8 +1337,11 @@
             }];
             [self reloadComments];
             //初始化一下context_id;
-            [[JKConnectCenter sharedJKConnectCenter] initDialogeWIthSatisFaction];
-            return;
+            //[[JKConnectCenter sharedJKConnectCenter] initDialogeWIthSatisFaction];
+            [weakSelf hideEndDialogBtn];
+            if ([message.content isEqualToString:@"closeRobotChat"]) {
+                return;
+            }
         }
         if (!message.content.length) {
             return;
@@ -1296,7 +1358,7 @@
             }]; //重新初始化 context_Id
             //初始化一下context_id;
             [self reloadComments];
-            [[JKConnectCenter sharedJKConnectCenter] initDialogeWIthSatisFaction];
+            //[[JKConnectCenter sharedJKConnectCenter] initDialogeWIthSatisFaction];
         }
         
         autoModel.whoSend = message.whoSend?message.whoSend:JK_Customer;
@@ -1690,37 +1752,18 @@
         }
         if (reText.length) {
             [self sendMessageToServer:reText Delay:YES];
-//            self.listMessage.messageType = JKMessageWord;
-//            self.listMessage.msgSendType = JK_SocketMSG;
-//            self.listMessage.whoSend = JK_Visitor;
-//            self.listMessage.content = reText;
-//
-//            [JKIMSendHelp sendTextMessageWithMessageModel:self.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
-//                messageFrame.hiddenTimeLabel = [self showTimeLabelWithModel:messageFrame];
-//                messageFrame =  [self jisuanMessageFrame:messageFrame];
-//                [self.dataFrameArray addObject:messageFrame];
-//                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//                    [self tableViewMoveToLastPathNeedAnimated:YES];
-//                });
-//            }];
         }
         self.isNeedResend = NO;
     }
-    //    if (self.navigationController) {
-    //        self.navigationController.navigationBar.hidden = YES;
-    //    }
 }
 - (void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
-    
     [[JKConnectCenter sharedJKConnectCenter] readMessageFromId:@""];
 }
 
 - (void)viewWillDisappear:(BOOL)animated{
     [super viewWillDisappear:animated];
     [[IQKeyboardManager sharedManager] setEnable:YES];
-//    [IQKeyboardManager sharedManager].enableAutoToolbar = YES;
-    //    self.navigationController.navigationBar.hidden = NO;
     self.navigationController.navigationBarHidden = NO;
 }
 
@@ -1861,10 +1904,6 @@
     }
     return _assoiateView;
 }
-
-
-
-
 - (JKMessageFrame *)jisuanMessageFrame:(JKMessageFrame *)message{
     CGFloat screenW = [UIScreen mainScreen].bounds.size.width;
     
@@ -1889,19 +1928,6 @@
     switch (message.message.messageType) {
         case JKMessageWord: case JKMessageLineUP:
             if (message.message.messageType == JKMessageLineUP) {
-//                NSString * detail = message.message.content;
-//                NSArray * lineUpArr = [detail componentsSeparatedByString:@"<br/>"];
-//                NSString *detailContent = @"";
-//                for (int i = 0; i < lineUpArr.count; i++) {
-//                    if (i >= 3) {
-//                        detailContent = [NSString stringWithFormat:@"%@%@",detailContent,lineUpArr[i]];
-//                    }else {
-//                        detailContent = [NSString stringWithFormat:@"%@<br/>%@",detailContent,lineUpArr[i]];
-//                    }
-//                }
-//                contentSize = [self jiSuanMessageHeigthWithModel:message.message message:detailContent font:JKChatContentFont];
-//
-//                contentSize = [self jiSuanMessageHeigthWithModel:message.message message:[[message.message.content componentsSeparatedByString:@"<br/>"]componentsJoinedByString:@""] font:JKChatContentFont];
                 contentSize = [self jiSuanMessageHeigthWithModel:message.message message:message.message.content font:JKChatContentFont];
                 NSArray * array = [message.message.content componentsSeparatedByString:@"<br/>"];
                 if (array.count == 2) {
@@ -1996,26 +2022,17 @@
     dispatch_once(&onceToken, ^{//生成一个同于计算文本高度的label
         stringLabel = [[UITextView alloc] init];
         stringLabel.font = font;
-//        stringLabel.textContainerInset = UIEdgeInsetsZero;
-//        stringLabel.textContainer.lineFragmentPadding = 0;
     });
 
     stringLabel.attributedText = attributedString;
     CGSize size = [stringLabel sizeThatFits:CGSizeMake(width, 0)];
     CGSize ceilSize = CGSizeMake(ceil(size.width), ceil(size.height));
     return ceilSize;
-//    NSString *str = attributedString.string;
-//    str = [NSString stringWithFormat:@"<head><style>img{width:%f !important;height:auto}</style></head>%@",[UIScreen mainScreen].bounds.size.width,str];
-//
-//    NSMutableAttributedString *htmlString =[[NSMutableAttributedString alloc] initWithData:[str dataUsingEncoding:NSUTF8StringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType, NSCharacterEncodingDocumentAttribute:[NSNumber numberWithInt:NSUTF8StringEncoding]} documentAttributes:NULL error:nil];
-//    [htmlString addAttributes:@{NSFontAttributeName:font} range:NSMakeRange(0, htmlString.length)];
-//    //设置行间距
-//    NSMutableParagraphStyle *paragraphStyle1 = [[NSMutableParagraphStyle alloc] init];
-//    [paragraphStyle1 setLineSpacing:0];
-//    [htmlString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle1 range:NSMakeRange(0, [htmlString length])];
-//    //    [htmlString addAttribute:<#(nonnull NSAttributedStringKey)#> value:<#(nonnull id)#> range:<#(NSRange)#>];
-//    CGSize contextSize = [htmlString boundingRectWithSize:(CGSize){width, CGFLOAT_MAX} options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading context:nil].size;
-//    return contextSize;
-    
+}
+-(void)hideEndDialogBtn{//隐藏结束对话按钮
+    self.endDialogBtn.hidden = YES;
+}
+-(void)showEndDialogBtn{//显示结束对话按钮
+    self.endDialogBtn.hidden = NO;
 }
 @end

@@ -16,6 +16,14 @@
 
 typedef void (^RobotMessageBlock)(JKMessage * _Nullable message,int count);
 
+/**
+ 结束对话再次发消息
+
+ @param isSuccess 是否成功
+ @param errorMsg 错误的提示
+ */
+typedef void(^NeedInitFirstSendBlock)(BOOL isSuccess,NSString *errorMsg);
+
 typedef void (^JKGetSatisFactionBlock)(id _Nullable result,BOOL isSuccess);
 
 typedef void(^JKInItDialogueBlock)(NSDictionary * _Nullable blockDict);
@@ -28,6 +36,7 @@ typedef void(^JKGetEndChatBlock)(BOOL satisFaction);
 
 typedef void(^JKLoadHistoryBlock)(NSArray<JKMessage *> *array);
 
+typedef void(^JKConnectSuccessBlock)(BOOL isTure);
 
 /**
  初始化相关数据是否成功
@@ -113,6 +122,11 @@ NS_ASSUME_NONNULL_BEGIN
  是否抛出异常
  */
 @property (nonatomic,assign) BOOL  throwException;
+/**
+ 是否需要建立对话连接，对后结束后味NO，已经连接为yes
+ */
+@property (nonatomic,assign) BOOL  isNeedInitDialog;
+
 
 
 @property (nonatomic,assign,getter=isRobotOn,readonly)BOOL robotOn;
@@ -126,6 +140,10 @@ NS_ASSUME_NONNULL_BEGIN
  机器人消息回调
  */
 @property (nonatomic, copy) RobotMessageBlock robotMessageBlock;
+/**
+ 结束对话再次发消息
+ */
+@property (nonatomic, copy) NeedInitFirstSendBlock initFirstSendBlock;
 
 @property (nonatomic,copy) JKGetSatisFactionBlock satisfactionBlock;
 
@@ -179,7 +197,8 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)receiveHistoryArray:(NSArray<JKMessage *> *)messageArr;
 
 /** 发送机器人消息 */
--(void)sendRobotMessage:(JKMessage *)message robotMessageBlock:(RobotMessageBlock)robotMessageBlock;
+//-(void)sendRobotMessage:(JKMessage *)message robotMessageBlock:(RobotMessageBlock)robotMessageBlock withFirstReNeedBlock:(NeedInitFirstSendBlock)initFirstBlock;
+-(void)sendRobotMessage:(JKMessage *)message firstReNeedBlock:(NeedInitFirstSendBlock)initFirstBlock withRobotMessageBlock:(RobotMessageBlock)robotMessageBlock;
 
 - (void)receiveRobotOn:(NSString *)data;
 
@@ -199,8 +218,14 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  结束对话收到满意度需要初始化一下context_id;
  */
--(void)initDialogeWIthSatisFaction;
+//-(void)initDialogeWIthSatisFaction;
+/**
+ 点击发送后，建立对话连接
 
+ @param message 信息
+ @param block 回调是否成功
+ */
+-(void)initDialogeAfterClickSendWithMessage:(NSString * )message andsuccessBlock:(JKConnectSuccessBlock)block;
 /**
  结束对话的Block（以前假结束）
  @param block 结束对话
