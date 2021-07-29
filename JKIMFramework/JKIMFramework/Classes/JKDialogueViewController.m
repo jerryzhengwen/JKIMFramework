@@ -1342,6 +1342,7 @@
             if ([message.content isEqualToString:@"closeRobotChat"]) {
                 return;
             }
+            return;
         }
         if (!message.content.length) {
             return;
