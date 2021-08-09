@@ -49,8 +49,6 @@
 //收到新的消息时的Message
 @property(nonatomic, strong)JKMessage *listMessage;
 @property(nonatomic, strong)MBProgressHUD *hud;
-
-@property (nonatomic, assign)BOOL isConnect;//是否已经建立连接
 @end
 
 @implementation JKDialogueViewController
@@ -98,11 +96,11 @@
         }else {
             [[JKMessageOpenUrl sharedOpenUrl] JK_ClickHyperMediaMessageOpenUrl:model.content];
         }
-        if ([weakSelf.textView isFirstResponder]) {
-            weakSelf.textView.text = @"";
-        }else {
-            weakSelf.textView.text = weakSelf.placeHolerStr;
-        }
+//        if ([weakSelf.textView isFirstResponder]) {
+//            weakSelf.textView.text = @"";
+//        }else {
+//            weakSelf.textView.text = weakSelf.placeHolerStr;
+//        }
     };
     [self.view addSubview:self.suckerView];
     
@@ -383,7 +381,9 @@
         self.hud = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
         self.hud.label.text = @"加载中";
         [self.view bringSubviewToFront:self.hud];
-        [[JKConnectCenter sharedJKConnectCenter] initDialogeAfterClickSendWithMessage:self.textView.text andsuccessBlock:^(BOOL isTure) {
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+        [[JKConnectCenter sharedJKConnectCenter] initDialogeAfterClickSendWithMessage:weakSelf.textView.text andsuccessBlock:^(BOOL isTure) {
             if (isTure) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [weakSelf.hud hideAnimated:YES];
@@ -400,6 +400,7 @@
                 });
             }
         }];
+        });
     }else{
         [self sendMessageToServer:self.textView.text Delay:NO];
         self.textView.text = @"";
@@ -410,8 +411,10 @@
     self.listMessage.msgSendType = JK_SocketMSG;
     self.listMessage.whoSend = JK_Visitor;
     self.listMessage.content = content;
+    dispatch_async(dispatch_get_main_queue(), ^{
     self.assoiateView.hidden = YES; //需要判断是否在人工
     self.suckerView.hidden = self.listMessage.to.length?YES:NO;
+    });
     __weak JKDialogueViewController *weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
         //展示
@@ -430,7 +433,9 @@
                 }
             });
         } withRobotMessageBlock:^(JKMessage * _Nullable message, int count) {
+            dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf showRobotMessage:message count:count];
+            });
         }];
 
     });
@@ -729,11 +734,11 @@
         }
         cell.hotView.hotMsgBlock = ^(NSString * _Nonnull question) {
             [weakSelf showHotMsgQuestion:question];
-            if ([weakSelf.textView isFirstResponder]) {
-                    weakSelf.textView.text = @"";
-            }else {
-                weakSelf.textView.text = weakSelf.placeHolerStr;
-            }
+//            if ([weakSelf.textView isFirstResponder]) {
+//                    weakSelf.textView.text = @"";
+//            }else {
+//                weakSelf.textView.text = weakSelf.placeHolerStr;
+//            }
         };
         cell.backgroundColor = JKBGDefaultColor;
         cell.model = messageFrame.message;
@@ -1339,9 +1344,6 @@
             //初始化一下context_id;
             //[[JKConnectCenter sharedJKConnectCenter] initDialogeWIthSatisFaction];
             [weakSelf hideEndDialogBtn];
-            if ([message.content isEqualToString:@"closeRobotChat"]) {
-                return;
-            }
             return;
         }
         if (!message.content.length) {
