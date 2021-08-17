@@ -215,7 +215,7 @@
                         [weakSelf.navigationController popViewControllerAnimated:YES];
                     } //结束对话
                     [[JKConnectCenter sharedJKConnectCenter] getReallyEndChat];
-                    [weakSelf hideEndDialogBtn];
+//                    [weakSelf hideEndDialogBtn];
                     [weakSelf reloadComments];
                 });
             }];
@@ -1343,7 +1343,7 @@
             [self reloadComments];
             //初始化一下context_id;
             //[[JKConnectCenter sharedJKConnectCenter] initDialogeWIthSatisFaction];
-            [weakSelf hideEndDialogBtn];
+            [weakSelf hideEndDialogBtn];//收到对话结束的消息后隐藏右上角结束按钮
             return;
         }
         if (!message.content.length) {
@@ -2031,6 +2031,15 @@
     CGSize size = [stringLabel sizeThatFits:CGSizeMake(width, 0)];
     CGSize ceilSize = CGSizeMake(ceil(size.width), ceil(size.height));
     return ceilSize;
+}
+-(void)hideEndBtnWithSuccess:(BOOL)isChatEnd{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (isChatEnd) {
+            self.endDialogBtn.hidden = YES;
+        }else{
+            self.endDialogBtn.hidden = NO;
+        }
+    });
 }
 -(void)hideEndDialogBtn{//隐藏结束对话按钮
     self.endDialogBtn.hidden = YES;

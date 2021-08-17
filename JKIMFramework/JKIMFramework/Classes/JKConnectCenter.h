@@ -96,6 +96,13 @@ typedef void(^JKInitCompleteBlock)(BOOL);
 
 /** 在对话的过程中更新用户信息*/
 //- (void)updateVisitorInfoToCustomerChat;
+
+/**
+ 对话结束后，隐藏右上角的结束按钮
+
+ @param isChatEnd 对话是否结束
+ */
+-(void)hideEndBtnWithSuccess:(BOOL)isChatEnd;
 @end
 
 
@@ -312,6 +319,13 @@ NS_ASSUME_NONNULL_BEGIN
  @param errorBlock 接口请求失败
  */
 -(void)requestRobotCommentsWithPara:(NSMutableDictionary *)dict result:(void(^)(BOOL isSuccess,NSString *tips))success error:(void (^)(NSString * errorMsg))errorBlock;
+
+/**
+ 是否成功结束对话并隐藏右上角结束对话的按钮
+
+ @param isEnd isEnd description
+ */
+-(void)hideUpRihtEndBtnAfterEndChatWithIsEnd:(BOOL)isEnd;
 @end
 
 NS_ASSUME_NONNULL_END
