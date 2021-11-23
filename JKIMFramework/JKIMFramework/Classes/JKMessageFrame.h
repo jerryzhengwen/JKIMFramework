@@ -22,6 +22,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "JKDialogModel.h"
+#import "JKENUMObject.h"
 
 
 @interface JKMessageFrame : NSObject
@@ -55,4 +56,8 @@
  上一通对话
  */
 @property (nonatomic, assign) BOOL isBeforeDialog;
+/**
+ 消息发送后的状态
+ */
+@property (nonatomic, assign) JKMsgSendStatus msgSendStatus;
 @end

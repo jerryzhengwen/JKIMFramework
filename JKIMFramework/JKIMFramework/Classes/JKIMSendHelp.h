@@ -26,6 +26,10 @@ typedef void(^CompleteBlock)(JKMessageFrame *messageFrame);
 + (void)sendTextMessageWithMessageModel:(JKMessage *)messageModel completeBlock:(CompleteBlock)completeBlock;
 
 + (void)sendImageMessageWithImageData:(NSData *)imageData image:(UIImage *)image MessageModel:(JKMessage *)messageModel completeBlock:(CompleteBlock)completeBlock;
+
+/// 判断网络后重发消息
+/// @param messageModel 消息体
++(void)judgeNetThenSendTextMessageWithMessageModel:(JKMessage *)messageModel;
 /**
  获取时间戳
  

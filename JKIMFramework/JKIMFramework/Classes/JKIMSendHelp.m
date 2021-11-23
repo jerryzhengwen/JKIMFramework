@@ -53,6 +53,11 @@
         [[JKConnectCenter sharedJKConnectCenter]sendMessage:messageModel];
     }
 }
++(void)judgeNetThenSendTextMessageWithMessageModel:(JKMessage *)messageModel{
+    if (messageModel.to.length) {
+        [[JKConnectCenter sharedJKConnectCenter]sendMessage:messageModel];
+    }
+}
 
 + (void)sendImageMessageWithImageData:(NSData *)imageData image:(UIImage *)image MessageModel:(JKMessage *)messageModel completeBlock:(CompleteBlock)completeBlock{
     

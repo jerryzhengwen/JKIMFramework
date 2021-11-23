@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "JKMessageContent.h"
+#import "JKMsgSendStatusView.h"
 @class JKMessageFrame;
 @class JKMessageCell;
 
@@ -78,5 +79,6 @@ typedef void(^ClickSolveBtnBlock)(BOOL clickSolveBtn,NSString*answer,NSString *m
  未解决按钮
  */
 @property (nonatomic,strong)UIButton *unSloveBtn;
+@property (nonatomic,strong)JKMsgSendStatusView * sendStatusView;
 @end
 

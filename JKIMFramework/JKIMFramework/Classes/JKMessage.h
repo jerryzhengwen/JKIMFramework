@@ -132,6 +132,14 @@ typedef NS_ENUM(NSInteger, JKChatStatue) {
 //@property (nonatomic,assign) int sort;
 ///** 来源ID  */
 //@property (nonatomic,assign) int source;
+/**
+ 消息发送了多久
+ */
+@property (nonatomic ,assign)int sendTime;
+/**
+ 发送到服务器的失败次数
+ */
+@property (nonatomic, assign) int sendFailCount;
 @end
 
 NS_ASSUME_NONNULL_END

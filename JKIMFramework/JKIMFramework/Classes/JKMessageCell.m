@@ -64,6 +64,7 @@
         
         [self.contentView addSubview:self.solveBtn];
         [self.contentView addSubview:self.unSloveBtn];
+        [self.contentView addSubview:self.sendStatusView];
     }
     return self;
 }
@@ -150,7 +151,14 @@
     JKDialogModel *message = messageFrame.message;
     self.btnContent.frame = _messageFrame.contentF;
     self.nameLabel.frame = _messageFrame.nameF;
-    
+    if (self.messageFrame.message.whoSend != JK_Visitor) {
+        self.sendStatusView.hidden = YES;
+    }else{
+        self.sendStatusView.hidden = NO;
+    }
+    self.sendStatusView.frame = CGRectMake(messageFrame.contentF.origin.x -50, self.messageFrame.contentF.origin.y, 44, 44);
+    self.sendStatusView.msgSendStatus = messageFrame.msgSendStatus;
+
     // 1、设置时间
     NSString * time = [NSDate getTimeStringWithIntervalString:message.time];
     self.labelTime.text = time;
@@ -650,6 +658,24 @@
         self.unSloveBtn.titleEdgeInsets = UIEdgeInsetsMake(28, -22, 0, 0);
         self.unSloveBtn.imageEdgeInsets = UIEdgeInsetsMake(6, 12, 18, 12);
     }
+//    if (self.messageFrame.message.whoSend != JK_Visitor) {
+//        self.sendStatusView.hidden = YES;
+//    }
+//    self.sendStatusView.frame = CGRectMake(self.messageFrame.contentF.origin.x -88, self.messageFrame.contentF.origin.y, 44, 44);
+//    self.sendStatusView.msgSendStatus = self.messageFrame.msgSendStatus;
+}
+-(JKMsgSendStatusView *)sendStatusView{
+    __weak typeof(self) weakSelf = self;
+    if (_sendStatusView == nil) {
+        _sendStatusView = [[JKMsgSendStatusView alloc]initWithFrame:CGRectZero];
+        _sendStatusView.reSendMsgBlock = ^{
+            NSLog(@"%@",weakSelf.messageFrame.message.content);
+            if (weakSelf.sendMsgBlock) {
+                weakSelf.sendMsgBlock(weakSelf.messageFrame.message.content);
+            }
+        };
+    }
+    return _sendStatusView;
 }
 @end
 

@@ -66,3 +66,13 @@ typedef NS_ENUM(NSInteger,JKSocketState) {
     JK_SocketConnectError = 5, //连接错误
     JK_SocketExit ,//退出链接
 };
+/**
+ 访客消息发送状态
+ 
+ - JK_MsgSendFail: 发送失败
+ */
+typedef NS_ENUM(NSInteger,JKMsgSendStatus) {
+    JK_MsgSendSuccess = 0 ,   //访客消息发送成功
+    JK_MsgSendFail,    //访客消息发送失败
+    JK_MsgSending,         //访客消息发送中
+};

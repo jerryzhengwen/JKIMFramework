@@ -15,7 +15,7 @@
 @class JKDialogeContentManager;
 
 typedef void (^RobotMessageBlock)(JKMessage * _Nullable message,int count);
-
+typedef void(^ReturnMessageStatusBlock)(BOOL isSuccess,int count);
 /**
  结束对话再次发消息
 
@@ -103,6 +103,10 @@ typedef void(^JKInitCompleteBlock)(BOOL);
  @param isChatEnd 对话是否结束
  */
 -(void)hideEndBtnWithSuccess:(BOOL)isChatEnd;
+
+/// 服务端已收访客发送的消息，更改为发送成功的状态
+/// @param msgID 消息ID
+-(void)receiveMsgChangeStatusWithmsgID:(NSString *_Nullable)msgID;
 @end
 
 
@@ -166,6 +170,7 @@ NS_ASSUME_NONNULL_BEGIN
  用户的浏览轨迹
  */
 @property (nonatomic,copy) NSString *scanPath;
+@property (nonatomic,copy) ReturnMessageStatusBlock returnMsgStsBlock;
 /**
  返回单例本身
 
@@ -205,7 +210,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** 发送机器人消息 */
 //-(void)sendRobotMessage:(JKMessage *)message robotMessageBlock:(RobotMessageBlock)robotMessageBlock withFirstReNeedBlock:(NeedInitFirstSendBlock)initFirstBlock;
--(void)sendRobotMessage:(JKMessage *)message firstReNeedBlock:(NeedInitFirstSendBlock)initFirstBlock withRobotMessageBlock:(RobotMessageBlock)robotMessageBlock;
+-(void)sendRobotMessage:(JKMessage *)message firstReNeedBlock:(NeedInitFirstSendBlock)initFirstBlock withRobotMessageBlock:(RobotMessageBlock)robotMessageBlock AndReutrnMessageStatusBlock:(ReturnMessageStatusBlock)returnMsgStsBlock;
 
 - (void)receiveRobotOn:(NSString *)data;
 
@@ -326,6 +331,10 @@ NS_ASSUME_NONNULL_BEGIN
  @param isEnd isEnd description
  */
 -(void)hideUpRihtEndBtnAfterEndChatWithIsEnd:(BOOL)isEnd;
+
+/// 服务端已收到访客发送的消息
+/// @param msgID 消息ID
+-(void)receivedRepietMsgWihtMsgID:(NSString * )msgID;
 @end
 
 NS_ASSUME_NONNULL_END
