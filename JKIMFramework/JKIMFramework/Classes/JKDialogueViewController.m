@@ -24,7 +24,7 @@
 #import "YYWebImage.h"
 #import "JKLabHUD.h"
 #import <libkern/OSAtomic.h>
-#import "Reachability.h"
+#import "Reachabilityy.h"
 @interface JKDialogueViewController ()<UITableViewDelegate,UITableViewDataSource,UITextViewDelegate,ConnectCenterDelegate,JKMessageCellDelegate,JKMessageImageCellDelegate>
 
 /** 获取图片资源路径 */
@@ -130,7 +130,7 @@
 -(void)whetherHaveNet{
 
 //    BOOL isExistenceNetwork = YES;
-    Reachability *reach = [Reachability reachabilityWithHostName:@"www.apple.com"];
+    Reachabilityy *reach = [Reachabilityy reachabilityWithHostName:@"www.apple.com"];
     switch ([reach currentReachabilityStatus]) {
         case NotReachable:
 //            isExistenceNetwork = NO;

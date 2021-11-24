@@ -10,7 +10,7 @@
 #import <SystemConfiguration/SystemConfiguration.h>
 #import <netinet/in.h>
 
-
+//sdfsdf
 typedef enum : NSInteger {
 	NotReachable = 0,
 	ReachableViaWiFi,
@@ -21,15 +21,15 @@ typedef enum : NSInteger {
 //Reachability fully support IPv6.  For full details, see ReadMe.md.
 
 
-extern NSString *kReachabilityChangedNotification;
+extern NSString *kReachabilityChangedNotificationnn;
 
 
-@interface Reachability : NSObject
+@interface Reachabilityy : NSObject
 
 /*!
  * Use to check the reachability of a given host name.
  */
-+ (instancetype)reachabilityWithHostName:(NSString *)hostName;
++ (instancetype)reachabilityWithHostName:(NSString *)hostName;//sdfsdf
 
 /*!
  * Use to check the reachability of a given IP address.
@@ -52,7 +52,7 @@ extern NSString *kReachabilityChangedNotification;
 - (BOOL)startNotifier;
 - (void)stopNotifier;
 
-- (NetworkStatus)currentReachabilityStatus;
+- (NetworkStatus)currentReachabilityStatus;//sdfsdf
 
 /*!
  * WWAN may be available, but not active until a connection has been established. WiFi may require a connection for VPN on Demand.
