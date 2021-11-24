@@ -56,6 +56,8 @@
 +(void)judgeNetThenSendTextMessageWithMessageModel:(JKMessage *)messageModel{
     if (messageModel.to.length) {
         [[JKConnectCenter sharedJKConnectCenter]sendMessage:messageModel];
+    }else{
+        [[JKConnectCenter sharedJKConnectCenter]sendRobotMessage:messageModel firstReNeedBlock:nil withRobotMessageBlock:nil AndReutrnMessageStatusBlock:nil];
     }
 }
 

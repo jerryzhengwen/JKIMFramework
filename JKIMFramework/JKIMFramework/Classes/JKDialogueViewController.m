@@ -24,8 +24,7 @@
 #import "YYWebImage.h"
 #import "JKLabHUD.h"
 #import <libkern/OSAtomic.h>
-
-#import "CTDNetworkReachabilityManager.h"
+#import "Reachability.h"
 @interface JKDialogueViewController ()<UITableViewDelegate,UITableViewDataSource,UITextViewDelegate,ConnectCenterDelegate,JKMessageCellDelegate,JKMessageImageCellDelegate>
 
 /** 获取图片资源路径 */
@@ -69,6 +68,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self whetherHaveNet];
+//    [self connectionAvailable];
     self.sendingArry = [NSMutableArray array];
     self.hud = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
     if (self.scanPathDate.length) {
@@ -125,22 +125,32 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textViewEditeAction)name:UITextViewTextDidChangeNotification object:nil];
     [self.view bringSubviewToFront:self.suckerView];
 }
-/**
- 是否有网
- */
+
+/// 网络判断
 -(void)whetherHaveNet{
-    //检测网络连接的局域网还是3G还是未知，还是无网。
-    [[CTDNetworkReachabilityManager sharedManager] startMonitoring];
-    // 检测网络连接的单例,网络变化时的回调方法
-    [[CTDNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(CTDNetworkReachabilityStatus status) {
-        if (status == CTDNetworkReachabilityStatusReachableViaWWAN || status == CTDNetworkReachabilityStatusReachableViaWiFi) {
-            NSLog(@"有网");
-            self.isHaveNet = YES;
-        }else{
-            NSLog(@"没网");
+
+//    BOOL isExistenceNetwork = YES;
+    Reachability *reach = [Reachability reachabilityWithHostName:@"www.apple.com"];
+    switch ([reach currentReachabilityStatus]) {
+        case NotReachable:
+//            isExistenceNetwork = NO;
             self.isHaveNet = NO;
-        }
-    }];
+            NSLog(@"没网");
+            NSLog(@"notReachable");
+            break;
+        case ReachableViaWiFi:
+//            isExistenceNetwork = YES;
+            self.isHaveNet = YES;
+            NSLog(@"有网");
+            NSLog(@"WIFI");
+            break;
+        case ReachableViaWWAN:
+//            isExistenceNetwork = YES;
+            self.isHaveNet = YES;
+            NSLog(@"有网");
+            NSLog(@"3G");
+            break;
+    }
 }
 
 -(void)textViewEditeAction {
@@ -617,6 +627,7 @@
                     [JKIMSendHelp sendTextMessageWithMessageModel:weakSelf.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
                         messageFrame.hiddenTimeLabel = [weakSelf showTimeLabelWithModel:messageFrame];
                         messageFrame =  [weakSelf jisuanMessageFrame:messageFrame];
+                        messageFrame.msgSendStatus = JK_MsgSendSuccess;
                         [weakSelf.dataFrameArray addObject:messageFrame];
                         [weakSelf tableViewMoveToLastPathNeedAnimated:YES];
                     }];
@@ -631,6 +642,8 @@
 -(void)runTimerJudgeNetWithJKMessageFrame:(JKMessageFrame * )sendingMsg{
     sendingMsg.message.sendTime = 0;
     [self.sendingArry addObject:sendingMsg];
+    [self whetherHaveNet];
+    NSLog(@"%d",self.isHaveNet);
     if (!self.isHaveNet) {
         if (!self.sendTimer) {
             //创建队列
@@ -651,10 +664,10 @@
                             JKMessageFrame * msgIng = self.sendingArry[i];
                             for (JKMessageFrame * everyMsg in self.dataFrameArray) {
                                 if ([msgIng.message.messageId isEqualToString:everyMsg.message.messageId]) {
-                                    //[self sendMessageAfterJudeNetWithMsg:msgIng.message firstReNeedBlock:fristSendBlcok];
                                     everyMsg.msgSendStatus = JK_MsgSending;
-                                    [self.sendingArry removeObject:msgIng];
+//                                    [self.sendingArry removeObject:msgIng];
                                     [JKIMSendHelp judgeNetThenSendTextMessageWithMessageModel:msgIng.message];
+//                                    [self tableViewMoveToLastPathNeedAnimated:YES];
                                 }
                             }
 //                            if (![self.dataFrameArray containsObject:msgIng]) {
@@ -674,7 +687,7 @@
                                     }else{
                                         everyMsg.msgSendStatus = JK_MsgSendFail;
                                         [self.sendingArry removeObject:msgIng];
-                                        [self.tableView reloadData];
+                                        [self tableViewMoveToLastPathNeedAnimated:YES];
                                     }
                                 }
                             }
@@ -685,6 +698,16 @@
             //启动定时器
             dispatch_resume(self.sendTimer);
         }
+    }else{
+//        for (JKMessageFrame * everyMsg in self.dataFrameArray) {
+//            if ([everyMsg.message.messageId isEqualToString:sendingMsg.message.messageId]) {
+//                everyMsg.msgSendStatus = JK_MsgSendSuccess;
+//                [self tableViewMoveToLastPathNeedAnimated:YES];
+//            }
+//        }
+//        if ([self.sendingArry containsObject:sendingMsg]) {
+//            [self.sendingArry removeObject:sendingMsg];
+//        }
     }
 }
 -(void)sendMessageToServer:(NSString *)content Delay:(BOOL)delay {
@@ -1033,6 +1056,7 @@
             [JKIMSendHelp sendTextMessageWithMessageModel:weakSelf.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
             messageFrame.hiddenTimeLabel = [weakSelf showTimeLabelWithModel:messageFrame];
             messageFrame =  [weakSelf jisuanMessageFrame:messageFrame];
+                messageFrame.msgSendStatus = JK_MsgSending;
             [weakSelf.dataFrameArray addObject:messageFrame];
             [weakSelf tableViewMoveToLastPathNeedAnimated:YES];
             }];
@@ -1528,11 +1552,12 @@
                         message.isClickUnSolveBtn = frameModel.message.isClickUnSolveBtn;
                     }
                 }
-                if (frameModel.msgSendStatus == JK_MsgSendFail) {
-                    [sendFailMSgArr addObject:frameModel];
+                if (frameModel.msgSendStatus == JK_MsgSendFail && frameModel.message.whoSend == JK_Visitor) {
+                    if (frameModel.message.messageType == JKMessageWord || frameModel.message.messageType == JKMessageImage ) {
+                        [sendFailMSgArr addObject:frameModel];
+                    }
                 }
             }
-            
             
             self.dataArray = [NSMutableArray array];
             self.dataFrameArray = [NSMutableArray array];
@@ -1546,17 +1571,23 @@
                 if (message.messageType == JKMessageFAQImageText || message.messageType == JKMessageFAQImage) {
                     frameModel.cellHeight = 0;
                 }
+                if (message.whoSend == JK_Visitor) {
+                    frameModel.msgSendStatus = JK_MsgSendSuccess;
+                }
                 [self.dataFrameArray addObject:frameModel];
             }
             //        [self reloadPath];
             //    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             if (self.sendingArry.count) {
                 for (JKMessageFrame * sendingMsg in self.sendingArry) {
+                    
                     [JKIMSendHelp judgeNetThenSendTextMessageWithMessageModel:sendingMsg.message];
-                    [self.sendingArry removeObject:sendingMsg];
-                    sendingMsg.msgSendStatus = JK_MsgSendSuccess;//sdfsdf
-                    [sendFailMSgArr addObject:sendingMsg];
+                    sendingMsg.msgSendStatus = JK_MsgSendSuccess;
+                    if (![sendFailMSgArr containsObject:sendingMsg]) {
+                        [sendFailMSgArr addObject:sendingMsg];
+                    }
                 }
+                [self.sendingArry removeAllObjects];
                 if (self.sendTimer) {
                     [self stopSendTimer];
                 }
