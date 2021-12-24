@@ -71,6 +71,7 @@
     messageModel.imageData = imageData;
     messageModel.messageType = JKMessageImage;
     messageModel.time = [JKIMSendHelp jk_getTimestamp];
+    messageModel.messageId = [NSUUID UUID].UUIDString;
     
     NSMutableArray *sizeArr = [UIView returnImageViewWidthAndHeightWith:[NSString stringWithFormat:@"%lf",image.size.width] AndHeight:[NSString stringWithFormat:@"%lf",image.size.height]];
     
