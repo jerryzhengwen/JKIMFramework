@@ -10,6 +10,12 @@
 #import "JKDialogueHeader.h"
 #import "YYWebImage.h"
 #import "MMImageBrower.h"
+#import "JKMsgSendStatusView.h"
+
+@interface JKMessageImageCell ()
+@property (nonatomic,strong)JKMsgSendStatusView * sendStatusView;
+@end
+
 @implementation JKMessageImageCell
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
@@ -39,6 +45,7 @@
         // 4、创建内容
         self.btnContent = [[JKMessageContent alloc]init];
         [self.contentView addSubview:self.btnContent];
+        [self.contentView addSubview:self.sendStatusView];
     }
     return self;
 }
@@ -94,6 +101,13 @@
     self.btnContent.backImageView.userInteractionEnabled = YES;
     self.btnContent.userInteractionEnabled = YES;
     self.btnContent.backImageView.frame = CGRectMake(0, 0, messageFrame.contentF.size.width, messageFrame.contentF.size.height);
+    if (self.messageFrame.message.whoSend != JK_Visitor) {
+        self.sendStatusView.hidden = YES;
+    }else{
+        self.sendStatusView.hidden = NO;
+    }
+    self.sendStatusView.frame = CGRectMake(messageFrame.contentF.origin.x -50, self.messageFrame.contentF.origin.y, 44, 44);
+    self.sendStatusView.msgSendStatus = messageFrame.msgSendStatus;
     if (([message.content containsString:@"http:"] ||[message.content containsString:@"https:"])&& (!message.imageWidth)) {
         
         [self downloadImageWithModelFrame:messageFrame button:self.btnContent];
@@ -181,5 +195,21 @@
         }
     }];
 //    NSLog(@"-------22222-%lf",modelFrame.contentF.size.height);
+}
+-(JKMsgSendStatusView *)sendStatusView{
+    __weak typeof(self) weakSelf = self;
+    if (_sendStatusView == nil) {
+        _sendStatusView = [[JKMsgSendStatusView alloc]initWithFrame:CGRectZero];
+        _sendStatusView.reSendMsgBlock = ^{
+            NSLog(@"%@",weakSelf.messageFrame.message.content);
+            if (weakSelf.delegate && [self.delegate respondsToSelector:@selector(reSendImageWithImageData:image:)]) {
+                [weakSelf.delegate reSendImageWithImageData:weakSelf.messageFrame.message.imageData image:weakSelf.btnContent.backImageView.image];
+            }
+//            if (weakSelf.sendMsgBlock) {
+//                weakSelf.sendMsgBlock(weakSelf.messageFrame.message.content);
+//            }
+        };
+    }
+    return _sendStatusView;
 }
 @end

@@ -128,24 +128,19 @@
 
 /// 网络判断
 -(void)whetherHaveNet{
-
-//    BOOL isExistenceNetwork = YES;
     Reachabilityy *reach = [Reachabilityy reachabilityWithHostName:@"www.apple.com"];
     switch ([reach currentReachabilityStatus]) {
         case NotReachable:
-//            isExistenceNetwork = NO;
             self.isHaveNet = NO;
             NSLog(@"没网");
             NSLog(@"notReachable");
             break;
         case ReachableViaWiFi:
-//            isExistenceNetwork = YES;
             self.isHaveNet = YES;
             NSLog(@"有网");
             NSLog(@"WIFI");
             break;
         case ReachableViaWWAN:
-//            isExistenceNetwork = YES;
             self.isHaveNet = YES;
             NSLog(@"有网");
             NSLog(@"3G");
@@ -249,7 +244,9 @@
                     if ([weakSelf.sendingArry containsObject:everyMsg]) {
                         [weakSelf.sendingArry removeObject:everyMsg];
                     }
-                    [weakSelf stopSendTimer];
+                    if (!self.sendingArry.count) {//sdfsdf
+                        [weakSelf stopSendTimer];
+                    }
                 }else{
                     if (!weakSelf.sendTimer) {
                         //创建队列
@@ -276,7 +273,9 @@
                                     [weakSelf.tableView reloadData];
                                 }
                             }
-                            [self stopSendTimer];
+                            if (self.sendingArry.count) {
+                                [self stopSendTimer];//sdfsdf
+                            }
                         });
                         //启动定时器
                         dispatch_resume(weakSelf.sendTimer);
@@ -322,14 +321,14 @@
                 [weakSelf whetherHaveNet];
                 if (weakSelf.isHaveNet) {
                     if (self.sendingArry.count) {
-                        for (int i = 0 ; i < self.sendingArry.count; i ++) {
-                            JKMessageFrame * msgIng = self.sendingArry[i];
-                            for (JKMessageFrame * everyMsg in self.dataFrameArray) {
-                                if ([msgIng.message.messageId isEqualToString:everyMsg.message.messageId]) {
-                                    [weakSelf sendMessageAfterJudeNetWithMsg:msgIng.message firstReNeedBlock:fristSendBlcok];
-                                }
-                            }
-                        }
+//                        for (int i = 0 ; i < self.sendingArry.count; i ++) {
+//                            JKMessageFrame * msgIng = self.sendingArry[i];
+//                            for (JKMessageFrame * everyMsg in self.dataFrameArray) {
+//                                if ([msgIng.message.messageId isEqualToString:everyMsg.message.messageId]) {
+//                                    [weakSelf sendMessageAfterJudeNetWithMsg:msgIng.message firstReNeedBlock:fristSendBlcok];
+//                                }
+//                            }
+//                        }
                     }else{[self stopSendTimer];}
                 }else{
                     if (self.sendingArry.count) {
@@ -495,6 +494,7 @@
                 JKDialogModel * autoModel = [message mutableCopy];
                 JKMessageFrame *frameModel = [[JKMessageFrame alloc] init];
                 frameModel.message = autoModel;
+                frameModel.msgSendStatus = JK_MsgSendSuccess;
                 @try {
                     if (i > 0) {
                         JKMessage *beforeModel = array[i - 1];
@@ -659,22 +659,40 @@
                 //重复执行的事件
                 [self whetherHaveNet];
                 if (self.isHaveNet) {
-                    if (self.sendingArry.count) {
-                        for (int i = 0 ; i < self.sendingArry.count; i ++) {
-                            JKMessageFrame * msgIng = self.sendingArry[i];
-                            for (JKMessageFrame * everyMsg in self.dataFrameArray) {
-                                if ([msgIng.message.messageId isEqualToString:everyMsg.message.messageId]) {
-                                    everyMsg.msgSendStatus = JK_MsgSending;
-//                                    [self.sendingArry removeObject:msgIng];
-                                    [JKIMSendHelp judgeNetThenSendTextMessageWithMessageModel:msgIng.message];
+//                    if (self.sendingArry.count) {
+//                        for (int i = 0 ; i < self.sendingArry.count; i ++) {
+//                            JKMessageFrame * msgIng = self.sendingArry[i];
+////                            for (JKMessageFrame * everyMsg in self.dataFrameArray) {
+////                                if ([msgIng.message.messageId isEqualToString:everyMsg.message.messageId]) {
+////                                    everyMsg.msgSendStatus = JK_MsgSending;
+//////                                    [self.sendingArry removeObject:msgIng];
+////                                    [JKIMSendHelp judgeNetThenSendTextMessageWithMessageModel:msgIng.message];
+//////                                    [self tableViewMoveToLastPathNeedAnimated:YES];
+////                                    [self.sendingArry removeObject:msgIng];//断网来网后，重发一次消息后，再正在发送数组里删除发送过得消息
+////                                }
+////                            }
+//                            [self.dataFrameArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//                                JKMessageFrame * everyMsg = obj;
+//                                if ([msgIng.message.messageId isEqualToString:everyMsg.message.messageId]) {
+//                                    everyMsg.msgSendStatus = JK_MsgSending;
+////                                    [self.sendingArry removeObject:msgIng];
+//                                    //[JKIMSendHelp judgeNetThenSendTextMessageWithMessageModel:msgIng.message];
+//                                    [self.dataFrameArray removeObject:msgIng];
+//                                    [self.sendingArry removeObject:msgIng];//断网来网后，重发一次消息后，再正在发送数组里删除发送过得消息
+//                                    if (everyMsg.message.messageType == JKMessageImage) {
+//                                        [self sendImageWithImageData:everyMsg.message.imageData image:everyMsg.message.imageIcon];
+//                                    }else{
+//                                        [self sendMessageToServer:everyMsg.message.content Delay:NO];
+//                                    }
 //                                    [self tableViewMoveToLastPathNeedAnimated:YES];
-                                }
-                            }
-//                            if (![self.dataFrameArray containsObject:msgIng]) {
-//                                [self.sendingArry removeObject:msgIng];
-//                            }
-                        }
-                    }else{[self stopSendTimer];}
+//                                }
+//
+//                            }];
+////                            if (![self.dataFrameArray containsObject:msgIng]) {
+////                                [self.sendingArry removeObject:msgIng];
+////                            }
+//                        }
+//                    }else{[self stopSendTimer];}
                 }else{
                     if (self.sendingArry.count) {
                         for (int i = 0 ; i < self.sendingArry.count; i ++) {
@@ -720,7 +738,10 @@
         messageFrame =  [self jisuanMessageFrame:messageFrame];
         messageFrame.msgSendStatus = JK_MsgSending;
         [self.dataFrameArray addObject:messageFrame];
-        [self runTimerJudgeNetWithJKMessageFrame:messageFrame];
+        if (self.listMessage.to.length) {
+            [self runTimerJudgeNetWithJKMessageFrame:messageFrame];
+        }
+        
         [self tableViewMoveToLastPathNeedAnimated:YES];
     }];
     self.assoiateView.hidden = YES; //需要判断是否在人工
@@ -1386,12 +1407,25 @@
         [weakSelf sendImageWithImageData:imageData image:image];
     }];
 }
-
+/// 判断网络后发送图片消息
+/// @param imageData 图片数据
+/// @param image 图片
+//-(void)judgeNetThenSendImgWithImgData:(NSData *)imageData image:(UIImage * )image{
+//    if (self.isHaveNet) {
+//        [self sendImageWithImageData:imageData image:image];
+//    }else{
+//        if (self.sendTimer) {
+//            <#statements#>
+//        }
+//    }
+//}
 - (void)sendImageWithImageData:(NSData *)imageData image:(UIImage *)image{
     
     [JKIMSendHelp sendImageMessageWithImageData:imageData image:image MessageModel:self.listMessage completeBlock:^(JKMessageFrame * _Nonnull messageFrame) {
         messageFrame =  [self jisuanMessageFrame:messageFrame];
+        messageFrame.msgSendStatus = JK_MsgSending;
         [self.dataFrameArray addObject:messageFrame];
+        [self runTimerJudgeNetWithJKMessageFrame:messageFrame];
         [self tableViewMoveToLastPathNeedAnimated:YES];
     }];
 }
@@ -1460,6 +1494,9 @@
             
         }
     }];
+}
+-(void)reSendImageWithImageData:(NSData *)imageData image:(UIImage *)image{
+    [self sendImageWithImageData:imageData image:image];
 }
 #pragma -
 #pragma mark - 消息的Delegate
@@ -1561,7 +1598,7 @@
             
             self.dataArray = [NSMutableArray array];
             self.dataFrameArray = [NSMutableArray array];
-            [self.tableView reloadData];
+           // [self.tableView reloadData];
             for (JKMessage * message in messageArr) {
                 JKDialogModel * autoModel = [message mutableCopy];
                 JKMessageFrame *frameModel = [[JKMessageFrame alloc] init];
@@ -1578,6 +1615,10 @@
             }
             //        [self reloadPath];
             //    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            if (self.sendTimer) {
+                [self stopSendTimer];
+                NSLog(@"定时器已结束----------正在发送的消息的个数%ld",self.sendingArry.count);
+            }
             if (self.sendingArry.count) {
                 for (JKMessageFrame * sendingMsg in self.sendingArry) {
                     
@@ -1588,9 +1629,6 @@
                     }
                 }
                 [self.sendingArry removeAllObjects];
-                if (self.sendTimer) {
-                    [self stopSendTimer];
-                }
             }
             [self.dataFrameArray addObjectsFromArray:sendFailMSgArr];
             [self tableViewMoveToLastPathNeedAnimated:YES];
@@ -2345,16 +2383,22 @@
 }
 -(void)receiveMsgChangeStatusWithmsgID:(NSString *_Nullable)msgID{
     dispatch_async(dispatch_get_main_queue(), ^{
-        for (JKMessageFrame * everyMsg in self.dataFrameArray) {
-            if ([everyMsg.message.messageId isEqualToString:msgID]) {
-                everyMsg.msgSendStatus = JK_MsgSendSuccess;
-                [self.tableView reloadData];
-            }
-            for (JKMessageFrame * sendingMsg in self.sendingArry) {
-                if ([sendingMsg isEqual:everyMsg]) {
-                    [self.sendingArry removeObject:sendingMsg];
+        @try {
+            for (JKMessageFrame * everyMsg in self.dataFrameArray) {
+                if ([everyMsg.message.messageId isEqualToString:msgID]) {
+                    everyMsg.msgSendStatus = JK_MsgSendSuccess;
+                    [self.tableView reloadData];
+                }
+                for (JKMessageFrame * sendingMsg in self.sendingArry) {
+                    if ([sendingMsg isEqual:everyMsg]) {
+                        [self.sendingArry removeObject:sendingMsg];
+                    }
                 }
             }
+        } @catch (NSException *exception) {
+            NSLog(@"%@",exception);
+        } @finally {
+            
         }
     });
 }

@@ -20,6 +20,11 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)cellCompleteLoadImgeUrl:(NSString *)imgUrl;
 
 -(void)resignKeyBoard;
+
+/// 图片发送失败，重新发送图片消息
+/// @param imageData 图片信息
+/// @param image 图片
+-(void)reSendImageWithImageData:(NSData *)imageData image:(UIImage *)image;
 @end
 
 
