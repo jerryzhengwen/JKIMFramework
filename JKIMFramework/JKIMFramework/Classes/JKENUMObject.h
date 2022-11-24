@@ -31,6 +31,7 @@ typedef NS_ENUM(NSInteger, JKMessageType) {
     JKMessageContinueLineUp,//继续排队
     JKMessageSkipAPP,//点击跳转url到APP
     JKMessageClickSend,//点击发送文字
+    JKMessageNetTip,//网络提示
 };
 
 /**
@@ -72,7 +73,7 @@ typedef NS_ENUM(NSInteger,JKSocketState) {
  - JK_MsgSendFail: 发送失败
  */
 typedef NS_ENUM(NSInteger,JKMsgSendStatus) {
-    JK_MsgSendSuccess = 0 ,   //访客消息发送成功
-    JK_MsgSendFail,    //访客消息发送失败
+    JK_MsgSendFail = 0 ,   //访客消息发送失败
+    JK_MsgSendSuccess ,    //访客消息发送成功
     JK_MsgSending,         //访客消息发送中
 };
