@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JKNetWorkTipCell : UITableViewCell
 
-@property (nonatomic, retain)JKMessageFrame *messageFrame;
+@property (nonatomic, strong)JKMessageFrame *messageFrame;
 
 @end
 
