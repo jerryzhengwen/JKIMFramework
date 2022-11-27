@@ -25,7 +25,7 @@
 #import "JKLabHUD.h"
 #import <libkern/OSAtomic.h>
 #import "Reachabilityy.h"
-#import "JKNetWorkTipCell.h"
+//#import "JKNetWorkTipCell.h"
 @interface JKDialogueViewController ()<UITableViewDelegate,UITableViewDataSource,UITextViewDelegate,ConnectCenterDelegate,JKMessageCellDelegate,JKMessageImageCellDelegate>
 
 /** 获取图片资源路径 */
@@ -908,16 +908,16 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     __weak JKDialogueViewController * weakSelf = self;
     JKMessageFrame * messageFrame = self.dataFrameArray[indexPath.row];
-    if (messageFrame.message.messageType == JKMessageNetTip){
-        static NSString * JKSatisID = @"JKNetWorkTipCell";
-        JKNetWorkTipCell * cell = [tableView dequeueReusableCellWithIdentifier:JKSatisID];
-        if (!cell){
-            cell = [[JKNetWorkTipCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:JKSatisID];
-        }
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        cell.messageFrame = messageFrame;
-        return cell;
-    }
+//    if (messageFrame.message.messageType == JKMessageNetTip){
+//        static NSString * JKSatisID = @"JKNetWorkTipCell";
+//        JKNetWorkTipCell * cell = [tableView dequeueReusableCellWithIdentifier:JKSatisID];
+//        if (!cell){
+//            cell = [[JKNetWorkTipCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:JKSatisID];
+//        }
+//        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+//        cell.messageFrame = messageFrame;
+//        return cell;
+//    }
     if (messageFrame.message.messageType ==  JKMessageLineUP) {
         static NSString * JKSatisID = @"JKLineUpCell";
         JKLineUpCell * cell = [tableView dequeueReusableCellWithIdentifier:JKSatisID];
