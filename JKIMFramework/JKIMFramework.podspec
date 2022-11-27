@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'JKIMFramework'
-  s.version          = '1.9.4'
+  s.version          = '1.9.5'
   s.summary          = '这是IMSDK，可以快速集成和实现IM聊天'
 
 # This description is used to generate tags and improve search results.
@@ -39,6 +39,7 @@ s.ios.vendored_libraries = 'JKIMFramework/**/Frameworks/**/*.a'
 s.resources = 'JKIMFramework/**/UIKit/**/{JKDialogeModel.xcdatamodeld,JKFace.plist,JKIMImage.bundle,style.css}'
 s.libraries = "resolv", "xml2","icucore"
 s.xcconfig = { 'VALID_ARCHS' => 'arm64 x86_64 armv7 i386', }
+s.pod_target_xcconfig = { 'VALID_ARCHS' => 'x86_64 armv7 arm64' }
 s.frameworks = 'UIKit', 'MapKit'
 s.requires_arc = false
 
