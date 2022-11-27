@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'JKIMFramework'
-  s.version          = '1.9.2'
+  s.version          = '1.9.3'
   s.summary          = '这是IMSDK，可以快速集成和实现IM聊天'
 
 # This description is used to generate tags and improve search results.
@@ -26,8 +26,8 @@ Pod::Spec.new do |s|
   s.source           = { :git => 'https://github.com/jerryzhengwen/JKIMFramework.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.ios.deployment_target = '8.0'
-  s.platform     = :ios, "8.0"
+  s.ios.deployment_target = '9.0'
+  s.platform     = :ios, "9.0"
 
 s.source_files = 'JKIMFramework/**/Classes/**/*.{h,m}','JKIMFramework/**/UI/**/*.{h,m}',
   
